@@ -1,10 +1,8 @@
 export default async function handler(req, res) {
-    "use strict";
-    // =========================================================
+    // ================================
     // CQS AI Global
-    // Secure DeepSeek Streaming Gateway
-    // File: api/chat.js
-    // =========================================================
+    // DeepSeek SSE Gateway
+    // ================================
     if (req.method !== "POST") {
         res.setHeader("Allow", "POST");
         return res.status(405).json({
@@ -12,6 +10,15 @@ export default async function handler(req, res) {
             error: `Method ${req.method} Not Allowed`
         });
     }
+    // -------------------------------
+    // 基础安全响应头
+    // -------------------------------
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Cache-Control", "no-cache, no-transform");
+    res.setHeader("Connection", "keep-alive");
+    // -------------------------------
+    // API Key
+    // -------------------------------
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey || !apiKey.trim()) {
         return res.status(500).json({
@@ -19,31 +26,26 @@ export default async function handler(req, res) {
             error: "服务器未配置 DEEPSEEK_API_KEY"
         });
     }
-    // ---------------------------------------------------------
-    // 基础安全 Header
-    // ---------------------------------------------------------
-    res.setHeader(
-        "X-Content-Type-Options",
-        "nosniff"
-    );
-    res.setHeader(
-        "X-Frame-Options",
-        "SAMEORIGIN"
-    );
-    res.setHeader(
-        "Referrer-Policy",
-        "strict-origin-when-cross-origin"
-    );
-    let upstreamController = null;
-    let clientClosed = false;
     try {
+        // -------------------------------
+        // 读取请求
+        // -------------------------------
         const body = req.body || {};
         const messages = body.messages;
-        const systemPrompt = body.systemPrompt;
-        const conversationId = body.conversationId;
-        // =====================================================
-        // 参数验证
-        // =====================================================
+        const conversationId =
+            typeof body.conversationId === "string"
+                ? body.conversationId.trim()
+                : "";
+        const requestedModel =
+            typeof body.model === "string"
+                ? body.model.trim()
+                : "DeepSeek";
+        const attachments = Array.isArray(body.attachments)
+            ? body.attachments
+            : [];
+        // -------------------------------
+        // messages 校验
+        // -------------------------------
         if (!Array.isArray(messages) || messages.length === 0) {
             return res.status(400).json({
                 success: false,
@@ -56,46 +58,16 @@ export default async function handler(req, res) {
                 error: "对话上下文过长，最多允许 50 条消息"
             });
         }
-        // =====================================================
-        // Conversation ID
-        // =====================================================
-        let safeConversationId = "";
-        if (typeof conversationId === "string") {
-            safeConversationId =
-                conversationId
-                    .trim()
-                    .substring(0, 100);
-        }
-        // 防止未使用变量被误解
-        void safeConversationId;
-        // =====================================================
-        // System Prompt
-        // =====================================================
-        let cleanSystemPrompt = "";
-        if (typeof systemPrompt === "string") {
-            cleanSystemPrompt =
-                systemPrompt.trim();
-            if (cleanSystemPrompt.length > 20000) {
-                return res.status(400).json({
-                    success: false,
-                    error: "System Prompt 过长，最大允许 20000 个字符"
-                });
-            }
-        }
-        // =====================================================
-        // 清洗 Messages
-        // =====================================================
-        const allowedRoles =
-            new Set([
-                "user",
-                "assistant"
-            ]);
+        // -------------------------------
+        // 清洗 messages
+        // -------------------------------
+        const allowedRoles = new Set([
+            "user",
+            "assistant"
+        ]);
         const cleanMessages = [];
         for (const message of messages) {
-            if (
-                !message ||
-                typeof message !== "object"
-            ) {
+            if (!message || typeof message !== "object") {
                 continue;
             }
             const role = message.role;
@@ -106,15 +78,13 @@ export default async function handler(req, res) {
             if (typeof content !== "string") {
                 continue;
             }
-            const cleanContent =
-                content.trim();
+            const cleanContent = content.trim();
             if (!cleanContent) {
                 continue;
             }
             cleanMessages.push({
                 role,
-                content:
-                    cleanContent.substring(0, 12000)
+                content: cleanContent.substring(0, 12000)
             });
         }
         if (cleanMessages.length === 0) {
@@ -123,22 +93,41 @@ export default async function handler(req, res) {
                 error: "没有合法的对话内容"
             });
         }
-        // =====================================================
-        // 最终 Messages
-        // =====================================================
-        const finalMessages = [];
-        if (cleanSystemPrompt) {
-            finalMessages.push({
-                role: "system",
-                content: cleanSystemPrompt
-            });
-        }
-        finalMessages.push(
-            ...cleanMessages
-        );
-        // =====================================================
-        // SSE Headers
-        // =====================================================
+        // -------------------------------
+        // 限制附件数量
+        // -------------------------------
+        const cleanAttachments = attachments
+            .filter(item =>
+                item &&
+                typeof item === "object" &&
+                typeof item.name === "string"
+            )
+            .slice(0, 10)
+            .map(item => ({
+                name: item.name.substring(0, 200),
+                size: Number.isFinite(item.size)
+                    ? Math.max(0, Math.floor(item.size))
+                    : 0,
+                type:
+                    typeof item.type === "string"
+                        ? item.type.substring(0, 100)
+                        : ""
+            }));
+        // -------------------------------
+        // 模型映射
+        //
+        // 目前真正连接的是 DeepSeek。
+        // 前端 GPT / Claude / Gemini
+        // 暂时只作为 UI 选择项。
+        // -------------------------------
+        const modelMap = {
+            "DeepSeek": "deepseek-chat"
+        };
+        const deepseekModel =
+            modelMap[requestedModel] || "deepseek-chat";
+        // -------------------------------
+        // SSE 初始化
+        // -------------------------------
         res.statusCode = 200;
         res.setHeader(
             "Content-Type",
@@ -152,178 +141,148 @@ export default async function handler(req, res) {
             "Connection",
             "keep-alive"
         );
+        // Vercel / 部分代理环境
         res.setHeader(
             "X-Accel-Buffering",
             "no"
         );
-        // =====================================================
-        // SSE Sender
-        // =====================================================
+        // -------------------------------
+        // SSE 工具函数
+        // -------------------------------
         const sendEvent = payload => {
-            if (
-                clientClosed ||
-                res.writableEnded
-            ) {
-                return;
-            }
             try {
                 res.write(
                     `data: ${JSON.stringify(payload)}\n\n`
                 );
             } catch (error) {
-                clientClosed = true;
+                console.error(
+                    "[CQS SSE Write Error]",
+                    error
+                );
             }
         };
-        // =====================================================
-        // 客户端断开
-        // =====================================================
-        req.on("close", () => {
-            clientClosed = true;
-            if (upstreamController) {
-                try {
-                    upstreamController.abort();
-                } catch {}
-            }
+        // -------------------------------
+        // 告诉前端 Gateway 已连接
+        // -------------------------------
+        sendEvent({
+            type: "status",
+            status: "connected",
+            conversationId: conversationId || null,
+            model: deepseekModel
         });
-        // =====================================================
-        // DeepSeek Controller
-        // =====================================================
-        upstreamController =
-            new AbortController();
-        const timeout =
-            setTimeout(() => {
-                try {
-                    upstreamController.abort();
-                } catch {}
-            }, 120000);
-        // =====================================================
-        // DeepSeek API
-        // =====================================================
+        // -------------------------------
+        // 构造发送给 DeepSeek 的消息
+        // -------------------------------
+        const finalMessages = [
+            ...cleanMessages
+        ];
+        // 如果前端有附件，
+        // 当前版本先把附件元数据作为上下文提示。
+        //
+        // 注意：
+        // 当前前端没有上传文件二进制内容，
+        // 所以 DeepSeek 暂时无法读取文件本身。
+        //
+        if (cleanAttachments.length > 0) {
+            const attachmentInfo =
+                cleanAttachments
+                    .map(file =>
+                        `- ${file.name} (${file.type || "unknown"}, ${file.size} bytes)`
+                    )
+                    .join("\n");
+            finalMessages.push({
+                role: "user",
+                content:
+                    `用户本次请求附带以下文件信息：\n${attachmentInfo}\n\n` +
+                    `注意：当前网关只收到文件元数据，没有收到文件二进制内容。`
+            });
+        }
+        // -------------------------------
+        // 调用 DeepSeek
+        // -------------------------------
+        const controller = new AbortController();
+        const timeout = setTimeout(() => {
+            controller.abort();
+        }, 120000);
         let upstreamResponse;
         try {
-            upstreamResponse =
-                await fetch(
-                    "https://api.deepseek.com/chat/completions",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type":
-                                "application/json",
-                            "Authorization":
-                                `Bearer ${apiKey.trim()}`,
-                            "Accept":
-                                "text/event-stream"
-                        },
-                        body: JSON.stringify({
-                            /*
-                             * 这里使用 DeepSeek Reasoner。
-                             *
-                             * 如果你的账户/API环境不支持，
-                             * 可以改成：
-                             *
-                             * deepseek-chat
-                             */
-                            model:
-                                "deepseek-reasoner",
-                            messages:
-                                finalMessages,
-                            stream: true,
-                            stream_options: {
-                                include_usage: true
-                            }
-                        }),
-                        signal:
-                            upstreamController.signal
-                    }
-                );
-        } catch (error) {
+            upstreamResponse = await fetch(
+                "https://api.deepseek.com/chat/completions",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization":
+                            `Bearer ${apiKey.trim()}`
+                    },
+                    body: JSON.stringify({
+                        model: deepseekModel,
+                        messages: finalMessages,
+                        stream: true,
+                        temperature: 0.7,
+                        max_tokens: 4096
+                    }),
+                    signal: controller.signal
+                }
+            );
+        } finally {
             clearTimeout(timeout);
-            if (!clientClosed) {
-                sendEvent({
-                    type: "error",
-                    error:
-                        error?.name === "AbortError"
-                            ? "AI 请求已取消或超时"
-                            : "无法连接 DeepSeek AI 服务"
-                });
-                sendEvent({
-                    type: "done"
-                });
-                try {
-                    res.end();
-                } catch {}
-            }
-            return;
         }
-        // =====================================================
-        // HTTP Error
-        // =====================================================
+        // -------------------------------
+        // DeepSeek HTTP 错误
+        // -------------------------------
         if (!upstreamResponse.ok) {
-            clearTimeout(timeout);
+            const errorText =
+                await upstreamResponse.text();
             let errorMessage =
                 `DeepSeek API 请求失败 (${upstreamResponse.status})`;
             try {
-                const errorText =
-                    await upstreamResponse.text();
+                const errorData =
+                    JSON.parse(errorText);
+                errorMessage =
+                    errorData?.error?.message ||
+                    errorData?.message ||
+                    errorMessage;
+            } catch {
                 if (errorText) {
-                    try {
-                        const errorData =
-                            JSON.parse(errorText);
-                        errorMessage =
-                            errorData?.error?.message ||
-                            errorData?.message ||
-                            errorMessage;
-                    } catch {}
+                    errorMessage =
+                        errorText.substring(0, 500);
                 }
-            } catch {}
-            if (!clientClosed) {
-                sendEvent({
-                    type: "error",
-                    error: errorMessage
-                });
-                sendEvent({
-                    type: "done"
-                });
-                try {
-                    res.end();
-                } catch {}
             }
-            return;
+            sendEvent({
+                type: "error",
+                error: errorMessage
+            });
+            sendEvent({
+                type: "done"
+            });
+            return res.end();
         }
-        // =====================================================
-        // Stream 检查
-        // =====================================================
+        // -------------------------------
+        // 检查流
+        // -------------------------------
         if (!upstreamResponse.body) {
-            clearTimeout(timeout);
-            if (!clientClosed) {
-                sendEvent({
-                    type: "error",
-                    error:
-                        "DeepSeek 没有返回流式数据"
-                });
-                sendEvent({
-                    type: "done"
-                });
-                try {
-                    res.end();
-                } catch {}
-            }
-            return;
+            sendEvent({
+                type: "error",
+                error: "DeepSeek 没有返回可读取的数据流"
+            });
+            sendEvent({
+                type: "done"
+            });
+            return res.end();
         }
-        // =====================================================
-        // 读取 Stream
-        // =====================================================
+        // -------------------------------
+        // 读取 DeepSeek SSE
+        // -------------------------------
         const reader =
             upstreamResponse.body.getReader();
         const decoder =
             new TextDecoder("utf-8");
         let buffer = "";
-        let finished = false;
+        let totalUsage = null;
+        let hasContent = false;
         try {
-            while (
-                !finished &&
-                !clientClosed
-            ) {
+            while (true) {
                 const {
                     value,
                     done
@@ -331,251 +290,206 @@ export default async function handler(req, res) {
                 if (done) {
                     break;
                 }
-                if (value) {
-                    buffer +=
-                        decoder.decode(
-                            value,
-                            {
-                                stream: true
-                            }
-                        );
-                }
+                buffer += decoder.decode(
+                    value,
+                    {
+                        stream: true
+                    }
+                );
                 const events =
-                    buffer.split(
-                        /\r?\n\r?\n/
-                    );
+                    buffer.split(/\r?\n\r?\n/);
                 buffer =
                     events.pop() || "";
                 for (const event of events) {
-                    if (clientClosed) {
-                        break;
-                    }
                     const lines =
                         event.split(/\r?\n/);
-                    const dataLines =
-                        lines
-                            .filter(line =>
-                                line.startsWith("data:")
-                            )
-                            .map(line =>
-                                line
-                                    .slice(5)
-                                    .trim()
-                            );
-                    if (
-                        dataLines.length === 0
-                    ) {
-                        continue;
-                    }
-                    const data =
-                        dataLines.join("\n");
-                    if (!data) {
-                        continue;
-                    }
-                    // DeepSeek 结束
-                    if (data === "[DONE]") {
-                        finished = true;
-                        break;
-                    }
-                    let packet;
-                    try {
-                        packet =
-                            JSON.parse(data);
-                    } catch {
-                        continue;
-                    }
-                    const choice =
-                        packet?.choices?.[0];
-                    const delta =
-                        choice?.delta;
-                    // =================================================
-                    // 思考内容
-                    // =================================================
-                    if (
-                        delta &&
-                        typeof
-                            delta.reasoning_content
-                            === "string" &&
-                        delta.reasoning_content.length
-                    ) {
-                        sendEvent({
-                            type:
-                                "reasoning",
-                            content:
-                                delta.reasoning_content
-                        });
-                    }
-                    // =================================================
-                    // 最终答案
-                    // =================================================
-                    if (
-                        delta &&
-                        typeof
-                            delta.content
-                            === "string" &&
-                        delta.content.length
-                    ) {
-                        sendEvent({
-                            type:
-                                "delta",
-                            content:
-                                delta.content
-                        });
-                    }
-                    // =================================================
-                    // Token Usage
-                    // =================================================
-                    if (packet?.usage) {
-                        sendEvent({
-                            type:
-                                "usage",
-                            usage:
-                                packet.usage
-                        });
-                    }
-                }
-            }
-            // =====================================================
-            // Flush Decoder
-            // =====================================================
-            buffer +=
-                decoder.decode();
-            // =====================================================
-            // 最后一个残留 SSE
-            // =====================================================
-            if (
-                !clientClosed &&
-                buffer.trim()
-            ) {
-                const lines =
-                    buffer.split(/\r?\n/);
-                const dataLines =
-                    lines
-                        .filter(line =>
-                            line.startsWith("data:")
-                        )
-                        .map(line =>
-                            line
-                                .slice(5)
-                                .trim()
-                        );
-                if (dataLines.length) {
-                    const data =
-                        dataLines.join("\n");
-                    if (data !== "[DONE]") {
+                    for (const line of lines) {
+                        if (!line.startsWith("data:")) {
+                            continue;
+                        }
+                        const data =
+                            line.slice(5).trim();
+                        if (!data) {
+                            continue;
+                        }
+                        // DeepSeek SSE 结束标记
+                        if (data === "[DONE]") {
+                            continue;
+                        }
+                        let packet;
                         try {
-                            const packet =
+                            packet =
                                 JSON.parse(data);
-                            const choice =
-                                packet?.choices?.[0];
-                            const delta =
-                                choice?.delta;
-                            if (
-                                delta &&
-                                typeof
-                                    delta.reasoning_content
-                                    === "string"
-                            ) {
-                                sendEvent({
-                                    type:
-                                        "reasoning",
-                                    content:
-                                        delta.reasoning_content
-                                });
-                            }
-                            if (
-                                delta &&
-                                typeof
-                                    delta.content
-                                    === "string"
-                            ) {
-                                sendEvent({
-                                    type:
-                                        "delta",
-                                    content:
-                                        delta.content
-                                });
-                            }
-                            if (packet?.usage) {
-                                sendEvent({
-                                    type:
-                                        "usage",
-                                    usage:
-                                        packet.usage
-                                });
-                            }
-                        } catch {}
+                        } catch {
+                            continue;
+                        }
+                        // -----------------------
+                        // 内容增量
+                        // -----------------------
+                        const delta =
+                            packet?.choices?.[0]?.delta;
+                        const content =
+                            delta?.content;
+                        if (
+                            typeof content ===
+                            "string" &&
+                            content.length > 0
+                        ) {
+                            hasContent = true;
+                            sendEvent({
+                                type: "delta",
+                                content
+                            });
+                        }
+                        // -----------------------
+                        // usage
+                        // -----------------------
+                        if (packet?.usage) {
+                            totalUsage =
+                                packet.usage;
+                        }
                     }
                 }
             }
-            // =====================================================
-            // Done
-            // =====================================================
-            if (!clientClosed) {
-                sendEvent({
-                    type:
-                        "done"
-                });
+            // 处理最后残留数据
+            buffer += decoder.decode();
+            const finalEvents =
+                buffer.split(/\r?\n\r?\n/);
+            for (const event of finalEvents) {
+                const lines =
+                    event.split(/\r?\n/);
+                for (const line of lines) {
+                    if (!line.startsWith("data:")) {
+                        continue;
+                    }
+                    const data =
+                        line.slice(5).trim();
+                    if (
+                        !data ||
+                        data === "[DONE]"
+                    ) {
+                        continue;
+                    }
+                    try {
+                        const packet =
+                            JSON.parse(data);
+                        if (packet?.usage) {
+                            totalUsage =
+                                packet.usage;
+                        }
+                        const content =
+                            packet?.choices?.[0]
+                                ?.delta
+                                ?.content;
+                        if (
+                            typeof content ===
+                            "string" &&
+                            content.length > 0
+                        ) {
+                            hasContent = true;
+                            sendEvent({
+                                type: "delta",
+                                content
+                            });
+                        }
+                    } catch {
+                        // 忽略无法解析的最后数据
+                    }
+                }
             }
-        } catch (error) {
+        } catch (streamError) {
             console.error(
-                "[CQS AI Stream Error]",
-                error
+                "[CQS DeepSeek Stream Error]",
+                streamError
             );
-            if (!clientClosed) {
-                sendEvent({
-                    type:
-                        "error",
-                    error:
-                        error?.name === "AbortError"
-                            ? "AI 请求已取消"
-                            : "AI 流式传输发生错误"
-                });
-                sendEvent({
-                    type:
-                        "done"
-                });
-            }
+            sendEvent({
+                type: "error",
+                error:
+                    streamError?.name ===
+                    "AbortError"
+                        ? "DeepSeek 请求超时"
+                        : "DeepSeek 流式连接中断"
+            });
+            return res.end();
         } finally {
-            clearTimeout(timeout);
             try {
                 reader.releaseLock();
             } catch {}
-            if (!clientClosed) {
-                try {
-                    res.end();
-                } catch {}
-            }
         }
+        // -------------------------------
+        // 没有内容
+        // -------------------------------
+        if (!hasContent) {
+            sendEvent({
+                type: "error",
+                error: "DeepSeek 返回了空响应"
+            });
+        }
+        // -------------------------------
+        // Token 使用量
+        // -------------------------------
+        if (totalUsage) {
+            sendEvent({
+                type: "usage",
+                usage: {
+                    prompt_tokens:
+                        Number(
+                            totalUsage.prompt_tokens ||
+                            0
+                        ),
+                    completion_tokens:
+                        Number(
+                            totalUsage.completion_tokens ||
+                            0
+                        ),
+                    total_tokens:
+                        Number(
+                            totalUsage.total_tokens ||
+                            0
+                        )
+                }
+            });
+        }
+        // -------------------------------
+        // 完成
+        // -------------------------------
+        sendEvent({
+            type: "done"
+        });
+        return res.end();
     } catch (error) {
         console.error(
             "[CQS AI Gateway Error]",
             error
         );
-        if (res.headersSent) {
-            try {
-                res.write(
-                    `data: ${JSON.stringify({
-                        type:
-                            "error",
-                        error:
-                            "服务器内部错误"
-                    })}\n\n`
-                );
-                res.write(
-                    `data: ${JSON.stringify({
-                        type:
-                            "done"
-                    })}\n\n`
-                );
-                res.end();
-            } catch {}
-            return;
+        // 如果 SSE 尚未建立
+        if (!res.headersSent) {
+            return res.status(500).json({
+                success: false,
+                error: "服务器内部错误",
+                detail:
+                    error?.message ||
+                    "Unknown error"
+            });
         }
-        return res.status(500).json({
-            success: false,
-            error:
-                "服务器内部错误"
-        });
+        // 如果已经进入 SSE
+        try {
+            res.write(
+                `data: ${JSON.stringify({
+                    type: "error",
+                    error:
+                        error?.message ||
+                        "服务器内部错误"
+                })}\n\n`
+            );
+            res.write(
+                `data: ${JSON.stringify({
+                    type: "done"
+                })}\n\n`
+            );
+            return res.end();
+        } catch {
+            return res.end();
+        }
     }
 }
