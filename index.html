@@ -87,13 +87,13 @@
         #user-input:focus {
             outline: none;
         }
-        #history-drawer {
+        #history-drawer, .modal-overlay {
             transition: opacity 0.2s ease;
         }
         #history-panel {
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        #history-drawer.hidden {
+        #history-drawer.hidden, .modal-overlay.hidden {
             opacity: 0;
             pointer-events: none;
         }
@@ -109,7 +109,7 @@
             <button id="history-btn" type="button" aria-label="历史记录与菜单" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 text-slate-300 active:scale-95 transition">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <h1 class="text-base font-semibold tracking-wide">AI 对话中心</h1>
+            <h1 id="current-title" class="text-base font-semibold tracking-wide">AI 对话中心</h1>
         </div>
         <div class="flex items-center space-x-3">
             <div class="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full font-mono">
@@ -126,7 +126,7 @@
             <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
                 <i class="fa-solid fa-robot text-xs text-white"></i>
             </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[80%] text-sm text-slate-200 shadow-lg">
+            <div id="welcome-msg" class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[80%] text-sm text-slate-200 shadow-lg">
                 你好！我是你的 AI 助手，请在下方输入框与我开始对话。
             </div>
         </div>
@@ -151,28 +151,59 @@
                 </button>
             </div>
 
-            <button id="new-chat-btn" type="button" class="w-full mb-4 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium flex items-center space-x-2 shadow-lg shadow-indigo-600/20 active:scale-98 transition">
+            <button id="new-chat-btn" type="button" class="w-full mb-3 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium flex items-center space-x-2 shadow-lg shadow-indigo-600/20 active:scale-98 transition">
                 <i class="fa-solid fa-plus"></i>
                 <span>开启新话题</span>
             </button>
 
-            <div class="space-y-1.5 mb-4 pb-3 border-b border-slate-800">
+            <div class="space-y-1.5 mb-3 pb-3 border-b border-slate-800">
                 <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1 mb-1">系统功能</div>
-                <button id="deploy-skill-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-xl text-xs flex items-center space-x-2.5 transition">
-                    <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i>
-                    <span>部署 Skill</span>
+                <button id="deploy-skill-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-xl text-xs flex items-center justify-between transition">
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i><span>部署 Skill</span></span>
+                    <i class="fa-solid fa-plus text-[10px] text-slate-500"></i>
                 </button>
-                <button id="deploy-agent-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-xl text-xs flex items-center space-x-2.5 transition">
-                    <i class="fa-solid fa-brain text-emerald-400"></i>
-                    <span>部署 Agent</span>
+                <button id="deploy-agent-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-xl text-xs flex items-center justify-between transition">
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-brain text-emerald-400"></i><span>部署 Agent</span></span>
+                    <i class="fa-solid fa-plus text-[10px] text-slate-500"></i>
                 </button>
+            </div>
+
+            <div id="deployed-section" class="space-y-2 mb-3 pb-3 border-b border-slate-800 hidden">
+                <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1">我的技能与智能体</div>
+                <div id="deployed-list" class="space-y-1"></div>
             </div>
 
             <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1 mb-1">历史对话</div>
             <div id="history-list" class="flex-1 overflow-y-auto space-y-1.5"></div>
         </div>
     </div>
+
+    <div id="config-modal" class="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <h3 id="modal-title" class="text-sm font-semibold text-slate-200">配置</h3>
+                <button id="close-modal" type="button" class="text-slate-400 hover:text-white w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-800">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1" id="label-name">名称</label>
+                    <input type="text" id="modal-name-input" class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl px-3 py-2 border border-slate-700 focus:border-indigo-500 focus:outline-none" placeholder="例如：翻译专家">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1" id="label-desc">设定 / 系统提示词 (System Prompt)</label>
+                    <textarea id="modal-desc-input" rows="3" class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl px-3 py-2 border border-slate-700 focus:border-indigo-500 focus:outline-none resize-none" placeholder="输入具体的行为设定或规则..."></textarea>
+                </div>
+            </div>
+            <div class="flex space-x-2 pt-2">
+                <button id="modal-cancel-btn" type="button" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition">取消</button>
+                <button id="modal-save-btn" type="button" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium transition shadow-lg shadow-indigo-600/30">确认部署</button>
+            </div>
+        </div>
+    </div>
 </div>
+
 <script>
     const chatContainer = document.getElementById('chat-container');
     const userInput = document.getElementById('user-input');
@@ -184,16 +215,33 @@
     const closeDrawer = document.getElementById('close-drawer');
     const historyList = document.getElementById('history-list');
     const newChatBtn = document.getElementById('new-chat-btn');
+    const currentTitleEl = document.getElementById('current-title');
+    const welcomeMsgEl = document.getElementById('welcome-msg');
+
     const deploySkillBtn = document.getElementById('deploy-skill-btn');
     const deployAgentBtn = document.getElementById('deploy-agent-btn');
+    const deployedSection = document.getElementById('deployed-section');
+    const deployedList = document.getElementById('deployed-list');
+
+    const configModal = document.getElementById('config-modal');
+    const closeModal = document.getElementById('close-modal');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+    const modalSaveBtn = document.getElementById('modal-save-btn');
+    const modalTitle = document.getElementById('modal-title');
+    const modalNameInput = document.getElementById('modal-name-input');
+    const modalDescInput = document.getElementById('modal-desc-input');
 
     let messages = [];
     let totalTokens = 0;
     let isSending = false;
+    let currentMode = 'chat';
+    let currentSystemPrompt = '';
+    let deployedItems = [];
 
     try {
         const savedMessages = localStorage.getItem('chat_messages');
         const savedTokens = localStorage.getItem('total_tokens');
+        const savedDeployed = localStorage.getItem('deployed_items');
         if (savedMessages) {
             const parsed = JSON.parse(savedMessages);
             if (Array.isArray(parsed)) messages = parsed;
@@ -202,8 +250,12 @@
             const parsedTokens = parseInt(savedTokens, 10);
             if (!Number.isNaN(parsedTokens)) totalTokens = parsedTokens;
         }
+        if (savedDeployed) {
+            const parsedD = JSON.parse(savedDeployed);
+            if (Array.isArray(parsedD)) deployedItems = parsedD;
+        }
     } catch (error) {
-        console.error('LocalStorage read error:', error);
+        console.error('Storage read error:', error);
     }
     tokenCountEl.textContent = totalTokens;
 
@@ -211,9 +263,60 @@
         try {
             localStorage.setItem('chat_messages', JSON.stringify(messages));
             localStorage.setItem('total_tokens', String(totalTokens));
+            localStorage.setItem('deployed_items', JSON.stringify(deployedItems));
         } catch (error) {
-            console.error('LocalStorage save error:', error);
+            console.error('Storage save error:', error);
         }
+    }
+
+    function renderDeployedItems() {
+        if (!deployedItems.length) {
+            deployedSection.classList.add('hidden');
+            return;
+        }
+        deployedSection.classList.remove('hidden');
+        deployedList.innerHTML = '';
+        deployedItems.forEach((item, index) => {
+            const el = document.createElement('div');
+            el.className = 'p-2 bg-slate-800/40 rounded-xl text-xs flex items-center justify-between group hover:bg-slate-800 transition cursor-pointer';
+            
+            const leftDiv = document.createElement('div');
+            leftDiv.className = 'flex items-center space-x-2 truncate';
+            const icon = document.createElement('i');
+            icon.className = item.type === 'skill' ? 'fa-solid fa-wand-magic-sparkles text-indigo-400' : 'fa-solid fa-brain text-emerald-400';
+            
+            const textSpan = document.createElement('span');
+            textSpan.className = 'text-slate-300 truncate';
+            textSpan.textContent = item.name;
+            
+            leftDiv.appendChild(icon);
+            leftDiv.appendChild(textSpan);
+            leftDiv.addEventListener('click', () => {
+                activateItem(item);
+            });
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'text-slate-500 hover:text-red-400 px-1';
+            delBtn.innerHTML = '<i class="fa-solid fa-trash text-[10px]"></i>';
+            delBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deployedItems.splice(index, 1);
+                saveState();
+                renderDeployedItems();
+            });
+
+            el.appendChild(leftDiv);
+            el.appendChild(delBtn);
+            deployedList.appendChild(el);
+        });
+    }
+    renderDeployedItems();
+
+    function activateItem(item) {
+        currentSystemPrompt = item.prompt;
+        currentTitleEl.textContent = `${item.type === 'skill' ? 'Skill' : 'Agent'}: ${item.name}`;
+        welcomeMsgEl.textContent = `已加载 [${item.name}] 设定：${item.prompt}`;
+        closeHistory();
     }
 
     function appendUI(role, text, save = true) {
@@ -304,11 +407,15 @@
         createLoading();
 
         try {
-            const cleanMessages = messages.map(m => ({ role: m.role, content: m.content }));
+            let finalMessages = messages.map(m => ({ role: m.role, content: m.content }));
+            if (currentSystemPrompt && finalMessages.length === 1) {
+                finalMessages.unshift({ role: 'system', content: currentSystemPrompt });
+            }
+
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ messages: cleanMessages })
+                body: JSON.stringify({ messages: finalMessages })
             });
 
             let data;
@@ -363,6 +470,8 @@
     function startNewChat() {
         messages = [];
         totalTokens = 0;
+        currentSystemPrompt = '';
+        currentTitleEl.textContent = 'AI 对话中心';
         tokenCountEl.textContent = '0';
         localStorage.removeItem('chat_messages');
         localStorage.removeItem('total_tokens');
@@ -372,7 +481,7 @@
                 <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
                     <i class="fa-solid fa-robot text-xs text-white"></i>
                 </div>
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[80%] text-sm text-slate-200 shadow-lg">
+                <div id="welcome-msg" class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[80%] text-sm text-slate-200 shadow-lg">
                     你好！我是你的 AI 助手，请在下方输入框与我开始对话。
                 </div>
             </div>
@@ -381,11 +490,42 @@
     }
     newChatBtn.addEventListener('click', startNewChat);
 
-    deploySkillBtn.addEventListener('click', () => {
-        alert('🚀 [部署 Skill] 功能正在规划中，后续支持在此挂载自定义技能与工作流。');
-    });
-    deployAgentBtn.addEventListener('click', () => {
-        alert('🤖 [部署 Agent] 功能正在规划中，后续支持在此配置和发布智能体。');
+    function openConfigModal(type) {
+        currentMode = type;
+        closeHistory();
+        modalTitle.textContent = type === 'skill' ? '部署新 Skill (技能)' : '部署新 Agent (智能体)';
+        modalNameInput.value = '';
+        modalDescInput.value = '';
+        modalNameInput.placeholder = type === 'skill' ? '例如：代码审查助手' : '例如：全栈架构师';
+        modalDescInput.placeholder = type === 'skill' ? '输入该技能的具体提示词规则...' : '输入该智能体的人设与背景描述...';
+        configModal.classList.remove('hidden');
+    }
+
+    deploySkillBtn.addEventListener('click', () => openConfigModal('skill'));
+    deployAgentBtn.addEventListener('click', () => openConfigModal('agent'));
+
+    function closeConfigModal() {
+        configModal.classList.add('hidden');
+    }
+    closeModal.addEventListener('click', closeConfigModal);
+    modalCancelBtn.addEventListener('click', closeConfigModal);
+
+    modalSaveBtn.addEventListener('click', () => {
+        const name = modalNameInput.value.trim();
+        const prompt = modalDescInput.value.trim();
+        if (!name || !prompt) {
+            alert('请完整填写名称和设定说明！');
+            return;
+        }
+
+        deployedItems.push({
+            type: currentMode,
+            name: name,
+            prompt: prompt
+        });
+        saveState();
+        renderDeployedItems();
+        closeConfigModal();
     });
 
     exportBtn.addEventListener('click', () => {
@@ -437,13 +577,9 @@
         if (event.target === historyDrawer) closeHistory();
     });
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape') closeHistory();
-    });
-
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && !isSending) {
-            sendBtn.disabled = false;
-            userInput.disabled = false;
+        if (event.key === 'Escape') {
+            closeHistory();
+            closeConfigModal();
         }
     });
 </script>
