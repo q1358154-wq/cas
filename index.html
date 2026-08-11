@@ -3,25 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<title>CQS AI Global</title>
+
 <meta name="theme-color" content="#020617">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<title>CQS AI Global</title>
-
 <!-- Tailwind -->
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-<!-- Font Awesome -->
+<!-- FontAwesome -->
 <link
     rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 >
 
 <!-- Marked -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-<!-- Highlight.js -->
+<!-- Highlight -->
 <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
@@ -31,13 +32,12 @@
 <style>
 :root {
     --bg: #020617;
-    --bg2: #080d18;
-    --panel: #0b1220;
-    --panel2: #0f172a;
-    --border: #1e293b;
-    --muted: #64748b;
+    --panel: #070b14;
+    --panel2: #0b1220;
+    --border: rgba(148,163,184,.14);
     --text: #f8fafc;
-    --indigo: #6366f1;
+    --muted: #64748b;
+    --accent: #6366f1;
 }
 
 * {
@@ -70,16 +70,13 @@ body {
 
 button,
 textarea,
-input {
+input,
+select {
     font: inherit;
 }
 
 button {
     cursor: pointer;
-}
-
-textarea {
-    outline: none;
 }
 
 ::-webkit-scrollbar {
@@ -110,7 +107,6 @@ textarea {
     min-height: 100svh;
     display: flex;
     overflow: hidden;
-    background: var(--bg);
 }
 
 /* =========================================================
@@ -118,24 +114,27 @@ textarea {
 ========================================================= */
 
 #sidebar {
-    width: 280px;
-    min-width: 280px;
+    width: 290px;
+    min-width: 290px;
     height: 100%;
+    background:
+        linear-gradient(
+            180deg,
+            #060a12 0%,
+            #070b14 100%
+        );
+    border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    background: #070b14;
-    border-right: 1px solid var(--border);
     z-index: 100;
-    transition: transform .25s ease;
 }
 
 .sidebar-header {
-    height: 64px;
-    flex-shrink: 0;
+    height: 68px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
     border-bottom: 1px solid var(--border);
 }
 
@@ -146,265 +145,252 @@ textarea {
 }
 
 .brand-logo {
-    width: 36px;
-    height: 36px;
-    border-radius: 11px;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #818cf8,
+            #4f46e5 45%,
+            #312e81 100%
+        );
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
     color: white;
     font-weight: 800;
-    box-shadow: 0 8px 25px rgba(99, 102, 241, .25);
+    font-size: 16px;
+    box-shadow:
+        0 8px 25px rgba(79,70,229,.3);
 }
 
-.brand-title {
+.brand-name {
     font-size: 14px;
-    font-weight: 650;
+    font-weight: 700;
     letter-spacing: .2px;
 }
 
 .brand-version {
-    margin-top: 2px;
     color: #475569;
     font-size: 9px;
+    margin-top: 2px;
+}
+
+.sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 10px;
 }
 
 .new-chat-wrap {
-    padding: 13px;
+    padding: 14px;
 }
 
-.new-chat {
+.new-chat-btn {
     width: 100%;
-    height: 44px;
-    border: 0;
+    height: 45px;
     border-radius: 12px;
+    border: 1px solid rgba(99,102,241,.25);
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #4f46e5
+        );
     color: white;
-    background: #4f46e5;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     font-size: 12px;
     font-weight: 600;
+    box-shadow: 0 8px 25px rgba(79,70,229,.18);
     transition: .18s;
 }
 
-.new-chat:hover {
-    background: #6366f1;
+.new-chat-btn:hover {
+    filter: brightness(1.08);
 }
 
-.new-chat:active {
+.new-chat-btn:active {
     transform: scale(.985);
 }
 
+/* =========================================================
+   SIDEBAR SECTIONS
+========================================================= */
+
+.sidebar-section {
+    padding: 4px 10px 10px;
+}
+
 .sidebar-section-title {
-    padding: 8px 12px 5px;
+    padding: 8px 8px 7px;
     color: #475569;
     font-size: 9px;
-    font-weight: 700;
-    letter-spacing: .12em;
     text-transform: uppercase;
+    letter-spacing: .12em;
+    font-weight: 700;
 }
 
-.mode-list {
-    padding: 0 10px;
-}
-
-.mode-btn {
+.mode-btn,
+.tool-btn,
+.model-open-btn,
+.language-open-btn {
     width: 100%;
-    height: 38px;
-    margin-bottom: 3px;
-    padding: 0 11px;
+    min-height: 40px;
+    padding: 8px 10px;
     border: 0;
-    border-radius: 9px;
+    border-radius: 10px;
     background: transparent;
     color: #94a3b8;
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 12px;
     text-align: left;
     transition: .18s;
 }
 
-.mode-btn:hover {
-    background: #111827;
+.mode-btn:hover,
+.tool-btn:hover,
+.model-open-btn:hover,
+.language-open-btn:hover {
+    background: rgba(30,41,59,.55);
     color: #e2e8f0;
 }
 
 .mode-btn.active {
+    background: rgba(79,70,229,.13);
     color: #a5b4fc;
-    background: #111827;
 }
 
-.mode-btn i {
-    width: 17px;
-    text-align: center;
-}
-
-.history-area {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    padding: 5px 10px 10px;
-}
-
-.history-item {
-    position: relative;
-    width: 100%;
-    min-height: 39px;
-    padding: 0 8px;
-    margin-bottom: 3px;
-    border-radius: 9px;
-    border: 0;
-    background: transparent;
-    color: #94a3b8;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-align: left;
-    transition: .15s;
-}
-
-.history-item:hover {
-    background: #111827;
-    color: #e2e8f0;
-}
-
-.history-item.active {
-    background: #172033;
-    color: #f8fafc;
-}
-
-.history-item-title {
-    min-width: 0;
-    flex: 1;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-size: 11px;
-}
-
-.history-delete {
-    width: 25px;
-    height: 25px;
-    flex-shrink: 0;
-    border: 0;
-    border-radius: 7px;
-    color: #64748b;
-    background: transparent;
-    opacity: 0;
-}
-
-.history-item:hover .history-delete {
-    opacity: 1;
-}
-
-.history-delete:hover {
-    color: #f87171;
-    background: #1f2937;
-}
-
-.sidebar-tools {
-    flex-shrink: 0;
-    border-top: 1px solid var(--border);
-    padding: 8px 10px;
-}
-
-.tool-btn {
-    width: 100%;
-    min-height: 45px;
-    padding: 6px 8px;
-    border: 0;
-    border-radius: 9px;
-    background: transparent;
-    color: #94a3b8;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    text-align: left;
-    transition: .18s;
-}
-
-.tool-btn:hover {
-    background: #111827;
-    color: #e2e8f0;
-}
-
-.tool-icon {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
+.side-icon {
+    width: 26px;
+    height: 26px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #111827;
+    background: #0f172a;
     border: 1px solid #1e293b;
     color: #818cf8;
-    font-size: 11px;
+    font-size: 10px;
+    flex-shrink: 0;
 }
 
-.tool-content {
+.side-main {
     min-width: 0;
     flex: 1;
 }
 
-.tool-title {
+.side-title {
     font-size: 11px;
-    color: #cbd5e1;
+    color: inherit;
+    font-weight: 500;
 }
 
-.tool-status {
+.side-sub {
     margin-top: 2px;
     font-size: 8px;
     color: #475569;
+}
+
+.side-arrow {
+    font-size: 9px;
+    color: #334155;
+}
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-area {
+    padding: 0 10px 10px;
+}
+
+.history-item {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    margin-bottom: 2px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #64748b;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    transition: .16s;
+}
+
+.history-item:hover {
+    background: #0f172a;
+    color: #cbd5e1;
+}
+
+.history-item.active {
+    background: #111827;
+    color: #f8fafc;
+}
+
+.history-item i {
+    font-size: 9px;
+    color: #475569;
+}
+
+.history-title {
+    min-width: 0;
+    flex: 1;
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 10px;
 }
 
-.sidebar-user {
-    height: 55px;
-    flex-shrink: 0;
-    padding: 0 13px;
+/* =========================================================
+   SIDEBAR FOOTER
+========================================================= */
+
+.sidebar-footer {
+    padding: 10px;
     border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 }
 
-.user-info {
+.user-row {
+    min-height: 42px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
 }
 
 .user-avatar {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
+    background: #111827;
+    border: 1px solid #1e293b;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #172033;
     color: #94a3b8;
     font-size: 10px;
 }
 
 .user-name {
-    color: #cbd5e1;
+    flex: 1;
     font-size: 10px;
+    color: #94a3b8;
 }
 
 .settings-btn {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border: 0;
-    border-radius: 8px;
-    color: #64748b;
+    border-radius: 9px;
     background: transparent;
+    color: #64748b;
 }
 
 .settings-btn:hover {
@@ -417,31 +403,43 @@ textarea {
 ========================================================= */
 
 #main {
-    min-width: 0;
     flex: 1;
+    min-width: 0;
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: var(--bg);
+    background:
+        radial-gradient(
+            circle at 50% -20%,
+            rgba(79,70,229,.08),
+            transparent 38%
+        ),
+        #020617;
 }
 
+/* =========================================================
+   HEADER
+========================================================= */
+
 .topbar {
-    height: 58px;
-    flex-shrink: 0;
-    padding: 0 17px;
+    height: 60px;
+    min-height: 60px;
+    padding: 0 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(30, 41, 59, .8);
-    background: rgba(2, 6, 23, .88);
-    backdrop-filter: blur(16px);
-    z-index: 20;
+    border-bottom: 1px solid var(--border);
+    background: rgba(2,6,23,.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    z-index: 30;
 }
 
-.topbar-left {
+.top-left,
+.top-right {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 8px;
 }
 
 .mobile-menu-btn {
@@ -449,51 +447,44 @@ textarea {
     width: 34px;
     height: 34px;
     border: 0;
-    border-radius: 8px;
-    color: #94a3b8;
+    border-radius: 9px;
     background: transparent;
+    color: #94a3b8;
 }
 
-.mobile-menu-btn:hover {
-    background: #111827;
-    color: white;
-}
-
-.model-name {
-    color: #e2e8f0;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.online-badge {
-    padding: 3px 8px;
-    border-radius: 999px;
-    color: #818cf8;
-    background: rgba(99, 102, 241, .08);
-    border: 1px solid rgba(99, 102, 241, .2);
-    font-size: 9px;
-}
-
-.topbar-right {
+.model-badge {
     display: flex;
     align-items: center;
     gap: 7px;
-}
-
-.top-btn {
-    height: 31px;
-    padding: 0 10px;
+    padding: 6px 9px;
+    border-radius: 9px;
+    background: rgba(15,23,42,.7);
     border: 1px solid #1e293b;
-    border-radius: 8px;
-    color: #94a3b8;
-    background: transparent;
+    color: #cbd5e1;
     font-size: 10px;
 }
 
-.top-btn:hover {
+.online-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34,197,94,.7);
+}
+
+.header-btn {
+    height: 32px;
+    padding: 0 9px;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+    background: #0b1220;
+    color: #94a3b8;
+    font-size: 9px;
+}
+
+.header-btn:hover {
     color: white;
     border-color: #334155;
-    background: #0f172a;
 }
 
 /* =========================================================
@@ -502,98 +493,109 @@ textarea {
 
 #chat-container {
     flex: 1;
-    min-height: 0;
     overflow-y: auto;
-    padding: 26px 17px;
+    padding: 28px 18px 24px;
     scroll-behavior: smooth;
 }
 
 .chat-inner {
-    width: 100%;
-    max-width: 900px;
+    width: min(920px, 100%);
     margin: 0 auto;
 }
 
-.welcome {
+.welcome-screen {
     min-height: calc(100% - 20px);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     text-align: center;
-}
-
-.welcome-inner {
-    width: 100%;
-    max-width: 460px;
+    padding: 30px 20px;
 }
 
 .welcome-logo {
-    width: 70px;
-    height: 70px;
-    margin: 0 auto 18px;
+    width: 72px;
+    height: 72px;
     border-radius: 22px;
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            #818cf8,
+            #4f46e5 48%,
+            #312e81 100%
+        );
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #a5b4fc;
-    background: rgba(99, 102, 241, .08);
-    border: 1px solid rgba(99, 102, 241, .18);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
-    animation: welcomePulse 2.8s ease-in-out infinite;
+    color: white;
+    font-size: 25px;
+    box-shadow:
+        0 20px 50px rgba(79,70,229,.25);
+    animation: welcomeFloat 3s ease-in-out infinite;
 }
 
-@keyframes welcomePulse {
+@keyframes welcomeFloat {
     0%,100% {
         transform: translateY(0);
-        box-shadow: 0 20px 60px rgba(0,0,0,.2);
     }
     50% {
-        transform: translateY(-4px);
-        box-shadow: 0 25px 70px rgba(99,102,241,.12);
+        transform: translateY(-6px);
     }
 }
 
 .welcome-title {
-    color: #f8fafc;
-    font-size: 19px;
-    font-weight: 650;
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -.02em;
 }
 
-.welcome-desc {
-    margin-top: 7px;
+.welcome-subtitle {
+    margin-top: 8px;
     color: #64748b;
     font-size: 11px;
     line-height: 1.7;
+    max-width: 450px;
 }
 
-.quick-actions {
-    margin-top: 22px;
+.welcome-grid {
+    width: min(650px,100%);
+    margin-top: 25px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3,1fr);
     gap: 8px;
 }
 
-.quick-action {
-    padding: 11px;
-    border: 1px solid #1e293b;
-    border-radius: 11px;
+.welcome-card {
+    padding: 13px;
+    border: 1px solid #172033;
+    border-radius: 13px;
+    background: rgba(15,23,42,.45);
     color: #94a3b8;
-    background: #080d18;
     font-size: 10px;
-    text-align: left;
     transition: .18s;
 }
 
-.quick-action:hover {
-    border-color: #334155;
-    color: #e2e8f0;
-    background: #0f172a;
+.welcome-card:hover {
+    border-color: rgba(99,102,241,.35);
+    background: rgba(30,41,59,.5);
+    color: white;
 }
 
+.welcome-card i {
+    color: #818cf8;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
 .message-row {
-    width: 100%;
     display: flex;
-    margin-bottom: 21px;
+    width: 100%;
+    margin-bottom: 22px;
 }
 
 .message-row.user {
@@ -604,86 +606,86 @@ textarea {
     justify-content: flex-start;
 }
 
-.message {
-    max-width: min(82%, 760px);
+.message-stack {
+    max-width: min(820px, 88%);
 }
 
-.message-role {
-    margin-bottom: 5px;
+.message-meta {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 6px;
     color: #475569;
-    font-size: 9px;
+    font-size: 8px;
 }
 
-.message-row.user .message-role {
-    text-align: right;
+.message-row.user .message-meta {
+    justify-content: flex-end;
 }
 
 .message-bubble {
+    border-radius: 17px;
     padding: 12px 14px;
-    border-radius: 16px;
     font-size: 13px;
     line-height: 1.65;
     overflow-wrap: anywhere;
 }
 
 .message-row.user .message-bubble {
+    background:
+        linear-gradient(
+            135deg,
+            #4f46e5,
+            #4338ca
+        );
     color: white;
-    background: #4f46e5;
     border-bottom-right-radius: 5px;
+    box-shadow: 0 8px 25px rgba(79,70,229,.14);
 }
 
 .message-row.assistant .message-bubble {
-    color: #dbe4f0;
-    background: #0b1220;
-    border: 1px solid #1e293b;
+    background: rgba(15,23,42,.82);
+    border: 1px solid #172033;
+    color: #dbe4ef;
     border-bottom-left-radius: 5px;
 }
 
-.message-attachment {
-    margin-top: 7px;
-    padding: 8px 10px;
-    border-radius: 9px;
-    color: #94a3b8;
-    background: #0f172a;
-    border: 1px solid #1e293b;
-    font-size: 10px;
+/* =========================================================
+   REASONING
+========================================================= */
+
+.reasoning-box {
+    margin-bottom: 9px;
+    border: 1px solid #172033;
+    border-radius: 13px;
+    background: rgba(2,6,23,.55);
+    overflow: hidden;
 }
 
-.typing {
-    display: inline-flex;
+.reasoning-head {
+    height: 34px;
+    padding: 0 11px;
+    display: flex;
     align-items: center;
-    gap: 4px;
-    height: 20px;
+    gap: 7px;
+    color: #818cf8;
+    font-size: 9px;
+    border-bottom: 1px solid #172033;
 }
 
-.typing span {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #64748b;
-    animation: typing 1s infinite ease-in-out;
+.reasoning-content {
+    padding: 9px 11px;
+    color: #64748b;
+    font-size: 9px;
+    line-height: 1.65;
+    max-height: 180px;
+    overflow-y: auto;
+    white-space: pre-wrap;
 }
 
-.typing span:nth-child(2) {
-    animation-delay: .15s;
-}
-
-.typing span:nth-child(3) {
-    animation-delay: .3s;
-}
-
-@keyframes typing {
-    0%,80%,100% {
-        opacity: .25;
-        transform: translateY(0);
-    }
-    40% {
-        opacity: 1;
-        transform: translateY(-3px);
-    }
-}
-
-/* Markdown */
+/* =========================================================
+   MARKDOWN
+========================================================= */
 
 .markdown-body p {
     margin: 0 0 10px;
@@ -695,8 +697,8 @@ textarea {
 
 .markdown-body ul,
 .markdown-body ol {
-    margin: 7px 0 10px;
-    padding-left: 22px;
+    padding-left: 20px;
+    margin: 8px 0;
 }
 
 .markdown-body li {
@@ -706,16 +708,17 @@ textarea {
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3 {
-    margin: 13px 0 7px;
+    margin: 14px 0 8px;
+    font-weight: 700;
     color: #f8fafc;
 }
 
 .markdown-body h1 {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .markdown-body h2 {
-    font-size: 16px;
+    font-size: 17px;
 }
 
 .markdown-body h3 {
@@ -723,19 +726,10 @@ textarea {
 }
 
 .markdown-body blockquote {
-    margin: 10px 0;
+    border-left: 3px solid #4f46e5;
     padding-left: 12px;
-    border-left: 3px solid #6366f1;
     color: #94a3b8;
-}
-
-.markdown-body pre {
     margin: 10px 0;
-    padding: 12px;
-    overflow-x: auto;
-    border: 1px solid #1e293b;
-    border-radius: 10px;
-    background: #020617 !important;
 }
 
 .markdown-body code {
@@ -746,14 +740,43 @@ textarea {
         Monaco,
         Consolas,
         monospace;
-    font-size: .88em;
 }
 
 .markdown-body :not(pre) > code {
+    background: #111827;
+    border: 1px solid #1e293b;
     padding: 2px 5px;
     border-radius: 5px;
-    background: #1e293b;
     color: #c4b5fd;
+    font-size: .9em;
+}
+
+.markdown-body pre {
+    position: relative;
+    background: #020617 !important;
+    border: 1px solid #1e293b;
+    border-radius: 11px;
+    padding: 13px;
+    margin: 10px 0;
+    overflow-x: auto;
+}
+
+.markdown-body pre code {
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.code-copy-btn {
+    position: absolute;
+    right: 7px;
+    top: 7px;
+    height: 26px;
+    padding: 0 7px;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    background: #0f172a;
+    color: #94a3b8;
+    font-size: 8px;
 }
 
 /* =========================================================
@@ -761,38 +784,43 @@ textarea {
 ========================================================= */
 
 .input-area {
-    flex-shrink: 0;
-    padding: 10px 17px 14px;
-    background: rgba(2, 6, 23, .96);
-    border-top: 1px solid rgba(30, 41, 59, .7);
+    padding:
+        10px
+        18px
+        calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: rgba(2,6,23,.9);
 }
 
-.input-inner {
-    width: 100%;
-    max-width: 900px;
+.input-wrap {
+    width: min(920px, 100%);
     margin: 0 auto;
 }
 
-.chat-form {
+#chat-form {
     position: relative;
     border: 1px solid #1e293b;
     border-radius: 17px;
-    background: #0b1220;
-    box-shadow: 0 10px 35px rgba(0,0,0,.16);
+    background: #080e1a;
+    box-shadow: 0 15px 35px rgba(0,0,0,.18);
     transition: .18s;
 }
 
-.chat-form:focus-within {
-    border-color: rgba(99, 102, 241, .55);
+#chat-form:focus-within {
+    border-color: rgba(99,102,241,.55);
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.18),
+        0 0 0 3px rgba(99,102,241,.06);
 }
 
 #user-input {
     width: 100%;
-    min-height: 50px;
-    max-height: 150px;
-    resize: none;
-    padding: 14px 15px 49px;
+    min-height: 54px;
+    max-height: 180px;
+    padding: 14px 14px 48px;
     border: 0;
+    outline: 0;
+    resize: none;
     background: transparent;
     color: #f8fafc;
     font-size: 13px;
@@ -805,19 +833,18 @@ textarea {
 
 .input-toolbar {
     position: absolute;
-    left: 8px;
-    right: 8px;
-    bottom: 7px;
+    left: 9px;
+    right: 9px;
+    bottom: 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.input-left,
-.input-right {
+.input-tools {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
 }
 
 .input-btn {
@@ -825,18 +852,17 @@ textarea {
     height: 31px;
     border: 0;
     border-radius: 8px;
-    color: #64748b;
     background: transparent;
+    color: #64748b;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: .15s;
+    font-size: 11px;
 }
 
-.input-btn:hover,
-.input-btn.active {
+.input-btn:hover {
+    background: #111827;
     color: #cbd5e1;
-    background: #172033;
 }
 
 .send-btn {
@@ -844,12 +870,12 @@ textarea {
     height: 32px;
     border: 0;
     border-radius: 10px;
-    color: white;
     background: #4f46e5;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 18px rgba(79,70,229,.25);
+    box-shadow: 0 7px 18px rgba(79,70,229,.22);
 }
 
 .send-btn:hover {
@@ -861,46 +887,301 @@ textarea {
     cursor: not-allowed;
 }
 
-.input-note {
-    padding-top: 6px;
+.disclaimer {
     text-align: center;
     color: #334155;
     font-size: 8px;
+    margin-top: 7px;
 }
 
 /* =========================================================
-   FILE PREVIEW
+   ATTACHMENT PREVIEW
 ========================================================= */
 
 #attachment-preview {
     display: none;
     margin-bottom: 7px;
+    padding: 8px 10px;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    background: #080e1a;
 }
 
-.attachment-chip {
-    display: inline-flex;
+.attachment-row {
+    display: flex;
     align-items: center;
-    gap: 7px;
-    max-width: 100%;
-    padding: 7px 9px;
-    border: 1px solid #1e293b;
-    border-radius: 9px;
-    color: #94a3b8;
-    background: #0b1220;
+    gap: 8px;
+}
+
+.attachment-icon {
+    width: 29px;
+    height: 29px;
+    border-radius: 8px;
+    background: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #818cf8;
     font-size: 10px;
 }
 
-.attachment-chip span {
-    max-width: 220px;
+.attachment-name {
+    flex: 1;
+    min-width: 0;
+    color: #cbd5e1;
+    font-size: 9px;
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .attachment-remove {
     border: 0;
-    color: #64748b;
     background: transparent;
+    color: #64748b;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-card {
+    width: min(520px,100%);
+    max-height: min(720px,92dvh);
+    overflow-y: auto;
+    border: 1px solid #1e293b;
+    border-radius: 20px;
+    background: #080e1a;
+    box-shadow: 0 30px 90px rgba(0,0,0,.55);
+}
+
+.modal-head {
+    min-height: 60px;
+    padding: 0 17px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #172033;
+}
+
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.modal-title-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #818cf8;
+    font-size: 11px;
+}
+
+.modal-title-text {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.modal-subtitle {
+    margin-top: 2px;
+    color: #475569;
+    font-size: 8px;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: #111827;
+    color: #64748b;
+}
+
+.modal-body {
+    padding: 17px;
+}
+
+/* =========================================================
+   MODEL OPTIONS
+========================================================= */
+
+.option-card {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 7px;
+    border: 1px solid #1e293b;
+    border-radius: 13px;
+    background: #0b1220;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #94a3b8;
+    text-align: left;
+}
+
+.option-card:hover {
+    border-color: #334155;
+}
+
+.option-card.active {
+    border-color: rgba(99,102,241,.6);
+    background: rgba(79,70,229,.08);
+    color: white;
+}
+
+.option-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #818cf8;
+    font-size: 11px;
+}
+
+.option-main {
+    flex: 1;
+}
+
+.option-name {
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.option-description {
+    margin-top: 3px;
+    color: #475569;
+    font-size: 8px;
+}
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+.language-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 7px;
+}
+
+.language-item {
+    padding: 11px;
+    border: 1px solid #1e293b;
+    border-radius: 11px;
+    background: #0b1220;
+    color: #94a3b8;
+    text-align: left;
+}
+
+.language-item:hover {
+    border-color: #334155;
+}
+
+.language-item.active {
+    border-color: rgba(99,102,241,.55);
+    background: rgba(79,70,229,.08);
+    color: white;
+}
+
+.language-native {
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.language-en {
+    margin-top: 3px;
+    font-size: 8px;
+    color: #475569;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+#toast {
+    position: fixed;
+    left: 50%;
+    bottom: 90px;
+    z-index: 500;
+    transform: translate(-50%,20px);
+    opacity: 0;
+    pointer-events: none;
+    padding: 9px 13px;
+    border-radius: 10px;
+    border: 1px solid #1e293b;
+    background: #0f172a;
+    color: #cbd5e1;
+    font-size: 9px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    transition: .2s;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translate(-50%,0);
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.thinking-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.thinking-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #818cf8;
+    animation: thinking 1.1s infinite ease-in-out;
+}
+
+.thinking-dot:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.thinking-dot:nth-child(3) {
+    animation-delay: .3s;
+}
+
+@keyframes thinking {
+    0%,80%,100% {
+        opacity: .25;
+        transform: scale(.8);
+    }
+    40% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* =========================================================
@@ -911,29 +1192,29 @@ textarea {
     display: none;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 900px) {
+
     #sidebar {
         position: fixed;
-        inset: 0 auto 0 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
         transform: translateX(-100%);
-        box-shadow: 20px 0 50px rgba(0,0,0,.35);
+        transition: transform .25s ease;
+        box-shadow: 25px 0 70px rgba(0,0,0,.45);
     }
 
     #sidebar.mobile-open {
         transform: translateX(0);
     }
 
-    #sidebar-backdrop {
+    #sidebar-backdrop.show {
+        display: block;
         position: fixed;
         inset: 0;
-        display: none;
-        background: rgba(0,0,0,.6);
-        backdrop-filter: blur(3px);
         z-index: 90;
-    }
-
-    #sidebar-backdrop.visible {
-        display: block;
+        background: rgba(0,0,0,.55);
+        backdrop-filter: blur(3px);
     }
 
     .mobile-menu-btn {
@@ -942,243 +1223,96 @@ textarea {
         justify-content: center;
     }
 
-    .message {
-        max-width: 91%;
+    .topbar {
+        padding: 0 11px;
     }
 
-    .topbar {
-        height: 55px;
+    #chat-container {
+        padding: 20px 12px 15px;
     }
 
     .input-area {
-        padding-bottom: max(10px, env(safe-area-inset-bottom));
+        padding:
+            8px
+            10px
+            calc(9px + env(safe-area-inset-bottom));
+    }
+
+    .message-stack {
+        max-width: 94%;
+    }
+
+    .welcome-grid {
+        grid-template-columns: 1fr;
+        max-width: 320px;
+    }
+
+    .welcome-title {
+        font-size: 19px;
+    }
+
+    .modal {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal-card {
+        width: 100%;
+        max-height: 90dvh;
+        border-radius: 22px 22px 0 0;
+    }
+
+    .top-right .language-short {
+        display: none;
     }
 }
 
-@media (max-width: 480px) {
-    .quick-actions {
-        grid-template-columns: 1fr;
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .model-badge {
+        max-width: 145px;
     }
 
-    .topbar-right .lang-btn {
-        display: none;
-    }
-
-    .model-name {
-        max-width: 120px;
+    .model-badge span.model-name {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+
+    .welcome-screen {
+        padding-top: 10px;
+    }
+
+    .welcome-logo {
+        width: 62px;
+        height: 62px;
+        font-size: 21px;
+    }
+
+    .welcome-subtitle {
+        font-size: 10px;
+    }
+
+    #user-input {
+        font-size: 13px;
+    }
 }
 
 /* =========================================================
-   MODAL
+   HIDDEN FILE INPUT
 ========================================================= */
 
-.modal {
-    position: fixed;
-    inset: 0;
-    z-index: 500;
+#file-input {
     display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 18px;
-    background: rgba(0,0,0,.68);
-    backdrop-filter: blur(8px);
-}
-
-.modal.show {
-    display: flex;
-}
-
-.modal-card {
-    width: 100%;
-    max-width: 500px;
-    max-height: min(760px, 90dvh);
-    overflow: hidden;
-    border: 1px solid #1e293b;
-    border-radius: 18px;
-    background: #0b1220;
-    box-shadow: 0 30px 100px rgba(0,0,0,.5);
-}
-
-.modal-header {
-    height: 58px;
-    padding: 0 17px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #1e293b;
-}
-
-.modal-title {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    color: #f8fafc;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.modal-close {
-    width: 31px;
-    height: 31px;
-    border: 0;
-    border-radius: 8px;
-    color: #64748b;
-    background: transparent;
-}
-
-.modal-close:hover {
-    color: white;
-    background: #172033;
-}
-
-.modal-body {
-    padding: 17px;
-    overflow-y: auto;
-}
-
-.modal-description {
-    margin-bottom: 15px;
-    color: #64748b;
-    font-size: 10px;
-    line-height: 1.7;
-}
-
-.modal-btn {
-    width: 100%;
-    min-height: 45px;
-    margin-bottom: 8px;
-    border: 1px solid #1e293b;
-    border-radius: 10px;
-    color: #cbd5e1;
-    background: #0f172a;
-    font-size: 11px;
-    font-weight: 550;
-}
-
-.modal-btn:hover {
-    background: #172033;
-    border-color: #334155;
-}
-
-.modal-btn.primary {
-    color: white;
-    border-color: transparent;
-    background: #4f46e5;
-}
-
-.modal-btn.primary:hover {
-    background: #6366f1;
-}
-
-.modal-result {
-    display: none;
-    margin-top: 10px;
-    padding: 11px;
-    border: 1px solid #1e293b;
-    border-radius: 10px;
-    color: #94a3b8;
-    background: #020617;
-    font-size: 10px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-.modal-result.show {
-    display: block;
-}
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-#toast-container {
-    position: fixed;
-    left: 50%;
-    bottom: 85px;
-    z-index: 1000;
-    transform: translateX(-50%);
-    pointer-events: none;
-}
-
-.toast {
-    padding: 9px 13px;
-    border: 1px solid #334155;
-    border-radius: 10px;
-    color: #e2e8f0;
-    background: #0f172a;
-    box-shadow: 0 15px 40px rgba(0,0,0,.35);
-    font-size: 10px;
-    animation: toastIn .2s ease-out;
-}
-
-@keyframes toastIn {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* =========================================================
-   WELCOME ANIMATION
-========================================================= */
-
-#boot-screen {
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #020617;
-    pointer-events: none;
-    animation: bootOut .8s ease 2.1s forwards;
-}
-
-.boot-text {
-    color: #e2e8f0;
-    font-size: clamp(23px, 7vw, 42px);
-    font-weight: 700;
-    letter-spacing: .08em;
-}
-
-.boot-text span {
-    opacity: 0;
-    animation: letterIn .25s ease forwards;
-}
-
-@keyframes letterIn {
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes bootOut {
-    to {
-        opacity: 0;
-        visibility: hidden;
-    }
 }
 </style>
 </head>
 
 <body>
-
-<!-- =========================================================
-     BOOT
-========================================================= -->
-
-<div id="boot-screen">
-    <div id="boot-text" class="boot-text"></div>
-</div>
 
 <div id="app">
 
@@ -1189,156 +1323,382 @@ textarea {
     <aside id="sidebar">
 
         <div class="sidebar-header">
+
             <div class="brand">
-                <div class="brand-logo">C</div>
+
+                <div class="brand-logo">
+                    C
+                </div>
 
                 <div>
-                    <div class="brand-title">CQS AI Global</div>
-                    <div class="brand-version">Advanced AI Workspace</div>
+                    <div class="brand-name">
+                        CQS AI Global
+                    </div>
+
+                    <div class="brand-version">
+                        Global Intelligent Workspace
+                    </div>
                 </div>
+
             </div>
 
             <button
-                id="close-sidebar-btn"
+                id="mobile-close-sidebar"
                 class="mobile-menu-btn"
                 type="button"
-                aria-label="关闭菜单"
             >
                 <i class="fa-solid fa-xmark"></i>
             </button>
-        </div>
-
-        <div class="new-chat-wrap">
-            <button id="new-chat-btn" class="new-chat" type="button">
-                <i class="fa-solid fa-plus"></i>
-                <span data-i18n="newChat">新建对话</span>
-            </button>
-        </div>
-
-        <div class="sidebar-section-title" data-i18n="modes">
-            Modes
-        </div>
-
-        <div class="mode-list">
-
-            <button
-                class="mode-btn active"
-                data-mode="chat"
-                type="button"
-            >
-                <i class="fa-solid fa-comments"></i>
-                <span>Chat</span>
-            </button>
-
-            <button
-                class="mode-btn"
-                data-mode="still"
-                type="button"
-            >
-                <i class="fa-solid fa-brain"></i>
-                <span>STILL</span>
-            </button>
-
-            <button
-                class="mode-btn"
-                data-mode="agent"
-                type="button"
-            >
-                <i class="fa-solid fa-robot"></i>
-                <span>Agent</span>
-            </button>
 
         </div>
 
-        <div class="history-area">
+        <div class="sidebar-scroll">
 
-            <div class="sidebar-section-title">
-                <span data-i18n="history">History</span>
+            <!-- NEW CHAT -->
+
+            <div class="new-chat-wrap">
+
+                <button
+                    id="new-chat-btn"
+                    class="new-chat-btn"
+                    type="button"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    <span data-i18n="newChat">新建对话</span>
+                </button>
+
             </div>
 
-            <div id="history-list"></div>
+            <!-- MODES -->
 
-        </div>
+            <div class="sidebar-section">
 
-        <div class="sidebar-tools">
+                <div
+                    class="sidebar-section-title"
+                    data-i18n="modes"
+                >
+                    Modes
+                </div>
 
-            <div class="sidebar-section-title">
-                <span data-i18n="tools">Tools</span>
+                <button
+                    class="mode-btn active"
+                    data-mode="chat"
+                    type="button"
+                >
+                    <span class="side-icon">
+                        <i class="fa-solid fa-comments"></i>
+                    </span>
+
+                    <span class="side-main">
+                        <span
+                            class="side-title"
+                            data-i18n="chat"
+                        >
+                            Chat
+                        </span>
+
+                        <span
+                            class="side-sub"
+                            data-i18n="chatDesc"
+                        >
+                            普通智能对话
+                        </span>
+                    </span>
+                </button>
+
+                <button
+                    class="mode-btn"
+                    data-mode="still"
+                    type="button"
+                >
+                    <span class="side-icon">
+                        <i class="fa-solid fa-brain"></i>
+                    </span>
+
+                    <span class="side-main">
+                        <span
+                            class="side-title"
+                            data-i18n="still"
+                        >
+                            STILL
+                        </span>
+
+                        <span
+                            class="side-sub"
+                            data-i18n="stillDesc"
+                        >
+                            深度思考模式
+                        </span>
+                    </span>
+                </button>
+
+                <button
+                    class="mode-btn"
+                    data-mode="agent"
+                    type="button"
+                >
+                    <span class="side-icon">
+                        <i class="fa-solid fa-robot"></i>
+                    </span>
+
+                    <span class="side-main">
+                        <span
+                            class="side-title"
+                            data-i18n="agent"
+                        >
+                            Agent
+                        </span>
+
+                        <span
+                            class="side-sub"
+                            data-i18n="agentDesc"
+                        >
+                            智能任务代理
+                        </span>
+                    </span>
+                </button>
+
             </div>
 
-            <button id="notion-btn" class="tool-btn" type="button">
-                <div class="tool-icon">
-                    <i class="fa-solid fa-book"></i>
+            <!-- MODEL -->
+
+            <div class="sidebar-section">
+
+                <div
+                    class="sidebar-section-title"
+                    data-i18n="model"
+                >
+                    Model
                 </div>
 
-                <div class="tool-content">
-                    <div class="tool-title">Notion</div>
-                    <div id="notion-status" class="tool-status">
-                        未连接
-                    </div>
+                <button
+                    id="open-model-modal"
+                    class="model-open-btn"
+                    type="button"
+                >
+
+                    <span class="side-icon">
+                        <i class="fa-solid fa-microchip"></i>
+                    </span>
+
+                    <span class="side-main">
+
+                        <span
+                            id="sidebar-model-name"
+                            class="side-title"
+                        >
+                            DeepSeek V4 Flash
+                        </span>
+
+                        <span
+                            class="side-sub"
+                            data-i18n="modelDesc"
+                        >
+                            当前模型
+                        </span>
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-right side-arrow"></i>
+
+                </button>
+
+            </div>
+
+            <!-- LANGUAGE -->
+
+            <div class="sidebar-section">
+
+                <div
+                    class="sidebar-section-title"
+                    data-i18n="language"
+                >
+                    Language
                 </div>
 
-                <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
-            </button>
+                <button
+                    id="open-language-modal"
+                    class="language-open-btn"
+                    type="button"
+                >
 
-            <button id="export-chat-btn" class="tool-btn" type="button">
-                <div class="tool-icon">
-                    <i class="fa-solid fa-file-export"></i>
+                    <span class="side-icon">
+                        <i class="fa-solid fa-language"></i>
+                    </span>
+
+                    <span class="side-main">
+
+                        <span
+                            id="sidebar-language-name"
+                            class="side-title"
+                        >
+                            简体中文
+                        </span>
+
+                        <span
+                            class="side-sub"
+                            data-i18n="languageDesc"
+                        >
+                            界面语言
+                        </span>
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-right side-arrow"></i>
+
+                </button>
+
+            </div>
+
+            <!-- HISTORY -->
+
+            <div class="history-area">
+
+                <div
+                    class="sidebar-section-title"
+                    data-i18n="history"
+                >
+                    History
                 </div>
 
-                <div class="tool-content">
-                    <div class="tool-title" data-i18n="exportChat">
-                        导出对话
-                    </div>
+                <div id="history-list"></div>
 
-                    <div class="tool-status">
-                        TXT / Markdown / JSON
-                    </div>
+            </div>
+
+            <!-- TOOLS -->
+
+            <div class="sidebar-section">
+
+                <div
+                    class="sidebar-section-title"
+                    data-i18n="tools"
+                >
+                    Tools
                 </div>
 
-                <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
-            </button>
+                <button
+                    id="notion-btn"
+                    class="tool-btn"
+                    type="button"
+                >
 
-            <button id="share-chat-btn" class="tool-btn" type="button">
-                <div class="tool-icon">
-                    <i class="fa-solid fa-share-nodes"></i>
-                </div>
+                    <span class="side-icon">
+                        <i class="fa-solid fa-book"></i>
+                    </span>
 
-                <div class="tool-content">
-                    <div class="tool-title" data-i18n="shareChat">
-                        分享对话
-                    </div>
+                    <span class="side-main">
 
-                    <div class="tool-status">
-                        当前对话
-                    </div>
-                </div>
+                        <span
+                            class="side-title"
+                            data-i18n="notion"
+                        >
+                            Notion
+                        </span>
 
-                <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
-            </button>
+                        <span
+                            id="notion-status"
+                            class="side-sub"
+                        >
+                            API Ready
+                        </span>
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-right side-arrow"></i>
+
+                </button>
+
+                <button
+                    id="export-btn"
+                    class="tool-btn"
+                    type="button"
+                >
+
+                    <span class="side-icon">
+                        <i class="fa-solid fa-file-export"></i>
+                    </span>
+
+                    <span class="side-main">
+
+                        <span
+                            class="side-title"
+                            data-i18n="export"
+                        >
+                            导出对话
+                        </span>
+
+                        <span
+                            class="side-sub"
+                            data-i18n="exportDesc"
+                        >
+                            TXT / Markdown / JSON
+                        </span>
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-right side-arrow"></i>
+
+                </button>
+
+                <button
+                    id="share-btn"
+                    class="tool-btn"
+                    type="button"
+                >
+
+                    <span class="side-icon">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </span>
+
+                    <span class="side-main">
+
+                        <span
+                            class="side-title"
+                            data-i18n="share"
+                        >
+                            分享对话
+                        </span>
+
+                        <span
+                            class="side-sub"
+                            data-i18n="shareDesc"
+                        >
+                            分享当前对话
+                        </span>
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-right side-arrow"></i>
+
+                </button>
+
+            </div>
 
         </div>
 
-        <div class="sidebar-user">
+        <!-- FOOTER -->
 
-            <div class="user-info">
+        <div class="sidebar-footer">
+
+            <div class="user-row">
+
                 <div class="user-avatar">
                     <i class="fa-solid fa-user"></i>
                 </div>
 
                 <div class="user-name">
-                    Global User
+                    CQS AI User
                 </div>
-            </div>
 
-            <button
-                id="settings-btn"
-                class="settings-btn"
-                type="button"
-                aria-label="设置"
-            >
-                <i class="fa-solid fa-gear"></i>
-            </button>
+                <button
+                    id="settings-btn"
+                    class="settings-btn"
+                    type="button"
+                >
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+
+            </div>
 
         </div>
 
@@ -1352,119 +1712,127 @@ textarea {
 
     <main id="main">
 
+        <!-- TOPBAR -->
+
         <header class="topbar">
 
-            <div class="topbar-left">
+            <div class="top-left">
 
                 <button
-                    id="open-sidebar-btn"
+                    id="mobile-open-sidebar"
                     class="mobile-menu-btn"
                     type="button"
-                    aria-label="打开菜单"
                 >
                     <i class="fa-solid fa-bars"></i>
                 </button>
 
-                <div>
-                    <div id="model-name" class="model-name">
-                        DeepSeek-R1
-                    </div>
-                </div>
+                <div class="model-badge">
 
-                <div id="online-badge" class="online-badge">
-                    Online
+                    <span class="online-dot"></span>
+
+                    <span
+                        id="header-model-name"
+                        class="model-name"
+                    >
+                        DeepSeek V4 Flash
+                    </span>
+
                 </div>
 
             </div>
 
-            <div class="topbar-right">
+            <div class="top-right">
 
                 <button
-                    id="clear-current-btn"
-                    class="top-btn"
+                    id="header-language-btn"
+                    class="header-btn"
                     type="button"
                 >
-                    <i class="fa-solid fa-broom"></i>
+                    <span class="language-short">
+                        简体中文
+                    </span>
+                    <span class="language-short-mobile">
+                        中
+                    </span>
                 </button>
 
                 <button
-                    id="lang-btn"
-                    class="top-btn lang-btn"
+                    id="header-model-btn"
+                    class="header-btn"
                     type="button"
                 >
-                    EN / 简
+                    <i class="fa-solid fa-sliders"></i>
                 </button>
 
             </div>
 
         </header>
 
-        <!-- =================================================
-             CHAT CONTAINER
-        ================================================== -->
+        <!-- CHAT -->
 
         <div id="chat-container">
 
             <div class="chat-inner">
 
-                <div id="welcome-screen" class="welcome">
+                <div
+                    id="welcome-screen"
+                    class="welcome-screen"
+                >
 
-                    <div class="welcome-inner">
+                    <div class="welcome-logo">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
 
-                        <div class="welcome-logo">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        </div>
+                    <div
+                        id="welcome-title"
+                        class="welcome-title"
+                    >
+                        CQS AI，欢迎你
+                    </div>
 
-                        <div class="welcome-title" data-i18n="welcomeTitle">
-                            有什么我可以帮您的？
-                        </div>
+                    <div
+                        id="welcome-subtitle"
+                        class="welcome-subtitle"
+                    >
+                        新一代全球智能工作空间。
+                        支持多模型、深度思考、Agent、文件、
+                        语音、历史记录与多语言交互。
+                    </div>
 
-                        <div
-                            class="welcome-desc"
-                            data-i18n="welcomeDesc"
+                    <div class="welcome-grid">
+
+                        <button
+                            class="welcome-card"
+                            data-welcome-action="chat"
+                            type="button"
                         >
-                            基于 CQS AI Global 架构，为您提供安全、强大的智能对话体验。
-                        </div>
+                            <i class="fa-solid fa-comments"></i>
+                            <div data-i18n="cardChat">
+                                智能对话
+                            </div>
+                        </button>
 
-                        <div class="quick-actions">
+                        <button
+                            class="welcome-card"
+                            data-welcome-action="still"
+                            type="button"
+                        >
+                            <i class="fa-solid fa-brain"></i>
+                            <div data-i18n="cardStill">
+                                深度思考
+                            </div>
+                        </button>
 
-                            <button
-                                class="quick-action"
-                                data-prompt="帮我分析一下这个问题，并给出清晰的解决方案。"
-                                type="button"
-                            >
-                                <i class="fa-solid fa-lightbulb mr-2"></i>
-                                分析问题
-                            </button>
-
-                            <button
-                                class="quick-action"
-                                data-prompt="帮我制定一个详细、可执行的计划。"
-                                type="button"
-                            >
-                                <i class="fa-solid fa-list-check mr-2"></i>
-                                制定计划
-                            </button>
-
-                            <button
-                                class="quick-action"
-                                data-prompt="请帮我检查并优化下面的代码。"
-                                type="button"
-                            >
-                                <i class="fa-solid fa-code mr-2"></i>
-                                优化代码
-                            </button>
-
-                            <button
-                                class="quick-action"
-                                data-prompt="请用简单清楚的方式解释这个概念。"
-                                type="button"
-                            >
-                                <i class="fa-solid fa-graduation-cap mr-2"></i>
-                                解释概念
-                            </button>
-
-                        </div>
+                        <button
+                            class="welcome-card"
+                            data-welcome-action="agent"
+                            type="button"
+                        >
+                            <i class="fa-solid fa-robot"></i>
+                            <div data-i18n="cardAgent">
+                                Agent
+                            </div>
+                        </button>
 
                     </div>
 
@@ -1476,30 +1844,38 @@ textarea {
 
         </div>
 
-        <!-- =================================================
-             INPUT
-        ================================================== -->
+        <!-- INPUT -->
 
         <div class="input-area">
 
-            <div class="input-inner">
+            <div class="input-wrap">
 
                 <div id="attachment-preview">
-                    <div class="attachment-chip">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span id="attachment-name"></span>
+
+                    <div class="attachment-row">
+
+                        <div class="attachment-icon">
+                            <i class="fa-solid fa-file"></i>
+                        </div>
+
+                        <div
+                            id="attachment-name"
+                            class="attachment-name"
+                        ></div>
 
                         <button
-                            id="remove-attachment-btn"
+                            id="remove-attachment"
                             class="attachment-remove"
                             type="button"
                         >
                             <i class="fa-solid fa-xmark"></i>
                         </button>
+
                     </div>
+
                 </div>
 
-                <form id="chat-form" class="chat-form">
+                <form id="chat-form">
 
                     <textarea
                         id="user-input"
@@ -1511,13 +1887,13 @@ textarea {
 
                     <div class="input-toolbar">
 
-                        <div class="input-left">
+                        <div class="input-tools">
 
                             <button
                                 id="attach-btn"
                                 class="input-btn"
                                 type="button"
-                                title="上传文件"
+                                title="Upload"
                             >
                                 <i class="fa-solid fa-paperclip"></i>
                             </button>
@@ -1526,38 +1902,38 @@ textarea {
                                 id="mic-btn"
                                 class="input-btn"
                                 type="button"
-                                title="语音输入"
+                                title="Voice"
                             >
                                 <i class="fa-solid fa-microphone"></i>
                             </button>
 
-                            <input
-                                id="file-input"
-                                type="file"
-                                hidden
-                                multiple
-                            >
-
-                        </div>
-
-                        <div class="input-right">
-
                             <button
-                                id="send-btn"
-                                class="send-btn"
-                                type="submit"
-                                title="发送"
+                                id="quick-model-btn"
+                                class="input-btn"
+                                type="button"
+                                title="Model"
                             >
-                                <i class="fa-solid fa-arrow-up"></i>
+                                <i class="fa-solid fa-microchip"></i>
                             </button>
 
                         </div>
+
+                        <button
+                            id="send-btn"
+                            class="send-btn"
+                            type="submit"
+                        >
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </button>
 
                     </div>
 
                 </form>
 
-                <div class="input-note">
+                <div
+                    id="disclaimer"
+                    class="disclaimer"
+                >
                     CQS AI Global can make mistakes. Verify important information.
                 </div>
 
@@ -1569,24 +1945,259 @@ textarea {
 
 </div>
 
-<!-- =========================================================
-     NOTION MODAL
-========================================================= -->
+<input
+    id="file-input"
+    type="file"
+    accept=".txt,.md,.json,.csv,.html,.css,.js,.ts,.jsx,.tsx,.py,.java,.cpp,.c,.h,.xml,.yaml,.yml,.log,.pdf,.doc,.docx,.xls,.xlsx"
+>
 
-<div id="notion-modal" class="modal">
+<!-- =====================================================
+     MODEL MODAL
+====================================================== -->
+
+<div
+    id="model-modal"
+    class="modal"
+>
 
     <div class="modal-card">
 
-        <div class="modal-header">
+        <div class="modal-head">
 
             <div class="modal-title">
-                <i class="fa-solid fa-book"></i>
-                <span>Notion</span>
+
+                <div class="modal-title-icon">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+
+                <div>
+
+                    <div
+                        class="modal-title-text"
+                        data-i18n="selectModel"
+                    >
+                        选择模型
+                    </div>
+
+                    <div
+                        class="modal-subtitle"
+                        data-i18n="selectModelDesc"
+                    >
+                        选择当前对话使用的 AI 模型
+                    </div>
+
+                </div>
+
             </div>
 
             <button
-                id="notion-close-btn"
                 class="modal-close"
+                data-close-modal="model-modal"
+                type="button"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div
+            id="model-options"
+            class="modal-body"
+        >
+
+            <button
+                class="option-card active"
+                data-model="deepseek-v4-flash"
+                type="button"
+            >
+
+                <div class="option-icon">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+
+                <div class="option-main">
+
+                    <div class="option-name">
+                        DeepSeek V4 Flash
+                    </div>
+
+                    <div class="option-description">
+                        Fast / Thinking / Streaming
+                    </div>
+
+                </div>
+
+                <i class="fa-solid fa-check"></i>
+
+            </button>
+
+            <button
+                class="option-card"
+                data-model="deepseek-v4-pro"
+                type="button"
+            >
+
+                <div class="option-icon">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+
+                <div class="option-main">
+
+                    <div class="option-name">
+                        DeepSeek V4 Pro
+                    </div>
+
+                    <div class="option-description">
+                        Higher capability / Deep Thinking
+                    </div>
+
+                </div>
+
+                <i class="fa-solid fa-check hidden"></i>
+
+            </button>
+
+            <button
+                class="option-card"
+                data-model="openai"
+                type="button"
+            >
+
+                <div class="option-icon">
+                    <i class="fa-solid fa-cube"></i>
+                </div>
+
+                <div class="option-main">
+
+                    <div class="option-name">
+                        OpenAI
+                    </div>
+
+                    <div class="option-description">
+                        API adapter reserved
+                    </div>
+
+                </div>
+
+                <span
+                    style="font-size:8px;color:#475569"
+                    data-i18n="comingSoon"
+                >
+                    待接入
+                </span>
+
+            </button>
+
+            <button
+                class="option-card"
+                data-model="anthropic"
+                type="button"
+            >
+
+                <div class="option-icon">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+
+                <div class="option-main">
+
+                    <div class="option-name">
+                        Anthropic
+                    </div>
+
+                    <div class="option-description">
+                        API adapter reserved
+                    </div>
+
+                </div>
+
+                <span
+                    style="font-size:8px;color:#475569"
+                    data-i18n="comingSoon"
+                >
+                    待接入
+                </span>
+
+            </button>
+
+            <button
+                class="option-card"
+                data-model="gemini"
+                type="button"
+            >
+
+                <div class="option-icon">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+
+                <div class="option-main">
+
+                    <div class="option-name">
+                        Gemini
+                    </div>
+
+                    <div class="option-description">
+                        API adapter reserved
+                    </div>
+
+                </div>
+
+                <span
+                    style="font-size:8px;color:#475569"
+                    data-i18n="comingSoon"
+                >
+                    待接入
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+     LANGUAGE MODAL
+====================================================== -->
+
+<div
+    id="language-modal"
+    class="modal"
+>
+
+    <div class="modal-card">
+
+        <div class="modal-head">
+
+            <div class="modal-title">
+
+                <div class="modal-title-icon">
+                    <i class="fa-solid fa-language"></i>
+                </div>
+
+                <div>
+
+                    <div
+                        class="modal-title-text"
+                        data-i18n="selectLanguage"
+                    >
+                        选择语言
+                    </div>
+
+                    <div
+                        class="modal-subtitle"
+                        data-i18n="selectLanguageDesc"
+                    >
+                        CQS AI Global 八国语言界面
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                class="modal-close"
+                data-close-modal="language-modal"
                 type="button"
             >
                 <i class="fa-solid fa-xmark"></i>
@@ -1596,39 +2207,199 @@ textarea {
 
         <div class="modal-body">
 
-            <div class="modal-description">
-                连接 Notion 后，可以将 CQS AI 对话保存到 Notion，
-                并通过后端 API 读取你的 Notion 页面。
+            <div
+                id="language-grid"
+                class="language-grid"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+     NOTION MODAL
+====================================================== -->
+
+<div
+    id="notion-modal"
+    class="modal"
+>
+
+    <div class="modal-card">
+
+        <div class="modal-head">
+
+            <div class="modal-title">
+
+                <div class="modal-title-icon">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+
+                <div>
+
+                    <div
+                        class="modal-title-text"
+                    >
+                        Notion
+                    </div>
+
+                    <div
+                        class="modal-subtitle"
+                        id="notion-modal-status"
+                    >
+                        API integration
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                class="modal-close"
+                data-close-modal="notion-modal"
+                type="button"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div
+                style="
+                padding:14px;
+                border:1px solid #1e293b;
+                border-radius:13px;
+                background:#0b1220;
+                margin-bottom:10px;
+                "
+            >
+
+                <div
+                    style="
+                    display:flex;
+                    gap:10px;
+                    align-items:flex-start;
+                    "
+                >
+
+                    <div
+                        style="
+                        width:34px;
+                        height:34px;
+                        border-radius:10px;
+                        background:#111827;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        color:#818cf8;
+                        "
+                    >
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+
+                    <div>
+
+                        <div
+                            style="
+                            font-size:11px;
+                            font-weight:600;
+                            color:#e2e8f0;
+                            "
+                        >
+                            Notion Workspace
+                        </div>
+
+                        <div
+                            style="
+                            margin-top:4px;
+                            font-size:9px;
+                            color:#64748b;
+                            line-height:1.6;
+                            "
+                        >
+                            CQS AI 已预留 Notion 工作区入口。
+                            真实 OAuth / API 保存功能需要对应的
+                            /api/notion 后端。
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
             <button
                 id="notion-connect-btn"
-                class="modal-btn primary"
+                class="option-card"
                 type="button"
             >
-                <i class="fa-solid fa-plug mr-2"></i>
-                连接 Notion
+
+                <div class="option-icon">
+                    <i class="fa-solid fa-plug"></i>
+                </div>
+
+                <div class="option-main">
+
+                    <div class="option-name">
+                        Notion API
+                    </div>
+
+                    <div class="option-description">
+                        Backend connector
+                    </div>
+
+                </div>
+
+                <span
+                    style="font-size:8px;color:#475569"
+                >
+                    Ready
+                </span>
+
             </button>
 
             <button
                 id="notion-save-btn"
-                class="modal-btn"
+                class="option-card"
                 type="button"
             >
-                <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
-                保存当前对话到 Notion
+
+                <div class="option-icon">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+
+                <div class="option-main">
+
+                    <div class="option-name">
+                        保存当前对话
+                    </div>
+
+                    <div class="option-description">
+                        Save conversation to Notion
+                    </div>
+
+                </div>
+
             </button>
 
-            <button
-                id="notion-pages-btn"
-                class="modal-btn"
-                type="button"
-            >
-                <i class="fa-solid fa-file-lines mr-2"></i>
-                读取 Notion 页面
-            </button>
-
-            <div id="notion-result" class="modal-result"></div>
+            <div
+                id="notion-result"
+                style="
+                display:none;
+                margin-top:9px;
+                padding:10px;
+                border-radius:10px;
+                background:#020617;
+                border:1px solid #1e293b;
+                color:#64748b;
+                font-size:9px;
+                line-height:1.6;
+                "
+            ></div>
 
         </div>
 
@@ -1636,88 +2407,47 @@ textarea {
 
 </div>
 
-<!-- =========================================================
-     EXPORT MODAL
-========================================================= -->
-
-<div id="export-modal" class="modal">
-
-    <div class="modal-card">
-
-        <div class="modal-header">
-
-            <div class="modal-title">
-                <i class="fa-solid fa-file-export"></i>
-                <span data-i18n="exportChat">导出对话</span>
-            </div>
-
-            <button
-                id="export-close-btn"
-                class="modal-close"
-                type="button"
-            >
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-        </div>
-
-        <div class="modal-body">
-
-            <div class="modal-description">
-                选择当前对话的导出格式。
-            </div>
-
-            <button
-                class="modal-btn"
-                data-export-format="txt"
-                type="button"
-            >
-                <i class="fa-solid fa-file-lines mr-2"></i>
-                TXT
-            </button>
-
-            <button
-                class="modal-btn"
-                data-export-format="md"
-                type="button"
-            >
-                <i class="fa-brands fa-markdown mr-2"></i>
-                Markdown
-            </button>
-
-            <button
-                class="modal-btn"
-                data-export-format="json"
-                type="button"
-            >
-                <i class="fa-solid fa-brackets-curly mr-2"></i>
-                JSON
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- =========================================================
+<!-- =====================================================
      SETTINGS MODAL
-========================================================= -->
+====================================================== -->
 
-<div id="settings-modal" class="modal">
+<div
+    id="settings-modal"
+    class="modal"
+>
 
     <div class="modal-card">
 
-        <div class="modal-header">
+        <div class="modal-head">
 
             <div class="modal-title">
-                <i class="fa-solid fa-gear"></i>
-                <span>Settings</span>
+
+                <div class="modal-title-icon">
+                    <i class="fa-solid fa-gear"></i>
+                </div>
+
+                <div>
+
+                    <div
+                        class="modal-title-text"
+                        data-i18n="settings"
+                    >
+                        设置
+                    </div>
+
+                    <div
+                        class="modal-subtitle"
+                    >
+                        CQS AI Global
+                    </div>
+
+                </div>
+
             </div>
 
             <button
-                id="settings-close-btn"
                 class="modal-close"
+                data-close-modal="settings-modal"
                 type="button"
             >
                 <i class="fa-solid fa-xmark"></i>
@@ -1726,27 +2456,65 @@ textarea {
         </div>
 
         <div class="modal-body">
-
-            <div class="modal-description">
-                CQS AI Global 本地工作区设置。
-            </div>
 
             <button
                 id="clear-history-btn"
-                class="modal-btn"
+                class="option-card"
                 type="button"
             >
-                <i class="fa-solid fa-trash mr-2"></i>
-                清空全部历史记录
+
+                <div class="option-icon">
+                    <i class="fa-solid fa-trash"></i>
+                </div>
+
+                <div class="option-main">
+
+                    <div
+                        class="option-name"
+                        data-i18n="clearHistory"
+                    >
+                        清空历史记录
+                    </div>
+
+                    <div
+                        class="option-description"
+                        data-i18n="clearHistoryDesc"
+                    >
+                        删除本地保存的所有对话
+                    </div>
+
+                </div>
+
             </button>
 
             <button
-                id="reset-settings-btn"
-                class="modal-btn"
+                id="reset-language-btn"
+                class="option-card"
                 type="button"
             >
-                <i class="fa-solid fa-rotate-left mr-2"></i>
-                重置本地设置
+
+                <div class="option-icon">
+                    <i class="fa-solid fa-language"></i>
+                </div>
+
+                <div class="option-main">
+
+                    <div
+                        class="option-name"
+                        data-i18n="resetLanguage"
+                    >
+                        重置语言
+                    </div>
+
+                    <div
+                        class="option-description"
+                        data-i18n="resetLanguageDesc"
+                    >
+                        恢复简体中文
+                    </div>
+
+                </div>
+
             </button>
 
         </div>
@@ -1755,28 +2523,17 @@ textarea {
 
 </div>
 
-<div id="toast-container"></div>
+<div id="toast"></div>
 
 <script>
-"use strict";
-
 /* =========================================================
-   CONFIG
+   CQS AI GLOBAL
+   FRONTEND CORE
 ========================================================= */
 
-const CONFIG = {
-    chatEndpoint: "/api/chat",
+(() => {
 
-    notionConnectEndpoint: "/api/notion/connect",
-    notionSaveEndpoint: "/api/notion/save",
-    notionPagesEndpoint: "/api/notion/pages",
-
-    storageKey: "cqs_ai_global_state_v2",
-
-    defaultModel: "DeepSeek-R1",
-
-    maxHistory: 100
-};
+"use strict";
 
 /* =========================================================
    DOM
@@ -1787,12 +2544,10 @@ const $ = (id) => document.getElementById(id);
 const sidebar = $("sidebar");
 const sidebarBackdrop = $("sidebar-backdrop");
 
-const openSidebarBtn = $("open-sidebar-btn");
-const closeSidebarBtn = $("close-sidebar-btn");
+const mobileOpenSidebar = $("mobile-open-sidebar");
+const mobileCloseSidebar = $("mobile-close-sidebar");
 
 const newChatBtn = $("new-chat-btn");
-
-const historyList = $("history-list");
 
 const chatContainer = $("chat-container");
 const messagesEl = $("messages");
@@ -1803,198 +2558,780 @@ const userInput = $("user-input");
 const sendBtn = $("send-btn");
 
 const attachBtn = $("attach-btn");
-const micBtn = $("mic-btn");
 const fileInput = $("file-input");
+const micBtn = $("mic-btn");
 
 const attachmentPreview = $("attachment-preview");
 const attachmentName = $("attachment-name");
-const removeAttachmentBtn = $("remove-attachment-btn");
+const removeAttachment = $("remove-attachment");
 
-const modelNameEl = $("model-name");
+const historyList = $("history-list");
 
-const notionBtn = $("notion-btn");
-const notionStatus = $("notion-status");
-
+const modelModal = $("model-modal");
+const languageModal = $("language-modal");
 const notionModal = $("notion-modal");
-const notionCloseBtn = $("notion-close-btn");
-const notionConnectBtn = $("notion-connect-btn");
-const notionSaveBtn = $("notion-save-btn");
-const notionPagesBtn = $("notion-pages-btn");
-const notionResult = $("notion-result");
-
-const exportChatBtn = $("export-chat-btn");
-const exportModal = $("export-modal");
-const exportCloseBtn = $("export-close-btn");
-
-const shareChatBtn = $("share-chat-btn");
-
-const settingsBtn = $("settings-btn");
 const settingsModal = $("settings-modal");
-const settingsCloseBtn = $("settings-close-btn");
 
-const clearHistoryBtn = $("clear-history-btn");
-const resetSettingsBtn = $("reset-settings-btn");
+const languageGrid = $("language-grid");
 
-const clearCurrentBtn = $("clear-current-btn");
+const toast = $("toast");
 
-const langBtn = $("lang-btn");
+const modelHeader = $("header-model-name");
+const modelSidebar = $("sidebar-model-name");
 
-const bootText = $("boot-text");
+const sidebarLanguageName = $("sidebar-language-name");
 
-const toastContainer = $("toast-container");
+const disclaimer = $("disclaimer");
 
 /* =========================================================
-   STATE
+   STORAGE
 ========================================================= */
+
+const STORAGE_KEY = "cqs_ai_global_state_v2";
 
 let state = {
-    language: "zh",
-
-    model: CONFIG.defaultModel,
-
-    mode: "chat",
-
-    currentConversationId: null,
-
     conversations: {},
-
-    notion: {
-        connected: false
-    }
+    currentConversationId: null,
+    currentMode: "chat",
+    currentModel: "deepseek-v4-flash",
+    language: "zh-CN"
 };
 
-let pendingAttachment = null;
+function loadState() {
 
-let isGenerating = false;
+    try {
 
-let recognition = null;
+        const raw =
+            localStorage.getItem(STORAGE_KEY);
 
-/* =========================================================
-   BOOT
-========================================================= */
+        if (!raw) return;
 
-function runBootAnimation() {
+        const parsed =
+            JSON.parse(raw);
 
-    const text = "CQS AI";
+        if (
+            parsed &&
+            typeof parsed === "object"
+        ) {
 
-    bootText.innerHTML = "";
+            state = {
+                ...state,
+                ...parsed
+            };
 
-    [...text].forEach((char, index) => {
+        }
 
-        const span = document.createElement("span");
+    } catch (error) {
 
-        span.textContent = char === " " ? "\u00A0" : char;
+        console.warn(
+            "[CQS] State load failed",
+            error
+        );
 
-        span.style.animationDelay = `${index * 120}ms`;
+    }
 
-        bootText.appendChild(span);
-    });
 }
-
-/* =========================================================
-   LOCAL STORAGE
-========================================================= */
 
 function saveState() {
 
     try {
 
         localStorage.setItem(
-            CONFIG.storageKey,
+            STORAGE_KEY,
             JSON.stringify(state)
         );
 
     } catch (error) {
 
         console.warn(
-            "[CQS AI] Failed to save state:",
+            "[CQS] State save failed",
             error
         );
+
     }
-}
 
-function loadState() {
-
-    try {
-
-        const raw = localStorage.getItem(
-            CONFIG.storageKey
-        );
-
-        if (!raw) {
-            return;
-        }
-
-        const parsed = JSON.parse(raw);
-
-        if (!parsed || typeof parsed !== "object") {
-            return;
-        }
-
-        state = {
-            ...state,
-            ...parsed,
-
-            notion: {
-                ...state.notion,
-                ...(parsed.notion || {})
-            },
-
-            conversations:
-                parsed.conversations || {}
-        };
-
-    } catch (error) {
-
-        console.warn(
-            "[CQS AI] Failed to load state:",
-            error
-        );
-    }
 }
 
 /* =========================================================
-   UTILS
+   LANGUAGES
 ========================================================= */
 
-function escapeHtml(value) {
+const LANGUAGES = {
 
-    const div = document.createElement("div");
+    "zh-CN": {
+        native: "简体中文",
+        english: "Chinese",
+        short: "中"
+    },
 
-    div.textContent = value == null ? "" : String(value);
+    "en": {
+        native: "English",
+        english: "English",
+        short: "EN"
+    },
 
-    return div.innerHTML;
+    "ja": {
+        native: "日本語",
+        english: "Japanese",
+        short: "日"
+    },
+
+    "ko": {
+        native: "한국어",
+        english: "Korean",
+        short: "한"
+    },
+
+    "es": {
+        native: "Español",
+        english: "Spanish",
+        short: "ES"
+    },
+
+    "fr": {
+        native: "Français",
+        english: "French",
+        short: "FR"
+    },
+
+    "de": {
+        native: "Deutsch",
+        english: "German",
+        short: "DE"
+    },
+
+    "ru": {
+        native: "Русский",
+        english: "Russian",
+        short: "RU"
+    }
+
+};
+
+/* =========================================================
+   TRANSLATIONS
+========================================================= */
+
+const I18N = {
+
+"zh-CN": {
+
+    newChat: "新建对话",
+
+    modes: "模式",
+    chat: "Chat",
+    chatDesc: "普通智能对话",
+    still: "STILL",
+    stillDesc: "深度思考模式",
+    agent: "Agent",
+    agentDesc: "智能任务代理",
+
+    model: "模型",
+    modelDesc: "当前模型",
+
+    language: "语言",
+    languageDesc: "界面语言",
+
+    history: "历史记录",
+    tools: "工具",
+
+    notion: "Notion",
+    export: "导出对话",
+    exportDesc: "TXT / Markdown / JSON",
+    share: "分享对话",
+    shareDesc: "分享当前对话",
+
+    selectModel: "选择模型",
+    selectModelDesc: "选择当前对话使用的 AI 模型",
+
+    selectLanguage: "选择语言",
+    selectLanguageDesc: "CQS AI Global 八国语言界面",
+
+    comingSoon: "待接入",
+
+    settings: "设置",
+
+    clearHistory: "清空历史记录",
+    clearHistoryDesc: "删除本地保存的所有对话",
+
+    resetLanguage: "重置语言",
+    resetLanguageDesc: "恢复简体中文",
+
+    cardChat: "智能对话",
+    cardStill: "深度思考",
+    cardAgent: "Agent",
+
+    inputPlaceholder: "给 CQS AI 发送消息...",
+
+    disclaimer:
+        "CQS AI Global 可能产生错误，请核实重要信息。",
+
+    thinking:
+        "正在思考",
+
+    copied:
+        "已复制到剪贴板",
+
+    noConversation:
+        "当前没有可操作的对话",
+
+    exportFormat:
+        "请输入导出格式：txt / md / json",
+
+    invalidFormat:
+        "格式无效",
+
+    shareFailed:
+        "分享失败，已尝试复制",
+
+    historyCleared:
+        "历史记录已清空",
+
+    languageChanged:
+        "语言已切换",
+
+    modelChanged:
+        "模型已切换",
+
+    fileAttached:
+        "文件已添加",
+
+    voiceUnsupported:
+        "当前浏览器不支持语音识别",
+
+    listening:
+        "正在聆听...",
+
+    stopListening:
+        "停止语音输入",
+
+    apiError:
+        "AI 服务发生错误",
+
+    emptyResponse:
+        "AI 没有返回内容",
+
+    cancel:
+        "取消",
+
+    confirm:
+        "确定",
+
+    notionUnavailable:
+        "当前还没有配置 /api/notion 后端",
+
+    notionSaveUnavailable:
+        "Notion 前端入口已保留，但真实保存需要 Notion 后端接口。"
+
+},
+
+"en": {
+
+    newChat: "New Chat",
+
+    modes: "Modes",
+    chat: "Chat",
+    chatDesc: "General AI conversation",
+    still: "STILL",
+    stillDesc: "Deep thinking mode",
+    agent: "Agent",
+    agentDesc: "Intelligent task agent",
+
+    model: "Model",
+    modelDesc: "Current model",
+
+    language: "Language",
+    languageDesc: "Interface language",
+
+    history: "History",
+    tools: "Tools",
+
+    notion: "Notion",
+    export: "Export",
+    exportDesc: "TXT / Markdown / JSON",
+    share: "Share",
+    shareDesc: "Share current conversation",
+
+    selectModel: "Select Model",
+    selectModelDesc: "Choose the AI model for this conversation",
+
+    selectLanguage: "Select Language",
+    selectLanguageDesc: "CQS AI Global supports eight languages",
+
+    comingSoon: "Coming soon",
+
+    settings: "Settings",
+
+    clearHistory: "Clear History",
+    clearHistoryDesc: "Delete all locally saved conversations",
+
+    resetLanguage: "Reset Language",
+    resetLanguageDesc: "Restore English",
+
+    cardChat: "AI Chat",
+    cardStill: "Deep Thinking",
+    cardAgent: "Agent",
+
+    inputPlaceholder: "Message CQS AI...",
+
+    disclaimer:
+        "CQS AI Global can make mistakes. Verify important information.",
+
+    thinking: "Thinking",
+
+    copied: "Copied to clipboard",
+
+    noConversation:
+        "No conversation available",
+
+    exportFormat:
+        "Enter export format: txt / md / json",
+
+    invalidFormat:
+        "Invalid format",
+
+    shareFailed:
+        "Share failed. Copied instead.",
+
+    historyCleared:
+        "History cleared",
+
+    languageChanged:
+        "Language changed",
+
+    modelChanged:
+        "Model changed",
+
+    fileAttached:
+        "File attached",
+
+    voiceUnsupported:
+        "Speech recognition is not supported",
+
+    listening:
+        "Listening...",
+
+    stopListening:
+        "Stop voice input",
+
+    apiError:
+        "AI service error",
+
+    emptyResponse:
+        "AI returned no content",
+
+    cancel:
+        "Cancel",
+
+    confirm:
+        "Confirm",
+
+    notionUnavailable:
+        "/api/notion is not configured",
+
+    notionSaveUnavailable:
+        "The Notion UI is ready, but real saving requires a Notion backend."
+
+},
+
+"ja": {
+
+    newChat: "新しいチャット",
+    modes: "モード",
+    chat: "Chat",
+    chatDesc: "通常のAI会話",
+    still: "STILL",
+    stillDesc: "深い思考モード",
+    agent: "Agent",
+    agentDesc: "スマートタスクエージェント",
+    model: "モデル",
+    modelDesc: "現在のモデル",
+    language: "言語",
+    languageDesc: "表示言語",
+    history: "履歴",
+    tools: "ツール",
+    notion: "Notion",
+    export: "会話をエクスポート",
+    exportDesc: "TXT / Markdown / JSON",
+    share: "共有",
+    shareDesc: "現在の会話を共有",
+    selectModel: "モデルを選択",
+    selectModelDesc: "使用するAIモデルを選択",
+    selectLanguage: "言語を選択",
+    selectLanguageDesc: "8言語に対応",
+    comingSoon: "近日対応",
+    settings: "設定",
+    clearHistory: "履歴を削除",
+    clearHistoryDesc: "保存された会話を削除",
+    resetLanguage: "言語をリセット",
+    resetLanguageDesc: "日本語を使用",
+    cardChat: "AIチャット",
+    cardStill: "深い思考",
+    cardAgent: "Agent",
+    inputPlaceholder: "CQS AIにメッセージ...",
+    disclaimer: "重要な情報は必ず確認してください。",
+    thinking: "思考中",
+    copied: "コピーしました",
+    noConversation: "会話がありません",
+    exportFormat: "txt / md / json を入力してください",
+    invalidFormat: "無効な形式",
+    shareFailed: "共有できませんでした。コピーしました。",
+    historyCleared: "履歴を削除しました",
+    languageChanged: "言語を変更しました",
+    modelChanged: "モデルを変更しました",
+    fileAttached: "ファイルを追加しました",
+    voiceUnsupported: "音声認識に対応していません",
+    listening: "音声を認識中...",
+    stopListening: "音声入力を停止",
+    apiError: "AIサービスエラー",
+    emptyResponse: "AIから回答がありません",
+    cancel: "キャンセル",
+    confirm: "確認",
+    notionUnavailable: "/api/notion が設定されていません",
+    notionSaveUnavailable: "Notion UIは準備済みですが、保存にはバックエンドが必要です。"
+
+},
+
+"ko": {
+
+    newChat: "새 대화",
+    modes: "모드",
+    chat: "Chat",
+    chatDesc: "일반 AI 대화",
+    still: "STILL",
+    stillDesc: "심층 사고 모드",
+    agent: "Agent",
+    agentDesc: "스마트 작업 에이전트",
+    model: "모델",
+    modelDesc: "현재 모델",
+    language: "언어",
+    languageDesc: "인터페이스 언어",
+    history: "기록",
+    tools: "도구",
+    notion: "Notion",
+    export: "대화 내보내기",
+    exportDesc: "TXT / Markdown / JSON",
+    share: "공유",
+    shareDesc: "현재 대화 공유",
+    selectModel: "모델 선택",
+    selectModelDesc: "현재 대화에 사용할 모델",
+    selectLanguage: "언어 선택",
+    selectLanguageDesc: "8개 언어 지원",
+    comingSoon: "준비 중",
+    settings: "설정",
+    clearHistory: "기록 삭제",
+    clearHistoryDesc: "저장된 모든 대화 삭제",
+    resetLanguage: "언어 초기화",
+    resetLanguageDesc: "한국어로 복원",
+    cardChat: "AI 채팅",
+    cardStill: "심층 사고",
+    cardAgent: "Agent",
+    inputPlaceholder: "CQS AI에게 메시지...",
+    disclaimer: "중요한 정보는 반드시 확인하세요.",
+    thinking: "생각 중",
+    copied: "클립보드에 복사됨",
+    noConversation: "대화가 없습니다",
+    exportFormat: "txt / md / json 중 입력하세요",
+    invalidFormat: "잘못된 형식",
+    shareFailed: "공유할 수 없어 복사했습니다.",
+    historyCleared: "기록이 삭제되었습니다",
+    languageChanged: "언어가 변경되었습니다",
+    modelChanged: "모델이 변경되었습니다",
+    fileAttached: "파일이 추가되었습니다",
+    voiceUnsupported: "음성 인식을 지원하지 않습니다",
+    listening: "듣는 중...",
+    stopListening: "음성 입력 중지",
+    apiError: "AI 서비스 오류",
+    emptyResponse: "AI 응답이 없습니다",
+    cancel: "취소",
+    confirm: "확인",
+    notionUnavailable: "/api/notion이 구성되지 않았습니다",
+    notionSaveUnavailable: "Notion UI는 준비되어 있지만 저장에는 백엔드가 필요합니다."
+
+},
+
+"es": {
+
+    newChat: "Nuevo chat",
+    modes: "Modos",
+    chat: "Chat",
+    chatDesc: "Conversación general",
+    still: "STILL",
+    stillDesc: "Pensamiento profundo",
+    agent: "Agent",
+    agentDesc: "Agente inteligente",
+    model: "Modelo",
+    modelDesc: "Modelo actual",
+    language: "Idioma",
+    languageDesc: "Idioma de interfaz",
+    history: "Historial",
+    tools: "Herramientas",
+    notion: "Notion",
+    export: "Exportar",
+    exportDesc: "TXT / Markdown / JSON",
+    share: "Compartir",
+    shareDesc: "Compartir conversación",
+    selectModel: "Seleccionar modelo",
+    selectModelDesc: "Elige el modelo de IA",
+    selectLanguage: "Seleccionar idioma",
+    selectLanguageDesc: "Ocho idiomas disponibles",
+    comingSoon: "Próximamente",
+    settings: "Ajustes",
+    clearHistory: "Borrar historial",
+    clearHistoryDesc: "Eliminar conversaciones guardadas",
+    resetLanguage: "Restablecer idioma",
+    resetLanguageDesc: "Volver al español",
+    cardChat: "Chat IA",
+    cardStill: "Pensamiento profundo",
+    cardAgent: "Agent",
+    inputPlaceholder: "Escribe a CQS AI...",
+    disclaimer: "Verifica la información importante.",
+    thinking: "Pensando",
+    copied: "Copiado",
+    noConversation: "No hay conversación",
+    exportFormat: "Introduce txt / md / json",
+    invalidFormat: "Formato no válido",
+    shareFailed: "No se pudo compartir. Copiado.",
+    historyCleared: "Historial eliminado",
+    languageChanged: "Idioma cambiado",
+    modelChanged: "Modelo cambiado",
+    fileAttached: "Archivo añadido",
+    voiceUnsupported: "Reconocimiento de voz no compatible",
+    listening: "Escuchando...",
+    stopListening: "Detener voz",
+    apiError: "Error del servicio AI",
+    emptyResponse: "Sin respuesta de AI",
+    cancel: "Cancelar",
+    confirm: "Confirmar",
+    notionUnavailable: "No está configurado /api/notion",
+    notionSaveUnavailable: "La interfaz Notion está lista, pero necesita backend."
+
+},
+
+"fr": {
+
+    newChat: "Nouvelle conversation",
+    modes: "Modes",
+    chat: "Chat",
+    chatDesc: "Conversation générale",
+    still: "STILL",
+    stillDesc: "Réflexion approfondie",
+    agent: "Agent",
+    agentDesc: "Agent intelligent",
+    model: "Modèle",
+    modelDesc: "Modèle actuel",
+    language: "Langue",
+    languageDesc: "Langue de l'interface",
+    history: "Historique",
+    tools: "Outils",
+    notion: "Notion",
+    export: "Exporter",
+    exportDesc: "TXT / Markdown / JSON",
+    share: "Partager",
+    shareDesc: "Partager la conversation",
+    selectModel: "Choisir le modèle",
+    selectModelDesc: "Choisissez le modèle IA",
+    selectLanguage: "Choisir la langue",
+    selectLanguageDesc: "Huit langues disponibles",
+    comingSoon: "Bientôt",
+    settings: "Paramètres",
+    clearHistory: "Effacer l'historique",
+    clearHistoryDesc: "Supprimer les conversations locales",
+    resetLanguage: "Réinitialiser la langue",
+    resetLanguageDesc: "Restaurer le français",
+    cardChat: "Chat IA",
+    cardStill: "Réflexion",
+    cardAgent: "Agent",
+    inputPlaceholder: "Envoyer un message à CQS AI...",
+    disclaimer: "Vérifiez les informations importantes.",
+    thinking: "Réflexion",
+    copied: "Copié",
+    noConversation: "Aucune conversation",
+    exportFormat: "Entrez txt / md / json",
+    invalidFormat: "Format invalide",
+    shareFailed: "Partage impossible. Copié.",
+    historyCleared: "Historique effacé",
+    languageChanged: "Langue modifiée",
+    modelChanged: "Modèle modifié",
+    fileAttached: "Fichier ajouté",
+    voiceUnsupported: "Reconnaissance vocale non prise en charge",
+    listening: "Écoute...",
+    stopListening: "Arrêter la saisie vocale",
+    apiError: "Erreur du service IA",
+    emptyResponse: "Aucune réponse IA",
+    cancel: "Annuler",
+    confirm: "Confirmer",
+    notionUnavailable: "/api/notion n'est pas configuré",
+    notionSaveUnavailable: "L'interface Notion est prête, mais nécessite un backend."
+
+},
+
+"de": {
+
+    newChat: "Neuer Chat",
+    modes: "Modi",
+    chat: "Chat",
+    chatDesc: "Allgemeines KI-Gespräch",
+    still: "STILL",
+    stillDesc: "Tiefes Denken",
+    agent: "Agent",
+    agentDesc: "Intelligenter Aufgaben-Agent",
+    model: "Modell",
+    modelDesc: "Aktuelles Modell",
+    language: "Sprache",
+    languageDesc: "Oberflächensprache",
+    history: "Verlauf",
+    tools: "Werkzeuge",
+    notion: "Notion",
+    export: "Exportieren",
+    exportDesc: "TXT / Markdown / JSON",
+    share: "Teilen",
+    shareDesc: "Aktuelles Gespräch teilen",
+    selectModel: "Modell auswählen",
+    selectModelDesc: "KI-Modell auswählen",
+    selectLanguage: "Sprache auswählen",
+    selectLanguageDesc: "Acht Sprachen verfügbar",
+    comingSoon: "Demnächst",
+    settings: "Einstellungen",
+    clearHistory: "Verlauf löschen",
+    clearHistoryDesc: "Gespeicherte Gespräche löschen",
+    resetLanguage: "Sprache zurücksetzen",
+    resetLanguageDesc: "Deutsch wiederherstellen",
+    cardChat: "KI-Chat",
+    cardStill: "Tiefes Denken",
+    cardAgent: "Agent",
+    inputPlaceholder: "Nachricht an CQS AI...",
+    disclaimer: "Wichtige Informationen überprüfen.",
+    thinking: "Denken",
+    copied: "Kopiert",
+    noConversation: "Keine Unterhaltung",
+    exportFormat: "txt / md / json eingeben",
+    invalidFormat: "Ungültiges Format",
+    shareFailed: "Teilen fehlgeschlagen. Kopiert.",
+    historyCleared: "Verlauf gelöscht",
+    languageChanged: "Sprache geändert",
+    modelChanged: "Modell geändert",
+    fileAttached: "Datei hinzugefügt",
+    voiceUnsupported: "Spracherkennung wird nicht unterstützt",
+    listening: "Höre zu...",
+    stopListening: "Spracheingabe stoppen",
+    apiError: "KI-Dienstfehler",
+    emptyResponse: "Keine KI-Antwort",
+    cancel: "Abbrechen",
+    confirm: "Bestätigen",
+    notionUnavailable: "/api/notion ist nicht konfiguriert",
+    notionSaveUnavailable: "Notion UI ist bereit, benötigt aber ein Backend."
+
+},
+
+"ru": {
+
+    newChat: "Новый чат",
+    modes: "Режимы",
+    chat: "Chat",
+    chatDesc: "Обычный ИИ-диалог",
+    still: "STILL",
+    stillDesc: "Глубокое мышление",
+    agent: "Agent",
+    agentDesc: "Интеллектуальный агент",
+    model: "Модель",
+    modelDesc: "Текущая модель",
+    language: "Язык",
+    languageDesc: "Язык интерфейса",
+    history: "История",
+    tools: "Инструменты",
+    notion: "Notion",
+    export: "Экспорт",
+    exportDesc: "TXT / Markdown / JSON",
+    share: "Поделиться",
+    shareDesc: "Поделиться диалогом",
+    selectModel: "Выбор модели",
+    selectModelDesc: "Выберите модель ИИ",
+    selectLanguage: "Выбор языка",
+    selectLanguageDesc: "Доступно восемь языков",
+    comingSoon: "Скоро",
+    settings: "Настройки",
+    clearHistory: "Очистить историю",
+    clearHistoryDesc: "Удалить сохраненные диалоги",
+    resetLanguage: "Сбросить язык",
+    resetLanguageDesc: "Восстановить русский",
+    cardChat: "ИИ-чат",
+    cardStill: "Глубокое мышление",
+    cardAgent: "Agent",
+    inputPlaceholder: "Сообщение CQS AI...",
+    disclaimer: "Проверяйте важную информацию.",
+    thinking: "Размышляет",
+    copied: "Скопировано",
+    noConversation: "Нет диалога",
+    exportFormat: "Введите txt / md / json",
+    invalidFormat: "Неверный формат",
+    shareFailed: "Не удалось поделиться. Скопировано.",
+    historyCleared: "История очищена",
+    languageChanged: "Язык изменён",
+    modelChanged: "Модель изменена",
+    fileAttached: "Файл добавлен",
+    voiceUnsupported: "Распознавание речи не поддерживается",
+    listening: "Слушаю...",
+    stopListening: "Остановить ввод",
+    apiError: "Ошибка сервиса ИИ",
+    emptyResponse: "Нет ответа ИИ",
+    cancel: "Отмена",
+    confirm: "Подтвердить",
+    notionUnavailable: "/api/notion не настроен",
+    notionSaveUnavailable: "Интерфейс Notion готов, но требуется backend."
+
+}
+
+};
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function t(key) {
+
+    const lang =
+        I18N[state.language] ||
+        I18N["zh-CN"];
+
+    return (
+        lang[key] ??
+        I18N["zh-CN"][key] ??
+        key
+    );
+
 }
 
 function showToast(message) {
 
-    const toast = document.createElement("div");
-
-    toast.className = "toast";
-
     toast.textContent = message;
 
-    toastContainer.appendChild(toast);
+    toast.classList.add("show");
 
-    setTimeout(() => {
+    clearTimeout(showToast.timer);
 
-        toast.remove();
+    showToast.timer =
+        setTimeout(() => {
 
-    }, 2400);
+            toast.classList.remove("show");
+
+        }, 2200);
+
 }
 
-function getCurrentConversation() {
+function escapeHtml(value) {
 
-    if (!state.currentConversationId) {
-        return null;
-    }
+    const div =
+        document.createElement("div");
 
-    return state.conversations[
-        state.currentConversationId
-    ] || null;
+    div.textContent =
+        String(value ?? "");
+
+    return div.innerHTML;
+
 }
 
-function createId(prefix = "id") {
+function makeId(prefix = "chat") {
 
     return (
         prefix +
@@ -2003,289 +3340,175 @@ function createId(prefix = "id") {
         "_" +
         Math.random()
             .toString(36)
-            .slice(2, 8)
+            .slice(2,8)
     );
+
 }
 
 /* =========================================================
-   LANGUAGE
+   MARKDOWN
 ========================================================= */
 
-const translations = {
+if (window.marked) {
 
-    zh: {
-        newChat: "新建对话",
-        modes: "Modes",
-        history: "History",
-        tools: "Tools",
-        exportChat: "导出对话",
-        shareChat: "分享对话",
-        welcomeTitle: "有什么我可以帮您的？",
-        welcomeDesc:
-            "基于 CQS AI Global 架构，为您提供安全、强大的智能对话体验。",
-        placeholder: "给 CQS AI 发送消息..."
-    },
+    marked.setOptions({
+        breaks: true,
+        gfm: true
+    });
 
-    en: {
-        newChat: "New Chat",
-        modes: "Modes",
-        history: "History",
-        tools: "Tools",
-        exportChat: "Export Chat",
-        shareChat: "Share Chat",
-        welcomeTitle: "How can I help you?",
-        welcomeDesc:
-            "Powered by the CQS AI Global architecture.",
-        placeholder: "Message CQS AI..."
-    }
-
-};
-
-function applyLanguage() {
-
-    const lang = state.language;
-
-    document
-        .querySelectorAll("[data-i18n]")
-        .forEach(el => {
-
-            const key = el.dataset.i18n;
-
-            if (
-                translations[lang] &&
-                translations[lang][key]
-            ) {
-
-                el.textContent =
-                    translations[lang][key];
-            }
-        });
-
-    userInput.placeholder =
-        translations[lang].placeholder;
-}
-
-function toggleLanguage() {
-
-    state.language =
-        state.language === "zh"
-            ? "en"
-            : "zh";
-
-    saveState();
-
-    applyLanguage();
-
-    renderAll();
 }
 
 /* =========================================================
-   MODE
+   MOBILE SIDEBAR
 ========================================================= */
 
-function setMode(mode) {
+function openSidebar() {
 
-    const allowed = [
-        "chat",
-        "still",
-        "agent"
-    ];
+    sidebar.classList.add("mobile-open");
+    sidebarBackdrop.classList.add("show");
 
-    if (!allowed.includes(mode)) {
-        return;
-    }
-
-    state.mode = mode;
-
-    document
-        .querySelectorAll(".mode-btn")
-        .forEach(btn => {
-
-            btn.classList.toggle(
-                "active",
-                btn.dataset.mode === mode
-            );
-        });
-
-    saveState();
-
-    updateModelDisplay();
 }
 
-function updateModelDisplay() {
+function closeSidebar() {
 
-    const modeName = {
-        chat: "Chat",
-        still: "STILL",
-        agent: "Agent"
-    }[state.mode];
+    sidebar.classList.remove("mobile-open");
+    sidebarBackdrop.classList.remove("show");
 
-    modelNameEl.textContent =
-        `${state.model} · ${modeName}`;
 }
+
+mobileOpenSidebar.addEventListener(
+    "click",
+    openSidebar
+);
+
+mobileCloseSidebar.addEventListener(
+    "click",
+    closeSidebar
+);
+
+sidebarBackdrop.addEventListener(
+    "click",
+    closeSidebar
+);
 
 /* =========================================================
    CONVERSATIONS
 ========================================================= */
 
+function ensureConversation() {
+
+    if (
+        state.currentConversationId &&
+        state.conversations[
+            state.currentConversationId
+        ]
+    ) {
+
+        return state.conversations[
+            state.currentConversationId
+        ];
+
+    }
+
+    return createConversation();
+
+}
+
 function createConversation() {
 
-    const id = createId("chat");
+    const id =
+        makeId();
 
     state.conversations[id] = {
 
         id,
 
         title:
-            state.language === "zh"
+            state.language === "zh-CN"
                 ? "新对话"
                 : "New Chat",
 
-        createdAt: Date.now(),
+        createdAt:
+            Date.now(),
 
-        updatedAt: Date.now(),
+        updatedAt:
+            Date.now(),
 
-        model: state.model,
+        model:
+            state.currentModel,
 
-        mode: state.mode,
+        mode:
+            state.currentMode,
 
         messages: []
 
     };
 
-    state.currentConversationId = id;
-
-    trimHistory();
-
-    saveState();
-
-    renderAll();
-
-    closeMobileSidebar();
-}
-
-function ensureConversation() {
-
-    if (
-        !state.currentConversationId ||
-        !state.conversations[
-            state.currentConversationId
-        ]
-    ) {
-
-        createConversation();
-    }
-
-    return getCurrentConversation();
-}
-
-function deleteConversation(id) {
-
-    const conversation =
-        state.conversations[id];
-
-    if (!conversation) {
-        return;
-    }
-
-    const ok = confirm(
-        state.language === "zh"
-            ? "确定删除这个对话吗？"
-            : "Delete this conversation?"
-    );
-
-    if (!ok) {
-        return;
-    }
-
-    delete state.conversations[id];
-
-    if (state.currentConversationId === id) {
-
-        const remaining =
-            Object.values(state.conversations)
-                .sort(
-                    (a, b) =>
-                        b.updatedAt -
-                        a.updatedAt
-                );
-
-        state.currentConversationId =
-            remaining[0]?.id || null;
-    }
+    state.currentConversationId =
+        id;
 
     saveState();
 
-    renderAll();
+    renderHistory();
+    renderMessages();
+
+    return state.conversations[id];
+
 }
 
-function trimHistory() {
+function getCurrentConversation() {
 
-    const entries =
-        Object.values(state.conversations)
-            .sort(
-                (a, b) =>
-                    b.updatedAt -
-                    a.updatedAt
-            );
+    return state.conversations[
+        state.currentConversationId
+    ] || null;
 
-    if (
-        entries.length <=
-        CONFIG.maxHistory
-    ) {
-        return;
-    }
-
-    entries
-        .slice(CONFIG.maxHistory)
-        .forEach(conversation => {
-
-            delete state.conversations[
-                conversation.id
-            ];
-        });
 }
 
 /* =========================================================
-   HISTORY RENDER
+   HISTORY
 ========================================================= */
 
 function renderHistory() {
 
     historyList.innerHTML = "";
 
-    const conversations =
-        Object.values(state.conversations)
-            .sort(
-                (a, b) =>
-                    b.updatedAt -
-                    a.updatedAt
-            );
+    const list =
+        Object.values(
+            state.conversations
+        )
+        .sort(
+            (a,b) =>
+                (b.updatedAt || b.createdAt || 0) -
+                (a.updatedAt || a.createdAt || 0)
+        );
 
-    if (conversations.length === 0) {
+    if (!list.length) {
 
         const empty =
             document.createElement("div");
 
-        empty.className =
-            "px-3 py-4 text-[10px] text-slate-600";
+        empty.style.cssText =
+            "padding:10px;color:#334155;font-size:9px;";
 
         empty.textContent =
-            state.language === "zh"
-                ? "暂无历史对话"
-                : "No conversations yet";
+            state.language === "zh-CN"
+                ? "暂无历史记录"
+                : "No history";
 
         historyList.appendChild(empty);
 
         return;
+
     }
 
-    conversations.forEach(conversation => {
+    for (const conversation of list) {
 
-        const item =
-            document.createElement("div");
+        const button =
+            document.createElement("button");
 
-        item.className =
+        button.type = "button";
+
+        button.className =
             "history-item" +
             (
                 conversation.id ===
@@ -2294,130 +3517,56 @@ function renderHistory() {
                     : ""
             );
 
-        const icon =
-            document.createElement("i");
+        button.innerHTML = `
 
-        icon.className =
-            "fa-regular fa-message text-[10px]";
+            <i class="fa-regular fa-message"></i>
 
-        const title =
-            document.createElement("div");
+            <span class="history-title">
+                ${escapeHtml(conversation.title || "Chat")}
+            </span>
 
-        title.className =
-            "history-item-title";
+        `;
 
-        title.textContent =
-            conversation.title ||
-            (
-                state.language === "zh"
-                    ? "新对话"
-                    : "New Chat"
-            );
-
-        const deleteBtn =
-            document.createElement("button");
-
-        deleteBtn.className =
-            "history-delete";
-
-        deleteBtn.type = "button";
-
-        deleteBtn.innerHTML =
-            '<i class="fa-solid fa-trash text-[9px]"></i>';
-
-        deleteBtn.addEventListener(
-            "click",
-            event => {
-
-                event.stopPropagation();
-
-                deleteConversation(
-                    conversation.id
-                );
-            }
-        );
-
-        item.appendChild(icon);
-
-        item.appendChild(title);
-
-        item.appendChild(deleteBtn);
-
-        item.addEventListener(
+        button.addEventListener(
             "click",
             () => {
 
                 state.currentConversationId =
                     conversation.id;
 
+                state.currentModel =
+                    conversation.model ||
+                    state.currentModel;
+
+                state.currentMode =
+                    conversation.mode ||
+                    "chat";
+
                 saveState();
 
-                renderAll();
+                updateModelUI();
+                updateModeUI();
 
-                closeMobileSidebar();
+                renderHistory();
+                renderMessages();
+
+                if (
+                    window.innerWidth <= 900
+                ) {
+                    closeSidebar();
+                }
+
             }
         );
 
-        historyList.appendChild(item);
-    });
+        historyList.appendChild(button);
+
+    }
+
 }
 
 /* =========================================================
-   MARKDOWN
-========================================================= */
-
-function renderMarkdown(content) {
-
-    if (
-        typeof marked === "undefined"
-    ) {
-        return escapeHtml(content)
-            .replace(/\n/g, "<br>");
-    }
-
-    try {
-
-        const html = marked.parse(
-            content || "",
-            {
-                breaks: true,
-                gfm: true
-            }
-        );
-
-        return html;
-
-    } catch {
-
-        return escapeHtml(content)
-            .replace(/\n/g, "<br>");
-    }
-}
-
-function highlightCode() {
-
-    if (
-        typeof hljs === "undefined"
-    ) {
-        return;
-    }
-
-    document
-        .querySelectorAll(
-            "#messages pre code"
-        )
-        .forEach(block => {
-
-            try {
-                hljs.highlightElement(
-                    block
-                );
-            } catch {}
-        });
-}
-
-/* =========================================================
-   MESSAGE RENDER
+   RENDER MESSAGES
 ========================================================= */
 
 function renderMessages() {
@@ -2430,514 +3579,957 @@ function renderMessages() {
     if (
         !conversation ||
         !conversation.messages ||
-        conversation.messages.length === 0
+        !conversation.messages.length
     ) {
 
         welcomeScreen.style.display =
             "flex";
 
         return;
+
     }
 
     welcomeScreen.style.display =
         "none";
 
-    conversation.messages.forEach(
-        message => {
+    for (
+        const message
+        of conversation.messages
+    ) {
 
-            const row =
-                document.createElement("div");
+        appendMessageToDOM(
+            message
+        );
 
-            row.className =
-                "message-row " +
-                (
-                    message.role === "user"
-                        ? "user"
-                        : "assistant"
-                );
+    }
 
-            const wrapper =
-                document.createElement("div");
+    scrollToBottom();
 
-            wrapper.className =
-                "message";
+}
 
-            const role =
-                document.createElement("div");
+function appendMessageToDOM(message) {
 
-            role.className =
-                "message-role";
+    const row =
+        document.createElement("div");
 
-            role.textContent =
-                message.role === "user"
-                    ? "You"
-                    : "CQS AI";
+    row.className =
+        "message-row " +
+        (
+            message.role === "user"
+                ? "user"
+                : "assistant"
+        );
 
-            const bubble =
-                document.createElement("div");
+    const stack =
+        document.createElement("div");
 
-            bubble.className =
-                "message-bubble " +
-                (
-                    message.role === "assistant"
-                        ? "markdown-body"
-                        : ""
-                );
+    stack.className =
+        "message-stack";
 
-            if (
-                message.role === "assistant"
-            ) {
+    const meta =
+        document.createElement("div");
 
-                bubble.innerHTML =
-                    renderMarkdown(
-                        message.content
-                    );
+    meta.className =
+        "message-meta";
 
-            } else {
+    meta.innerHTML =
+        message.role === "user"
+            ? `<i class="fa-solid fa-user"></i><span>You</span>`
+            : `<i class="fa-solid fa-wand-magic-sparkles"></i><span>CQS AI</span>`;
 
-                bubble.textContent =
-                    message.content || "";
-            }
+    stack.appendChild(meta);
 
-            wrapper.appendChild(role);
+    if (
+        message.role === "assistant" &&
+        message.reasoning
+    ) {
 
-            wrapper.appendChild(bubble);
-
-            if (message.file) {
-
-                const fileBox =
-                    document.createElement("div");
-
-                fileBox.className =
-                    "message-attachment";
-
-                fileBox.innerHTML =
-                    `<i class="fa-solid fa-paperclip mr-1"></i>${escapeHtml(message.file.name)}`;
-
-                wrapper.appendChild(fileBox);
-            }
-
-            row.appendChild(wrapper);
-
-            messagesEl.appendChild(row);
-        }
-    );
-
-    if (isGenerating) {
-
-        const row =
+        const reasoning =
             document.createElement("div");
 
-        row.className =
-            "message-row assistant";
+        reasoning.className =
+            "reasoning-box";
 
-        row.innerHTML = `
-            <div class="message">
-                <div class="message-role">CQS AI</div>
-                <div class="message-bubble">
-                    <div class="typing">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
+        reasoning.innerHTML = `
+
+            <div class="reasoning-head">
+
+                <i class="fa-solid fa-brain"></i>
+
+                <span>
+                    ${escapeHtml(t("thinking"))}
+                </span>
+
+            </div>
+
+            <div class="reasoning-content">
+                ${escapeHtml(message.reasoning)}
+            </div>
+
+        `;
+
+        stack.appendChild(reasoning);
+
+    }
+
+    const bubble =
+        document.createElement("div");
+
+    bubble.className =
+        "message-bubble";
+
+    if (
+        message.role === "assistant"
+    ) {
+
+        bubble.classList.add(
+            "markdown-body"
+        );
+
+        bubble.innerHTML =
+            renderMarkdown(
+                message.content || ""
+            );
+
+        enhanceCodeBlocks(
+            bubble
+        );
+
+    } else {
+
+        bubble.textContent =
+            message.content || "";
+
+    }
+
+    stack.appendChild(bubble);
+
+    row.appendChild(stack);
+
+    messagesEl.appendChild(row);
+
+}
+
+function renderMarkdown(text) {
+
+    if (!text) {
+
+        return `
+            <div class="thinking-indicator">
+                <span class="thinking-dot"></span>
+                <span class="thinking-dot"></span>
+                <span class="thinking-dot"></span>
             </div>
         `;
 
-        messagesEl.appendChild(row);
     }
 
-    highlightCode();
+    if (!window.marked) {
 
-    requestAnimationFrame(() => {
+        return escapeHtml(text)
+            .replace(/\n/g,"<br>");
 
-        chatContainer.scrollTop =
-            chatContainer.scrollHeight;
-    });
+    }
+
+    try {
+
+        return marked.parse(text);
+
+    } catch {
+
+        return escapeHtml(text)
+            .replace(/\n/g,"<br>");
+
+    }
+
+}
+
+function enhanceCodeBlocks(container) {
+
+    const blocks =
+        container.querySelectorAll(
+            "pre"
+        );
+
+    blocks.forEach(
+        (pre) => {
+
+            const code =
+                pre.querySelector("code");
+
+            if (
+                code &&
+                window.hljs
+            ) {
+
+                try {
+
+                    hljs.highlightElement(
+                        code
+                    );
+
+                } catch {}
+
+            }
+
+            if (
+                pre.querySelector(
+                    ".code-copy-btn"
+                )
+            ) {
+                return;
+            }
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "code-copy-btn";
+
+            button.type =
+                "button";
+
+            button.textContent =
+                "Copy";
+
+            button.addEventListener(
+                "click",
+                async () => {
+
+                    const value =
+                        code?.innerText || "";
+
+                    try {
+
+                        await navigator.clipboard
+                            .writeText(value);
+
+                        button.textContent =
+                            "Copied";
+
+                        setTimeout(
+                            () => {
+                                button.textContent =
+                                    "Copy";
+                            },
+                            1200
+                        );
+
+                    } catch {}
+
+                }
+            );
+
+            pre.appendChild(button);
+
+        }
+    );
+
+}
+
+function scrollToBottom() {
+
+    requestAnimationFrame(
+        () => {
+
+            chatContainer.scrollTop =
+                chatContainer.scrollHeight;
+
+        }
+    );
+
 }
 
 /* =========================================================
-   RENDER ALL
+   MODE
 ========================================================= */
 
-function renderAll() {
+function updateModeUI() {
+
+    document
+        .querySelectorAll(".mode-btn")
+        .forEach(
+            (button) => {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset.mode ===
+                    state.currentMode
+                );
+
+            }
+        );
+
+}
+
+function setMode(mode) {
+
+    const allowed =
+        ["chat","still","agent"];
+
+    if (!allowed.includes(mode)) {
+        return;
+    }
+
+    state.currentMode =
+        mode;
+
+    const conversation =
+        getCurrentConversation();
+
+    if (conversation) {
+
+        conversation.mode =
+            mode;
+
+        conversation.updatedAt =
+            Date.now();
+
+    }
+
+    saveState();
+
+    updateModeUI();
+
+    const names = {
+        chat: "Chat",
+        still: "STILL",
+        agent: "Agent"
+    };
+
+    showToast(
+        `${names[mode]}`
+    );
+
+}
+
+/* =========================================================
+   MODEL
+========================================================= */
+
+const MODEL_NAMES = {
+
+    "deepseek-v4-flash":
+        "DeepSeek V4 Flash",
+
+    "deepseek-v4-pro":
+        "DeepSeek V4 Pro",
+
+    "openai":
+        "OpenAI",
+
+    "anthropic":
+        "Anthropic",
+
+    "gemini":
+        "Gemini"
+
+};
+
+function updateModelUI() {
+
+    const name =
+        MODEL_NAMES[
+            state.currentModel
+        ] ||
+        state.currentModel;
+
+    modelHeader.textContent =
+        name;
+
+    modelSidebar.textContent =
+        name;
+
+    document
+        .querySelectorAll(
+            ".option-card[data-model]"
+        )
+        .forEach(
+            (button) => {
+
+                const active =
+                    button.dataset.model ===
+                    state.currentModel;
+
+                button.classList.toggle(
+                    "active",
+                    active
+                );
+
+                const check =
+                    button.querySelector(
+                        ".fa-check"
+                    );
+
+                if (check) {
+
+                    check.classList.toggle(
+                        "hidden",
+                        !active
+                    );
+
+                }
+
+            }
+        );
+
+}
+
+function setModel(model) {
+
+    state.currentModel =
+        model;
+
+    const conversation =
+        getCurrentConversation();
+
+    if (conversation) {
+
+        conversation.model =
+            model;
+
+        conversation.updatedAt =
+            Date.now();
+
+    }
+
+    saveState();
+
+    updateModelUI();
+
+    showToast(
+        `${t("modelChanged")}: ${
+            MODEL_NAMES[model] || model
+        }`
+    );
+
+}
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+function renderLanguageOptions() {
+
+    languageGrid.innerHTML = "";
+
+    for (
+        const [
+            code,
+            language
+        ]
+        of Object.entries(
+            LANGUAGES
+        )
+    ) {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className =
+            "language-item" +
+            (
+                code === state.language
+                    ? " active"
+                    : ""
+            );
+
+        button.innerHTML = `
+
+            <div class="language-native">
+                ${escapeHtml(language.native)}
+            </div>
+
+            <div class="language-en">
+                ${escapeHtml(language.english)}
+            </div>
+
+        `;
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                setLanguage(code);
+
+                closeModal(
+                    "language-modal"
+                );
+
+            }
+        );
+
+        languageGrid.appendChild(
+            button
+        );
+
+    }
+
+}
+
+function setLanguage(code) {
+
+    if (!LANGUAGES[code]) {
+        return;
+    }
+
+    state.language =
+        code;
+
+    document.documentElement
+        .lang =
+        code;
+
+    saveState();
+
+    applyTranslations();
+
+    renderLanguageOptions();
 
     renderHistory();
 
     renderMessages();
 
-    updateModelDisplay();
+    showToast(
+        t("languageChanged")
+    );
 
-    updateNotionStatus();
-
-    applyLanguage();
 }
 
-/* =========================================================
-   API RESPONSE EXTRACTION
-========================================================= */
+function applyTranslations() {
 
-function extractAssistantText(data) {
+    document
+        .querySelectorAll(
+            "[data-i18n]"
+        )
+        .forEach(
+            (element) => {
 
-    if (!data) {
-        return "";
-    }
+                const key =
+                    element.dataset.i18n;
 
-    if (typeof data === "string") {
-        return data;
-    }
+                element.textContent =
+                    t(key);
 
-    if (
-        typeof data.answer === "string"
-    ) {
-        return data.answer;
-    }
-
-    if (
-        typeof data.content === "string"
-    ) {
-        return data.content;
-    }
-
-    if (
-        typeof data.text === "string"
-    ) {
-        return data.text;
-    }
-
-    if (
-        data.message &&
-        typeof data.message.content === "string"
-    ) {
-        return data.message.content;
-    }
-
-    if (
-        Array.isArray(data.choices) &&
-        data.choices[0]
-    ) {
-
-        const choice =
-            data.choices[0];
-
-        if (
-            choice.message &&
-            typeof choice.message.content === "string"
-        ) {
-            return choice.message.content;
-        }
-
-        if (
-            typeof choice.text === "string"
-        ) {
-            return choice.text;
-        }
-    }
-
-    return "";
-}
-
-/* =========================================================
-   CHAT API
-========================================================= */
-
-async function callChatAPI(
-    conversation,
-    userText
-) {
-
-    const messages =
-        conversation.messages
-            .map(message => ({
-                role: message.role,
-                content: message.content
-            }));
-
-    const payload = {
-
-        model: state.model,
-
-        mode: state.mode,
-
-        messages,
-
-        conversationId:
-            conversation.id
-    };
-
-    const response =
-        await fetch(
-            CONFIG.chatEndpoint,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify(payload)
             }
         );
 
-    if (!response.ok) {
+    userInput.placeholder =
+        t("inputPlaceholder");
 
-        const errorText =
-            await response.text()
-                .catch(() => "");
+    disclaimer.textContent =
+        t("disclaimer");
 
-        throw new Error(
-            `HTTP ${response.status} ${errorText}`
-        );
-    }
+    const language =
+        LANGUAGES[
+            state.language
+        ];
 
-    const contentType =
-        response.headers.get(
-            "content-type"
-        ) || "";
+    sidebarLanguageName.textContent =
+        language.native;
 
-    /*
-       普通 JSON
-    */
+    const headerLanguageBtn =
+        $("header-language-btn");
 
-    if (
-        contentType.includes(
-            "application/json"
-        )
-    ) {
+    if (headerLanguageBtn) {
 
-        const data =
-            await response.json();
-
-        const text =
-            extractAssistantText(data);
-
-        if (!text) {
-
-            throw new Error(
-                "后端返回成功，但没有找到 AI 回复内容。"
+        const short =
+            headerLanguageBtn.querySelector(
+                ".language-short"
             );
+
+        const mobile =
+            headerLanguageBtn.querySelector(
+                ".language-short-mobile"
+            );
+
+        if (short) {
+
+            short.textContent =
+                language.native;
+
         }
 
-        return text;
+        if (mobile) {
+
+            mobile.textContent =
+                language.short;
+
+        }
+
     }
 
-    /*
-       普通文本 / 流式兼容
-    */
+    renderLanguageOptions();
 
-    const text =
-        await response.text();
-
-    if (!text) {
-
-        throw new Error(
-            "AI 返回内容为空。"
-        );
-    }
-
-    return text;
 }
 
 /* =========================================================
-   SEND MESSAGE
+   MODALS
 ========================================================= */
 
-async function sendMessage(text) {
+function openModal(id) {
 
-    if (
-        isGenerating ||
-        !text.trim()
-    ) {
-        return;
-    }
+    const modal = $(id);
 
-    const conversation =
-        ensureConversation();
+    if (!modal) return;
 
-    const cleanText =
-        text.trim();
+    modal.classList.add("show");
 
-    if (
-        conversation.messages.length === 0
-    ) {
+}
 
-        conversation.title =
-            cleanText.length > 30
-                ? cleanText.slice(0, 30) + "..."
-                : cleanText;
-    }
+function closeModal(id) {
 
-    conversation.messages.push({
+    const modal = $(id);
 
-        role: "user",
+    if (!modal) return;
 
-        content: cleanText,
+    modal.classList.remove("show");
 
-        createdAt: Date.now(),
+}
 
-        file:
-            pendingAttachment
-                ? {
-                    name:
-                        pendingAttachment.name,
-                    type:
-                        pendingAttachment.type,
-                    size:
-                        pendingAttachment.size
+document
+    .querySelectorAll(
+        "[data-close-modal]"
+    )
+    .forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    closeModal(
+                        button.dataset.closeModal
+                    );
+
                 }
-                : null
-    });
-
-    conversation.updatedAt =
-        Date.now();
-
-    conversation.mode =
-        state.mode;
-
-    conversation.model =
-        state.model;
-
-    const attachment =
-        pendingAttachment;
-
-    pendingAttachment = null;
-
-    clearAttachment();
-
-    saveState();
-
-    userInput.value = "";
-
-    autoResizeTextarea();
-
-    renderAll();
-
-    isGenerating = true;
-
-    renderMessages();
-
-    try {
-
-        const answer =
-            await callChatAPI(
-                conversation,
-                cleanText
             );
 
-        conversation.messages.push({
+        }
+    );
 
-            role: "assistant",
+document
+    .querySelectorAll(".modal")
+    .forEach(
+        (modal) => {
 
-            content:
-                answer ||
-                "AI 没有返回内容。",
+            modal.addEventListener(
+                "click",
+                (event) => {
 
-            createdAt: Date.now()
-        });
+                    if (
+                        event.target ===
+                        modal
+                    ) {
 
-        conversation.updatedAt =
-            Date.now();
+                        modal.classList.remove(
+                            "show"
+                        );
 
-        saveState();
+                    }
 
-    } catch (error) {
+                }
+            );
 
-        console.error(
-            "[CQS AI] Chat API error:",
-            error
-        );
+        }
+    );
 
-        conversation.messages.push({
+$("open-model-modal")
+    .addEventListener(
+        "click",
+        () => openModal(
+            "model-modal"
+        )
+    );
 
-            role: "assistant",
+$("header-model-btn")
+    .addEventListener(
+        "click",
+        () => openModal(
+            "model-modal"
+        )
+    );
 
-            content:
-                `**请求失败**
+$("quick-model-btn")
+    .addEventListener(
+        "click",
+        () => openModal(
+            "model-modal"
+        )
+    );
 
-${error.message}
+$("open-language-modal")
+    .addEventListener(
+        "click",
+        () => openModal(
+            "language-modal"
+        )
+    );
 
-请检查你的 \`/api/chat\` 后端是否正常运行。`,
+$("header-language-btn")
+    .addEventListener(
+        "click",
+        () => openModal(
+            "language-modal"
+        )
+    );
 
-            createdAt: Date.now(),
-
-            error: true
-        });
-
-        conversation.updatedAt =
-            Date.now();
-
-        saveState();
-
-    } finally {
-
-        isGenerating = false;
-
-        renderAll();
-    }
-}
+$("settings-btn")
+    .addEventListener(
+        "click",
+        () => openModal(
+            "settings-modal"
+        )
+    );
 
 /* =========================================================
-   TEXTAREA
+   MODEL EVENTS
 ========================================================= */
 
-function autoResizeTextarea() {
+document
+    .querySelectorAll(
+        ".option-card[data-model]"
+    )
+    .forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const model =
+                        button.dataset.model;
+
+                    if (
+                        [
+                            "openai",
+                            "anthropic",
+                            "gemini"
+                        ].includes(model)
+                    ) {
+
+                        showToast(
+                            `${MODEL_NAMES[model]} ${t("comingSoon")}`
+                        );
+
+                        return;
+
+                    }
+
+                    setModel(model);
+
+                    closeModal(
+                        "model-modal"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+/* =========================================================
+   MODE EVENTS
+========================================================= */
+
+document
+    .querySelectorAll(
+        ".mode-btn"
+    )
+    .forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    setMode(
+                        button.dataset.mode
+                    );
+
+                    if (
+                        window.innerWidth <= 900
+                    ) {
+
+                        closeSidebar();
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+document
+    .querySelectorAll(
+        "[data-welcome-action]"
+    )
+    .forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    setMode(
+                        button.dataset.welcomeAction
+                    );
+
+                    userInput.focus();
+
+                }
+            );
+
+        }
+    );
+
+/* =========================================================
+   NEW CHAT
+========================================================= */
+
+newChatBtn.addEventListener(
+    "click",
+    () => {
+
+        createConversation();
+
+        userInput.focus();
+
+        if (
+            window.innerWidth <= 900
+        ) {
+
+            closeSidebar();
+
+        }
+
+    }
+);
+
+/* =========================================================
+   INPUT AUTO RESIZE
+========================================================= */
+
+function resizeTextarea() {
 
     userInput.style.height =
         "auto";
 
-    const height =
+    userInput.style.height =
         Math.min(
             userInput.scrollHeight,
-            150
-        );
+            180
+        ) + "px";
 
-    userInput.style.height =
-        `${height}px`;
 }
+
+userInput.addEventListener(
+    "input",
+    resizeTextarea
+);
 
 /* =========================================================
    FILE
 ========================================================= */
 
-function setAttachment(file) {
+let attachedFile = null;
 
-    if (!file) {
-        return;
+attachBtn.addEventListener(
+    "click",
+    () => {
+
+        fileInput.click();
+
     }
+);
 
-    pendingAttachment = file;
+fileInput.addEventListener(
+    "change",
+    async () => {
 
-    attachmentName.textContent =
-        file.name;
+        const file =
+            fileInput.files?.[0];
 
-    attachmentPreview.style.display =
-        "block";
+        if (!file) return;
 
-    showToast(
-        `已选择：${file.name}`
-    );
-}
+        attachedFile =
+            file;
 
-function clearAttachment() {
+        attachmentName.textContent =
+            file.name;
 
-    pendingAttachment = null;
+        attachmentPreview.style.display =
+            "block";
 
-    fileInput.value = "";
+        showToast(
+            t("fileAttached")
+        );
 
-    attachmentPreview.style.display =
-        "none";
+        /*
+         * 文本文件可以直接读取并作为上下文。
+         * PDF / Office 文件这里只保留文件入口，
+         * 后续可以接专用解析 API。
+         */
 
-    attachmentName.textContent =
-        "";
-}
+        if (
+            file.type.startsWith("text/") ||
+            /\.(txt|md|json|csv|html|css|js|ts|jsx|tsx|py|java|cpp|c|h|xml|yaml|yml|log)$/i.test(
+                file.name
+            )
+        ) {
+
+            try {
+
+                const text =
+                    await file.text();
+
+                const clipped =
+                    text.slice(
+                        0,
+                        20000
+                    );
+
+                userInput.value +=
+                    `\n\n[File: ${file.name}]\n${clipped}`;
+
+                resizeTextarea();
+
+            } catch {}
+
+        }
+
+    }
+);
+
+removeAttachment.addEventListener(
+    "click",
+    () => {
+
+        attachedFile =
+            null;
+
+        fileInput.value =
+            "";
+
+        attachmentPreview.style.display =
+            "none";
+
+    }
+);
 
 /* =========================================================
-   SPEECH
+   SPEECH RECOGNITION
 ========================================================= */
 
-function initSpeechRecognition() {
+let recognition = null;
+let listening = false;
+
+function setupSpeechRecognition() {
 
     const SpeechRecognition =
         window.SpeechRecognition ||
@@ -2945,18 +4537,12 @@ function initSpeechRecognition() {
 
     if (!SpeechRecognition) {
 
-        recognition = null;
+        return false;
 
-        return;
     }
 
     recognition =
         new SpeechRecognition();
-
-    recognition.lang =
-        state.language === "zh"
-            ? "zh-CN"
-            : "en-US";
 
     recognition.continuous =
         false;
@@ -2964,23 +4550,30 @@ function initSpeechRecognition() {
     recognition.interimResults =
         true;
 
-    recognition.onstart = () => {
+    recognition.lang =
+        state.language === "zh-CN"
+            ? "zh-CN"
+            : state.language;
 
-        micBtn.classList.add("active");
+    recognition.onstart =
+        () => {
 
-        showToast(
-            state.language === "zh"
-                ? "正在听..."
-                : "Listening..."
-        );
-    };
+            listening =
+                true;
+
+            micBtn.style.color =
+                "#818cf8";
+
+            showToast(
+                t("listening")
+            );
+
+        };
 
     recognition.onresult =
-        event => {
+        (event) => {
 
-            let finalText = "";
-
-            let interimText = "";
+            let transcript = "";
 
             for (
                 let i = event.resultIndex;
@@ -2988,130 +4581,891 @@ function initSpeechRecognition() {
                 i++
             ) {
 
-                const result =
-                    event.results[i];
+                transcript +=
+                    event.results[i][0]
+                        .transcript;
 
-                if (
-                    result.isFinal
-                ) {
-
-                    finalText +=
-                        result[0].transcript;
-
-                } else {
-
-                    interimText +=
-                        result[0].transcript;
-                }
             }
 
-            if (finalText) {
+            userInput.value =
+                transcript;
 
-                userInput.value +=
-                    finalText;
+            resizeTextarea();
 
-                autoResizeTextarea();
-            }
-
-            if (interimText) {
-
-                micBtn.title =
-                    interimText;
-            }
         };
 
     recognition.onerror =
-        event => {
+        (event) => {
 
             console.warn(
-                "[CQS AI] Speech recognition:",
+                "[CQS Speech]",
                 event.error
             );
 
-            showToast(
-                state.language === "zh"
-                    ? "语音识别不可用"
-                    : "Speech recognition unavailable"
-            );
         };
 
-    recognition.onend = () => {
+    recognition.onend =
+        () => {
 
-        micBtn.classList.remove(
-            "active"
-        );
+            listening =
+                false;
 
-        micBtn.title =
-            "语音输入";
-    };
+            micBtn.style.color =
+                "";
+
+        };
+
+    return true;
+
 }
 
-function toggleSpeech() {
+micBtn.addEventListener(
+    "click",
+    () => {
 
-    if (!recognition) {
+        if (!recognition) {
 
-        showToast(
-            state.language === "zh"
-                ? "当前浏览器不支持语音输入"
-                : "Speech input is not supported"
+            if (
+                !setupSpeechRecognition()
+            ) {
+
+                showToast(
+                    t("voiceUnsupported")
+                );
+
+                return;
+
+            }
+
+        }
+
+        try {
+
+            if (listening) {
+
+                recognition.stop();
+
+            } else {
+
+                recognition.lang =
+                    state.language === "zh-CN"
+                        ? "zh-CN"
+                        : state.language;
+
+                recognition.start();
+
+            }
+
+        } catch {}
+
+    }
+);
+
+/* =========================================================
+   SSE PARSER
+========================================================= */
+
+async function consumeSSE(
+    response,
+    handlers
+) {
+
+    if (!response.body) {
+
+        throw new Error(
+            "Response body is unavailable"
         );
 
+    }
+
+    const reader =
+        response.body.getReader();
+
+    const decoder =
+        new TextDecoder("utf-8");
+
+    let buffer = "";
+
+    while (true) {
+
+        const {
+            value,
+            done
+        } =
+            await reader.read();
+
+        if (done) {
+            break;
+        }
+
+        buffer +=
+            decoder.decode(
+                value,
+                {
+                    stream: true
+                }
+            );
+
+        const chunks =
+            buffer.split(
+                /\r?\n\r?\n/
+            );
+
+        buffer =
+            chunks.pop() || "";
+
+        for (
+            const chunk
+            of chunks
+        ) {
+
+            processSSEChunk(
+                chunk,
+                handlers
+            );
+
+        }
+
+    }
+
+    buffer +=
+        decoder.decode();
+
+    if (buffer.trim()) {
+
+        processSSEChunk(
+            buffer,
+            handlers
+        );
+
+    }
+
+}
+
+function processSSEChunk(
+    chunk,
+    handlers
+) {
+
+    const lines =
+        chunk.split(
+            /\r?\n/
+        );
+
+    const dataLines =
+        lines
+            .filter(
+                line =>
+                    line.startsWith(
+                        "data:"
+                    )
+            )
+            .map(
+                line =>
+                    line
+                        .slice(5)
+                        .trim()
+            );
+
+    if (!dataLines.length) {
         return;
     }
 
+    const data =
+        dataLines.join("\n");
+
+    if (!data) {
+        return;
+    }
+
+    if (data === "[DONE]") {
+
+        handlers.done?.();
+
+        return;
+
+    }
+
+    let packet;
+
     try {
 
+        packet =
+            JSON.parse(data);
+
+    } catch {
+
+        return;
+
+    }
+
+    if (
+        packet.type ===
+        "reasoning"
+    ) {
+
+        handlers.reasoning?.(
+            packet.content || ""
+        );
+
+        return;
+
+    }
+
+    if (
+        packet.type ===
+        "delta"
+    ) {
+
+        handlers.delta?.(
+            packet.content || ""
+        );
+
+        return;
+
+    }
+
+    if (
+        packet.type ===
+        "usage"
+    ) {
+
+        handlers.usage?.(
+            packet.usage
+        );
+
+        return;
+
+    }
+
+    if (
+        packet.type ===
+        "error"
+    ) {
+
+        handlers.error?.(
+            packet.error ||
+            t("apiError")
+        );
+
+        return;
+
+    }
+
+    if (
+        packet.type ===
+        "done"
+    ) {
+
+        handlers.done?.();
+
+    }
+
+}
+
+/* =========================================================
+   SYSTEM PROMPT
+========================================================= */
+
+function buildSystemPrompt() {
+
+    const languageName =
+        LANGUAGES[
+            state.language
+        ]?.native ||
+        "简体中文";
+
+    let prompt = `You are CQS AI Global, an advanced AI assistant.
+
+Current interface language: ${languageName}.
+Respond naturally in the user's language unless the user explicitly asks for another language.
+
+Current mode: ${state.currentMode}.
+Current model: ${MODEL_NAMES[state.currentModel] || state.currentModel}.
+
+Do not expose hidden chain-of-thought or private reasoning.
+Provide concise useful explanations and final answers.
+
+`;
+
+    if (
+        state.currentMode ===
+        "still"
+    ) {
+
+        prompt += `
+STILL mode:
+Think carefully before answering.
+Provide a clear conclusion and useful reasoning summary,
+but do not expose hidden chain-of-thought.
+`;
+
+    }
+
+    if (
+        state.currentMode ===
+        "agent"
+    ) {
+
+        prompt += `
+Agent mode:
+Act as a task-oriented agent.
+Break complex requests into practical steps.
+Do not claim to have performed external actions unless they actually happened.
+`;
+
+    }
+
+    return prompt;
+
+}
+
+/* =========================================================
+   API REQUEST
+========================================================= */
+
+let abortController =
+    null;
+
+async function sendMessage() {
+
+    const text =
+        userInput.value.trim();
+
+    if (!text) {
+        return;
+    }
+
+    const conversation =
+        ensureConversation();
+
+    if (
+        conversation.messages.length === 0
+    ) {
+
+        conversation.title =
+            text.length > 24
+                ? text.slice(0,24) + "..."
+                : text;
+
+    }
+
+    const userMessage = {
+
+        role: "user",
+
+        content: text,
+
+        createdAt:
+            Date.now()
+
+    };
+
+    conversation.messages.push(
+        userMessage
+    );
+
+    conversation.updatedAt =
+        Date.now();
+
+    conversation.model =
+        state.currentModel;
+
+    conversation.mode =
+        state.currentMode;
+
+    saveState();
+
+    userInput.value =
+        "";
+
+    resizeTextarea();
+
+    attachedFile =
+        null;
+
+    fileInput.value =
+        "";
+
+    attachmentPreview.style.display =
+        "none";
+
+    renderHistory();
+
+    renderMessages();
+
+    /* -----------------------------------------------------
+       Temporary assistant message
+    ----------------------------------------------------- */
+
+    const assistantMessage = {
+
+        role: "assistant",
+
+        content: "",
+
+        reasoning: "",
+
+        createdAt:
+            Date.now(),
+
+        streaming:
+            true
+
+    };
+
+    conversation.messages.push(
+        assistantMessage
+    );
+
+    renderMessages();
+
+    scrollToBottom();
+
+    setSendLoading(
+        true
+    );
+
+    abortController =
+        new AbortController();
+
+    let gotAnswer =
+        false;
+
+    let gotDone =
+        false;
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/chat",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                        "Accept":
+                            "text/event-stream"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            messages:
+                                conversation.messages
+                                    .filter(
+                                        message =>
+                                            message.role ===
+                                            "user" ||
+                                            message.role ===
+                                            "assistant"
+                                    )
+                                    .map(
+                                        message => ({
+                                            role:
+                                                message.role,
+                                            content:
+                                                message.content || ""
+                                        })
+                                    ),
+
+                            systemPrompt:
+                                buildSystemPrompt(),
+
+                            conversationId:
+                                conversation.id,
+
+                            mode:
+                                state.currentMode,
+
+                            language:
+                                state.language,
+
+                            model:
+                                state.currentModel
+
+                        }),
+
+                    signal:
+                        abortController.signal
+
+                }
+            );
+
+        if (!response.ok) {
+
+            let errorText =
+                `HTTP ${response.status}`;
+
+            try {
+
+                const json =
+                    await response.json();
+
+                errorText =
+                    json.error ||
+                    errorText;
+
+            } catch {}
+
+            throw new Error(
+                errorText
+            );
+
+        }
+
+        await consumeSSE(
+            response,
+            {
+
+                reasoning:
+                    (content) => {
+
+                        assistantMessage.reasoning +=
+                            content;
+
+                        updateStreamingMessage(
+                            assistantMessage
+                        );
+
+                    },
+
+                delta:
+                    (content) => {
+
+                        gotAnswer =
+                            true;
+
+                        assistantMessage.content +=
+                            content;
+
+                        updateStreamingMessage(
+                            assistantMessage
+                        );
+
+                    },
+
+                usage:
+                    (usage) => {
+
+                        assistantMessage.usage =
+                            usage;
+
+                    },
+
+                error:
+                    (message) => {
+
+                        if (
+                            !assistantMessage.content
+                        ) {
+
+                            assistantMessage.content =
+                                `**Error:** ${message}`;
+
+                        }
+
+                        showToast(
+                            message
+                        );
+
+                        updateStreamingMessage(
+                            assistantMessage
+                        );
+
+                    },
+
+                done:
+                    () => {
+
+                        gotDone =
+                            true;
+
+                    }
+
+            }
+        );
+
         if (
-            micBtn.classList.contains(
-                "active"
-            )
+            !gotAnswer &&
+            !assistantMessage.content
         ) {
 
-            recognition.stop();
+            assistantMessage.content =
+                t("emptyResponse");
 
-        } else {
-
-            recognition.lang =
-                state.language === "zh"
-                    ? "zh-CN"
-                    : "en-US";
-
-            recognition.start();
         }
 
     } catch (error) {
 
-        console.warn(error);
+        if (
+            error?.name ===
+            "AbortError"
+        ) {
+
+            assistantMessage.content +=
+                "\n\n_Stopped._";
+
+        } else {
+
+            console.error(
+                "[CQS AI API]",
+                error
+            );
+
+            assistantMessage.content =
+                `**${t("apiError")}**\n\n${error?.message || "Unknown error"}`;
+
+            showToast(
+                error?.message ||
+                t("apiError")
+            );
+
+        }
+
+    } finally {
+
+        assistantMessage.streaming =
+            false;
+
+        conversation.updatedAt =
+            Date.now();
+
+        saveState();
+
+        renderHistory();
+
+        renderMessages();
+
+        setSendLoading(
+            false
+        );
+
+        abortController =
+            null;
+
+        scrollToBottom();
+
     }
+
 }
+
+function updateStreamingMessage(
+    assistantMessage
+) {
+
+    const rows =
+        messagesEl.querySelectorAll(
+            ".message-row.assistant"
+        );
+
+    const row =
+        rows[rows.length - 1];
+
+    if (!row) {
+
+        renderMessages();
+
+        return;
+
+    }
+
+    const stack =
+        row.querySelector(
+            ".message-stack"
+        );
+
+    if (!stack) return;
+
+    let reasoning =
+        stack.querySelector(
+            ".reasoning-box"
+        );
+
+    if (
+        assistantMessage.reasoning
+    ) {
+
+        if (!reasoning) {
+
+            reasoning =
+                document.createElement(
+                    "div"
+                );
+
+            reasoning.className =
+                "reasoning-box";
+
+            stack.insertBefore(
+                reasoning,
+                stack.firstChild.nextSibling
+            );
+
+        }
+
+        reasoning.innerHTML = `
+
+            <div class="reasoning-head">
+
+                <i class="fa-solid fa-brain"></i>
+
+                <span>
+                    ${escapeHtml(t("thinking"))}
+                </span>
+
+            </div>
+
+            <div class="reasoning-content">
+                ${escapeHtml(
+                    assistantMessage.reasoning
+                )}
+            </div>
+
+        `;
+
+    }
+
+    let bubble =
+        stack.querySelector(
+            ".message-bubble"
+        );
+
+    if (!bubble) {
+
+        bubble =
+            document.createElement(
+                "div"
+            );
+
+        bubble.className =
+            "message-bubble markdown-body";
+
+        stack.appendChild(
+            bubble
+        );
+
+    }
+
+    bubble.innerHTML =
+        renderMarkdown(
+            assistantMessage.content
+        );
+
+    enhanceCodeBlocks(
+        bubble
+    );
+
+    scrollToBottom();
+
+}
+
+/* =========================================================
+   SEND BUTTON
+========================================================= */
+
+function setSendLoading(
+    loading
+) {
+
+    if (loading) {
+
+        sendBtn.disabled =
+            false;
+
+        sendBtn.innerHTML =
+            `<i class="fa-solid fa-stop"></i>`;
+
+        sendBtn.dataset.stop =
+            "true";
+
+    } else {
+
+        sendBtn.disabled =
+            false;
+
+        sendBtn.innerHTML =
+            `<i class="fa-solid fa-arrow-up"></i>`;
+
+        sendBtn.dataset.stop =
+            "false";
+
+    }
+
+}
+
+sendBtn.addEventListener(
+    "click",
+    (event) => {
+
+        if (
+            sendBtn.dataset.stop ===
+            "true"
+        ) {
+
+            event.preventDefault();
+
+            if (abortController) {
+
+                abortController.abort();
+
+            }
+
+        }
+
+    }
+);
+
+chatForm.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+        if (
+            sendBtn.dataset.stop ===
+            "true"
+        ) {
+
+            return;
+
+        }
+
+        await sendMessage();
+
+    }
+);
+
+/* =========================================================
+   ENTER TO SEND
+========================================================= */
+
+userInput.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            chatForm.requestSubmit();
+
+        }
+
+    }
+);
 
 /* =========================================================
    EXPORT
 ========================================================= */
 
-function getConversationForExport() {
-
-    const conversation =
-        getCurrentConversation();
-
-    if (
-        !conversation ||
-        !conversation.messages.length
-    ) {
-
-        showToast(
-            state.language === "zh"
-                ? "当前没有可导出的对话"
-                : "No conversation to export"
-        );
-
-        return null;
-    }
-
-    return conversation;
-}
-
-function buildTextExport(conversation) {
+function buildExportText(
+    conversation
+) {
 
     let output =
         "CQS AI Global\n";
@@ -3120,79 +5474,67 @@ function buildTextExport(conversation) {
         "==============================\n";
 
     output +=
-        `Title: ${conversation.title}\n`;
+        `Title: ${
+            conversation.title || "Conversation"
+        }\n`;
 
     output +=
-        `Model: ${conversation.model}\n`;
+        `Model: ${
+            MODEL_NAMES[
+                conversation.model
+            ] ||
+            conversation.model ||
+            ""
+        }\n`;
 
     output +=
-        `Mode: ${conversation.mode}\n`;
+        `Mode: ${
+            conversation.mode || ""
+        }\n`;
 
     output +=
-        `Created: ${new Date(
-            conversation.createdAt
-        ).toLocaleString()}\n`;
+        `Created: ${
+            new Date(
+                conversation.createdAt ||
+                Date.now()
+            ).toLocaleString()
+        }\n`;
 
     output +=
         "==============================\n\n";
 
-    conversation.messages.forEach(
-        message => {
+    for (
+        const message
+        of conversation.messages || []
+    ) {
 
-            output +=
-                message.role === "user"
-                    ? "USER\n"
-                    : "CQS AI\n";
+        if (
+            message.role !== "user" &&
+            message.role !== "assistant"
+        ) {
 
-            output +=
-                `${message.content || ""}\n\n`;
+            continue;
+
         }
-    );
+
+        output +=
+            message.role === "user"
+                ? "USER\n"
+                : "CQS AI\n";
+
+        output +=
+            `${message.content || ""}\n\n`;
+
+    }
 
     return output;
-}
 
-function buildMarkdownExport(
-    conversation
-) {
-
-    let output =
-        `# ${conversation.title}\n\n`;
-
-    output +=
-        `- Model: ${conversation.model}\n`;
-
-    output +=
-        `- Mode: ${conversation.mode}\n`;
-
-    output +=
-        `- Created: ${new Date(
-            conversation.createdAt
-        ).toLocaleString()}\n\n`;
-
-    output +=
-        "---\n\n";
-
-    conversation.messages.forEach(
-        message => {
-
-            output +=
-                message.role === "user"
-                    ? "## User\n\n"
-                    : "## CQS AI\n\n";
-
-            output +=
-                `${message.content || ""}\n\n`;
-        }
-    );
-
-    return output;
 }
 
 function downloadFile(
     content,
     filename,
-    mime
+    type
 ) {
 
     const blob =
@@ -3200,43 +5542,74 @@ function downloadFile(
             [content],
             {
                 type:
-                    `${mime};charset=utf-8`
+                    `${type};charset=utf-8`
             }
         );
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
-    const link =
-        document.createElement("a");
+    const anchor =
+        document.createElement(
+            "a"
+        );
 
-    link.href = url;
+    anchor.href =
+        url;
 
-    link.download = filename;
+    anchor.download =
+        filename;
 
-    document.body.appendChild(link);
+    document.body.appendChild(
+        anchor
+    );
 
-    link.click();
+    anchor.click();
 
-    link.remove();
+    anchor.remove();
 
     setTimeout(
-        () =>
-            URL.revokeObjectURL(url),
+        () => {
+            URL.revokeObjectURL(
+                url
+            );
+        },
         1000
     );
+
 }
 
-function exportConversation(format) {
+function exportConversation() {
 
     const conversation =
-        getConversationForExport();
+        getCurrentConversation();
 
     if (!conversation) {
+
+        showToast(
+            t("noConversation")
+        );
+
+        return;
+
+    }
+
+    const format =
+        window.prompt(
+            t("exportFormat"),
+            "md"
+        );
+
+    if (!format) {
         return;
     }
 
-    const safeTitle =
+    const normalized =
+        format.trim().toLowerCase();
+
+    const safeName =
         (
             conversation.title ||
             "CQS-AI-Conversation"
@@ -3245,29 +5618,94 @@ function exportConversation(format) {
             /[\\/:*?"<>|]/g,
             "_"
         )
-        .slice(0, 60);
+        .slice(
+            0,
+            60
+        );
 
-    if (format === "txt") {
+    if (
+        normalized ===
+        "txt"
+    ) {
 
         downloadFile(
-            buildTextExport(
+            buildExportText(
                 conversation
             ),
-            `${safeTitle}.txt`,
+            `${safeName}.txt`,
             "text/plain"
         );
 
-    } else if (format === "md") {
+        return;
+
+    }
+
+    if (
+        normalized ===
+        "md"
+    ) {
+
+        let markdown =
+            `# ${
+                conversation.title ||
+                "CQS AI Conversation"
+            }\n\n`;
+
+        markdown +=
+            `- Model: ${
+                MODEL_NAMES[
+                    conversation.model
+                ] ||
+                conversation.model ||
+                ""
+            }\n`;
+
+        markdown +=
+            `- Mode: ${
+                conversation.mode || ""
+            }\n\n`;
+
+        markdown +=
+            "---\n\n";
+
+        for (
+            const message
+            of conversation.messages || []
+        ) {
+
+            if (
+                message.role !== "user" &&
+                message.role !== "assistant"
+            ) {
+
+                continue;
+
+            }
+
+            markdown +=
+                message.role === "user"
+                    ? "## User\n\n"
+                    : "## CQS AI\n\n";
+
+            markdown +=
+                `${message.content || ""}\n\n`;
+
+        }
 
         downloadFile(
-            buildMarkdownExport(
-                conversation
-            ),
-            `${safeTitle}.md`,
+            markdown,
+            `${safeName}.md`,
             "text/markdown"
         );
 
-    } else if (format === "json") {
+        return;
+
+    }
+
+    if (
+        normalized ===
+        "json"
+    ) {
 
         downloadFile(
             JSON.stringify(
@@ -3275,21 +5713,25 @@ function exportConversation(format) {
                 null,
                 2
             ),
-            `${safeTitle}.json`,
+            `${safeName}.json`,
             "application/json"
         );
+
+        return;
+
     }
 
-    exportModal.classList.remove(
-        "show"
+    showToast(
+        t("invalidFormat")
     );
 
-    showToast(
-        state.language === "zh"
-            ? "导出完成"
-            : "Export completed"
-    );
 }
+
+$("export-btn")
+    .addEventListener(
+        "click",
+        exportConversation
+    );
 
 /* =========================================================
    SHARE
@@ -3298,30 +5740,36 @@ function exportConversation(format) {
 async function shareConversation() {
 
     const conversation =
-        getConversationForExport();
+        getCurrentConversation();
 
     if (!conversation) {
+
+        showToast(
+            t("noConversation")
+        );
+
         return;
+
     }
 
+    const title =
+        conversation.title ||
+        "CQS AI";
+
     const text =
-        buildTextExport(
+        buildExportText(
             conversation
         );
 
-    const title =
-        `CQS AI · ${conversation.title}`;
-
     if (
-        navigator.share &&
-        typeof navigator.share ===
-            "function"
+        navigator.share
     ) {
 
         try {
 
             await navigator.share({
-                title,
+                title:
+                    `CQS AI · ${title}`,
                 text
             });
 
@@ -3330,25 +5778,25 @@ async function shareConversation() {
         } catch (error) {
 
             if (
-                error &&
-                error.name ===
-                    "AbortError"
+                error?.name ===
+                "AbortError"
             ) {
+
                 return;
+
             }
+
         }
+
     }
 
     try {
 
-        await navigator.clipboard.writeText(
-            text
-        );
+        await navigator.clipboard
+            .writeText(text);
 
         showToast(
-            state.language === "zh"
-                ? "对话已复制"
-                : "Conversation copied"
+            t("copied")
         );
 
     } catch {
@@ -3358,7 +5806,8 @@ async function shareConversation() {
                 "textarea"
             );
 
-        textarea.value = text;
+        textarea.value =
+            text;
 
         textarea.style.position =
             "fixed";
@@ -3379,775 +5828,351 @@ async function shareConversation() {
             );
 
             showToast(
-                state.language === "zh"
-                    ? "对话已复制"
-                    : "Conversation copied"
+                t("copied")
             );
 
         } catch {
 
-            alert(text);
+            showToast(
+                t("shareFailed")
+            );
+
         }
 
         textarea.remove();
+
     }
+
 }
+
+$("share-btn")
+    .addEventListener(
+        "click",
+        shareConversation
+    );
 
 /* =========================================================
    NOTION
 ========================================================= */
 
-function updateNotionStatus() {
+$("notion-btn")
+    .addEventListener(
+        "click",
+        () => {
 
-    if (state.notion.connected) {
+            openModal(
+                "notion-modal"
+            );
 
-        notionStatus.textContent =
-            state.language === "zh"
-                ? "已连接"
-                : "Connected";
-
-        notionStatus.style.color =
-            "#34d399";
-
-    } else {
-
-        notionStatus.textContent =
-            state.language === "zh"
-                ? "未连接"
-                : "Not connected";
-
-        notionStatus.style.color =
-            "";
-    }
-}
-
-function openNotionModal() {
-
-    notionModal.classList.add(
-        "show"
+        }
     );
 
-    updateNotionStatus();
-}
+$("notion-connect-btn")
+    .addEventListener(
+        "click",
+        () => {
 
-function closeNotionModal() {
+            showToast(
+                t("notionUnavailable")
+            );
 
-    notionModal.classList.remove(
-        "show"
+            $("notion-result").style.display =
+                "block";
+
+            $("notion-result").textContent =
+                t("notionSaveUnavailable");
+
+        }
     );
-}
 
-async function connectNotion() {
+$("notion-save-btn")
+    .addEventListener(
+        "click",
+        async () => {
 
-    try {
+            const conversation =
+                getCurrentConversation();
 
-        /*
-         * 真正的 Notion OAuth 应由后端
-         * /api/notion/connect 处理。
-         *
-         * 如果后端返回 redirectUrl，
-         * 前端跳转到真正的授权页面。
-         */
+            if (!conversation) {
 
-        const response =
-            await fetch(
-                CONFIG.notionConnectEndpoint,
-                {
-                    method: "GET"
+                showToast(
+                    t("noConversation")
+                );
+
+                return;
+
+            }
+
+            /*
+             * 如果未来添加 /api/notion，
+             * 这里可以直接 POST 当前 conversation。
+             */
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/notion",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    conversation
+                                })
+                        }
+                    );
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `HTTP ${response.status}`
+                    );
+
                 }
-            );
 
-        if (!response.ok) {
+                const result =
+                    await response.json();
 
-            throw new Error(
-                `HTTP ${response.status}`
-            );
+                $("notion-result").style.display =
+                    "block";
+
+                $("notion-result").textContent =
+                    result.message ||
+                    "Notion saved.";
+
+            } catch {
+
+                $("notion-result").style.display =
+                    "block";
+
+                $("notion-result").textContent =
+                    t("notionSaveUnavailable");
+
+            }
+
         }
+    );
 
-        const data =
-            await response.json();
+/* =========================================================
+   SETTINGS
+========================================================= */
 
-        if (data.redirectUrl) {
+$("clear-history-btn")
+    .addEventListener(
+        "click",
+        () => {
 
-            window.location.href =
-                data.redirectUrl;
+            const confirmed =
+                window.confirm(
+                    state.language === "zh-CN"
+                        ? "确定删除所有历史对话吗？"
+                        : "Delete all conversations?"
+                );
 
-            return;
-        }
+            if (!confirmed) {
+                return;
+            }
 
-        if (
-            data.connected === true
-        ) {
+            state.conversations =
+                {};
 
-            state.notion.connected =
-                true;
+            state.currentConversationId =
+                null;
 
             saveState();
 
-            updateNotionStatus();
+            createConversation();
 
-            showNotionResult(
-                "Notion 已连接。"
+            showToast(
+                t("historyCleared")
             );
 
-            return;
-        }
-
-        showNotionResult(
-            JSON.stringify(
-                data,
-                null,
-                2
-            )
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        showNotionResult(
-            "Notion 尚未配置后端连接。\n\n" +
-            "请确认 /api/notion/connect 已部署。"
-        );
-    }
-}
-
-function showNotionResult(text) {
-
-    notionResult.textContent =
-        text;
-
-    notionResult.classList.add(
-        "show"
-    );
-}
-
-async function saveCurrentToNotion() {
-
-    const conversation =
-        getConversationForExport();
-
-    if (!conversation) {
-        return;
-    }
-
-    if (!state.notion.connected) {
-
-        showNotionResult(
-            "请先连接 Notion。"
-        );
-
-        return;
-    }
-
-    showNotionResult(
-        "正在保存当前对话..."
-    );
-
-    try {
-
-        const response =
-            await fetch(
-                CONFIG.notionSaveEndpoint,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-                            conversation
-                        })
-                }
+            closeModal(
+                "settings-modal"
             );
 
-        const data =
-            await response.json()
-                .catch(
-                    () => ({})
-                );
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                `HTTP ${response.status}`
-            );
         }
-
-        showNotionResult(
-            data.message ||
-            "对话已发送到 Notion。"
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        showNotionResult(
-            `保存失败：${error.message}`
-        );
-    }
-}
-
-async function loadNotionPages() {
-
-    if (!state.notion.connected) {
-
-        showNotionResult(
-            "请先连接 Notion。"
-        );
-
-        return;
-    }
-
-    showNotionResult(
-        "正在读取 Notion 页面..."
     );
 
-    try {
-
-        const response =
-            await fetch(
-                CONFIG.notionPagesEndpoint
-            );
-
-        const data =
-            await response.json()
-                .catch(
-                    () => ({})
-                );
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                `HTTP ${response.status}`
-            );
-        }
-
-        if (
-            Array.isArray(
-                data.pages
-            )
-        ) {
-
-            showNotionResult(
-                data.pages
-                    .map(
-                        page =>
-                            `• ${page.title || page.id}`
-                    )
-                    .join("\n")
-            );
-
-        } else {
-
-            showNotionResult(
-                JSON.stringify(
-                    data,
-                    null,
-                    2
-                )
-            );
-        }
-
-    } catch (error) {
-
-        console.error(error);
-
-        showNotionResult(
-            `读取失败：${error.message}`
-        );
-    }
-}
-
-/* =========================================================
-   MOBILE SIDEBAR
-========================================================= */
-
-function openMobileSidebar() {
-
-    sidebar.classList.add(
-        "mobile-open"
-    );
-
-    sidebarBackdrop.classList.add(
-        "visible"
-    );
-}
-
-function closeMobileSidebar() {
-
-    sidebar.classList.remove(
-        "mobile-open"
-    );
-
-    sidebarBackdrop.classList.remove(
-        "visible"
-    );
-}
-
-/* =========================================================
-   CLEAR
-========================================================= */
-
-function clearCurrentConversation() {
-
-    const conversation =
-        getCurrentConversation();
-
-    if (!conversation) {
-        return;
-    }
-
-    if (
-        conversation.messages.length ===
-        0
-    ) {
-
-        showToast(
-            "当前对话已经为空"
-        );
-
-        return;
-    }
-
-    const ok = confirm(
-        state.language === "zh"
-            ? "确定清空当前对话吗？"
-            : "Clear current conversation?"
-    );
-
-    if (!ok) {
-        return;
-    }
-
-    conversation.messages = [];
-
-    conversation.updatedAt =
-        Date.now();
-
-    saveState();
-
-    renderAll();
-}
-
-/* =========================================================
-   EVENTS
-========================================================= */
-
-openSidebarBtn.addEventListener(
-    "click",
-    openMobileSidebar
-);
-
-closeSidebarBtn.addEventListener(
-    "click",
-    closeMobileSidebar
-);
-
-sidebarBackdrop.addEventListener(
-    "click",
-    closeMobileSidebar
-);
-
-newChatBtn.addEventListener(
-    "click",
-    createConversation
-);
-
-document
-    .querySelectorAll(".mode-btn")
-    .forEach(btn => {
-
-        btn.addEventListener(
-            "click",
-            () => {
-
-                setMode(
-                    btn.dataset.mode
-                );
-
-                closeMobileSidebar();
-            }
-        );
-    });
-
-chatForm.addEventListener(
-    "submit",
-    event => {
-
-        event.preventDefault();
-
-        sendMessage(
-            userInput.value
-        );
-    }
-);
-
-userInput.addEventListener(
-    "input",
-    autoResizeTextarea
-);
-
-userInput.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
-
-            event.preventDefault();
-
-            chatForm.requestSubmit();
-        }
-    }
-);
-
-attachBtn.addEventListener(
-    "click",
-    () => {
-
-        fileInput.click();
-    }
-);
-
-fileInput.addEventListener(
-    "change",
-    event => {
-
-        const file =
-            event.target.files?.[0];
-
-        if (file) {
-            setAttachment(file);
-        }
-    }
-);
-
-removeAttachmentBtn.addEventListener(
-    "click",
-    clearAttachment
-);
-
-micBtn.addEventListener(
-    "click",
-    toggleSpeech
-);
-
-shareChatBtn.addEventListener(
-    "click",
-    shareConversation
-);
-
-exportChatBtn.addEventListener(
-    "click",
-    () => {
-
-        exportModal.classList.add(
-            "show"
-        );
-    }
-);
-
-exportCloseBtn.addEventListener(
-    "click",
-    () => {
-
-        exportModal.classList.remove(
-            "show"
-        );
-    }
-);
-
-document
-    .querySelectorAll(
-        "[data-export-format]"
-    )
-    .forEach(btn => {
-
-        btn.addEventListener(
-            "click",
-            () => {
-
-                exportConversation(
-                    btn.dataset.exportFormat
-                );
-            }
-        );
-    });
-
-notionBtn.addEventListener(
-    "click",
-    openNotionModal
-);
-
-notionCloseBtn.addEventListener(
-    "click",
-    closeNotionModal
-);
-
-notionConnectBtn.addEventListener(
-    "click",
-    connectNotion
-);
-
-notionSaveBtn.addEventListener(
-    "click",
-    saveCurrentToNotion
-);
-
-notionPagesBtn.addEventListener(
-    "click",
-    loadNotionPages
-);
-
-settingsBtn.addEventListener(
-    "click",
-    () => {
-
-        settingsModal.classList.add(
-            "show"
-        );
-    }
-);
-
-settingsCloseBtn.addEventListener(
-    "click",
-    () => {
-
-        settingsModal.classList.remove(
-            "show"
-        );
-    }
-);
-
-clearCurrentBtn.addEventListener(
-    "click",
-    clearCurrentConversation
-);
-
-langBtn.addEventListener(
-    "click",
-    toggleLanguage
-);
-
-clearHistoryBtn.addEventListener(
-    "click",
-    () => {
-
-        const ok = confirm(
-            "确定删除全部历史记录吗？"
-        );
-
-        if (!ok) {
-            return;
-        }
-
-        state.conversations = {};
-
-        state.currentConversationId =
-            null;
-
-        saveState();
-
-        settingsModal.classList.remove(
-            "show"
-        );
-
-        renderAll();
-
-        showToast(
-            "历史记录已清空"
-        );
-    }
-);
-
-resetSettingsBtn.addEventListener(
-    "click",
-    () => {
-
-        const ok = confirm(
-            "确定重置本地设置吗？"
-        );
-
-        if (!ok) {
-            return;
-        }
-
-        state.language = "zh";
-
-        state.model =
-            CONFIG.defaultModel;
-
-        state.mode = "chat";
-
-        state.notion.connected =
-            false;
-
-        saveState();
-
-        settingsModal.classList.remove(
-            "show"
-        );
-
-        renderAll();
-
-        showToast(
-            "设置已重置"
-        );
-    }
-);
-
-/* =========================================================
-   QUICK PROMPTS
-========================================================= */
-
-document
-    .querySelectorAll(
-        ".quick-action"
-    )
-    .forEach(btn => {
-
-        btn.addEventListener(
-            "click",
-            () => {
-
-                const prompt =
-                    btn.dataset.prompt ||
-                    "";
-
-                userInput.value =
-                    prompt;
-
-                autoResizeTextarea();
-
-                userInput.focus();
-            }
-        );
-    });
-
-/* =========================================================
-   MODAL BACKDROP
-========================================================= */
-
-[
-    notionModal,
-    exportModal,
-    settingsModal
-].forEach(modal => {
-
-    modal.addEventListener(
+$("reset-language-btn")
+    .addEventListener(
         "click",
-        event => {
+        () => {
 
-            if (
-                event.target === modal
-            ) {
+            setLanguage(
+                "zh-CN"
+            );
 
-                modal.classList.remove(
-                    "show"
-                );
-            }
+            closeModal(
+                "settings-modal"
+            );
+
         }
     );
-});
-
-/* =========================================================
-   ESC
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key !== "Escape"
-        ) {
-            return;
-        }
-
-        notionModal.classList.remove(
-            "show"
-        );
-
-        exportModal.classList.remove(
-            "show"
-        );
-
-        settingsModal.classList.remove(
-            "show"
-        );
-
-        closeMobileSidebar();
-    }
-);
 
 /* =========================================================
    INITIALIZATION
 ========================================================= */
 
-function initialize() {
+loadState();
 
-    loadState();
+if (
+    !state.conversations ||
+    typeof state.conversations !==
+        "object"
+) {
 
-    if (
-        !state.currentConversationId ||
-        !state.conversations[
-            state.currentConversationId
-        ]
-    ) {
+    state.conversations =
+        {};
 
-        const conversations =
-            Object.values(
-                state.conversations
-            );
-
-        if (conversations.length) {
-
-            conversations.sort(
-                (a, b) =>
-                    b.updatedAt -
-                    a.updatedAt
-            );
-
-            state.currentConversationId =
-                conversations[0].id;
-
-        } else {
-
-            createConversation();
-
-            return;
-        }
-    }
-
-    runBootAnimation();
-
-    setMode(
-        state.mode || "chat"
-    );
-
-    applyLanguage();
-
-    updateNotionStatus();
-
-    initSpeechRecognition();
-
-    renderAll();
-
-    autoResizeTextarea();
-
-    saveState();
 }
 
-initialize();
+if (
+    !state.currentModel
+) {
+
+    state.currentModel =
+        "deepseek-v4-flash";
+
+}
+
+if (
+    !state.currentMode
+) {
+
+    state.currentMode =
+        "chat";
+
+}
+
+if (
+    !LANGUAGES[
+        state.language
+    ]
+) {
+
+    state.language =
+        "zh-CN";
+
+}
+
+if (
+    !state.currentConversationId ||
+    !state.conversations[
+        state.currentConversationId
+    ]
+) {
+
+    createConversation();
+
+} else {
+
+    renderHistory();
+    renderMessages();
+
+}
+
+updateModelUI();
+
+updateModeUI();
+
+applyTranslations();
+
+renderLanguageOptions();
+
+resizeTextarea();
+
+/* =========================================================
+   WELCOME TITLE ANIMATION
+========================================================= */
+
+(function welcomeAnimation() {
+
+    const title =
+        $("welcome-title");
+
+    if (!title) {
+        return;
+    }
+
+    const text =
+        title.textContent;
+
+    title.textContent =
+        "";
+
+    [...text].forEach(
+        (char, index) => {
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+            span.textContent =
+                char;
+
+            span.style.opacity =
+                "0";
+
+            span.style.display =
+                "inline-block";
+
+            span.style.transform =
+                "translateY(5px)";
+
+            span.style.transition =
+                "opacity .22s ease, transform .22s ease";
+
+            title.appendChild(
+                span
+            );
+
+            setTimeout(
+                () => {
+
+                    span.style.opacity =
+                        "1";
+
+                    span.style.transform =
+                        "translateY(0)";
+
+                },
+                80 * index
+            );
+
+        }
+    );
+
+})();
+
+/* =========================================================
+   PAGE VISIBILITY
+========================================================= */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            renderHistory();
+
+        }
+
+    }
+);
+
+})();
 </script>
 
 </body>
