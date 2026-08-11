@@ -1,4163 +1,1121 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-    >
-
-    <meta name="theme-color" content="#020617">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <title>CQS AI</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        rel="stylesheet"
-    >
-
-    <style>
-
-        /* =========================================================
-           CORE
-        ========================================================= */
-
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-
-            overflow: hidden;
-
-            background: #020617;
-
-            overscroll-behavior: none;
-        }
-
-        body {
-            min-height: 100vh;
-            min-height: 100dvh;
-
-            color: #f8fafc;
-
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                Helvetica,
-                Arial,
-                sans-serif;
-
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
-        }
-
-        ::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-            display: none;
-        }
-
-        * {
-            scrollbar-width: none;
-        }
-
-        .safe-top {
-            padding-top: env(safe-area-inset-top);
-        }
-
-        .safe-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        input,
-        textarea,
-        button {
-            font-size: 16px;
-        }
-
-        button:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-        }
-
-        #user-input {
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        #user-input:focus {
-            outline: none;
-        }
-
-
-        /* =========================================================
-           MESSAGE
-        ========================================================= */
-
-        .message-enter {
-            animation: messageEnter 0.22s ease-out;
-        }
-
-        @keyframes messageEnter {
-
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-        }
-
-
-        /* =========================================================
-           THINKING DOT
-        ========================================================= */
-
-        .typing-dot {
-            animation: typing 1.2s infinite ease-in-out;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.15s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.30s;
-        }
-
-        @keyframes typing {
-
-            0%,
-            60%,
-            100% {
-                opacity: 0.25;
-                transform: translateY(0);
-            }
-
-            30% {
-                opacity: 1;
-                transform: translateY(-3px);
-            }
-
-        }
-
-
-        /* =========================================================
-           THINKING AVATAR
-        ========================================================= */
-
-        .thinking-avatar {
-            animation: thinkingAvatar 1.8s ease-in-out infinite;
-        }
-
-        @keyframes thinkingAvatar {
-
-            0%,
-            100% {
-                transform: translateY(0) scale(1);
-                box-shadow:
-                    0 0 0 rgba(59, 130, 246, 0.0);
-            }
-
-            50% {
-                transform: translateY(-2px) scale(1.04);
-                box-shadow:
-                    0 0 18px rgba(59, 130, 246, 0.35);
-            }
-
-        }
-
-
-        /* =========================================================
-           CQS INTRO
-        ========================================================= */
-
-        #cqs-intro {
-            position: fixed;
-            inset: 0;
-
-            z-index: 9999;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background:
-                radial-gradient(
-                    circle at center,
-                    rgba(30, 64, 175, 0.18),
-                    transparent 40%
-                ),
-                #020617;
-
-            transition:
-                opacity 0.7s ease,
-                visibility 0.7s ease;
-        }
-
-        #cqs-intro.intro-hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .intro-inner {
-            width: 100%;
-            padding: 32px;
-
-            text-align: center;
-        }
-
-        .intro-avatar {
-            width: 82px;
-            height: 82px;
-
-            margin: 0 auto 22px;
-
-            border-radius: 26px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #2563eb,
-                    #1e40af
-                );
-
-            box-shadow:
-                0 0 50px rgba(37, 99, 235, 0.28);
-
-            animation: introAvatar 2s ease-in-out infinite;
-        }
-
-        @keyframes introAvatar {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-5px);
-            }
-
-        }
-
-        .intro-face {
-            font-size: 36px;
-            user-select: none;
-        }
-
-        .intro-title {
-            min-height: 38px;
-
-            color: #f8fafc;
-
-            font-size: 25px;
-            font-weight: 700;
-
-            letter-spacing: 0.18em;
-        }
-
-        .intro-subtitle {
-            margin-top: 9px;
-
-            color: #64748b;
-
-            font-size: 10px;
-
-            letter-spacing: 0.25em;
-
-            text-transform: uppercase;
-        }
-
-        .intro-cursor {
-            display: inline-block;
-
-            width: 2px;
-            height: 23px;
-
-            margin-left: 4px;
-
-            vertical-align: -3px;
-
-            background: #60a5fa;
-
-            animation: cursorBlink 0.8s infinite;
-        }
-
-        @keyframes cursorBlink {
-
-            0%,
-            50% {
-                opacity: 1;
-            }
-
-            51%,
-            100% {
-                opacity: 0;
-            }
-
-        }
-
-
-        /* =========================================================
-           MODALS
-        ========================================================= */
-
-        #history-drawer,
-        #config-modal,
-        #confirm-modal {
-            transition: opacity 0.2s ease;
-        }
-
-        #history-drawer.hidden,
-        #config-modal.hidden,
-        #confirm-modal.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #history-panel {
-            transition:
-                transform 0.25s cubic-bezier(
-                    0.16,
-                    1,
-                    0.3,
-                    1
-                );
-        }
-
-        #history-drawer.hidden #history-panel {
-            transform: translateX(-100%);
-        }
-
-        .modal-content {
-            transform:
-                translateY(0)
-                scale(1);
-
-            transition:
-                transform 0.2s ease,
-                opacity 0.2s ease;
-        }
-
-        .modal-overlay.hidden .modal-content {
-            transform:
-                translateY(8px)
-                scale(0.98);
-
-            opacity: 0;
-        }
-
-
-        /* =========================================================
-           VOICE STATE
-        ========================================================= */
-
-        .voice-recording {
-            background: rgb(127 29 29) !important;
-            color: rgb(248 113 113) !important;
-            animation: voicePulse 1s infinite;
-        }
-
-        @keyframes voicePulse {
-
-            0%,
-            100% {
-                box-shadow:
-                    0 0 0 rgba(239, 68, 68, 0);
-            }
-
-            50% {
-                box-shadow:
-                    0 0 18px rgba(239, 68, 68, 0.35);
-            }
-
-        }
-
-
-        /* =========================================================
-           FILE CHIP
-        ========================================================= */
-
-        .file-chip {
-            animation: messageEnter 0.2s ease-out;
-        }
-
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#020617">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>CQS AI</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none;}
+*::-webkit-scrollbar{width:0;height:0;}
+html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#020617;overscroll-behavior:none;}
+body{min-height:100vh;min-height:100dvh;color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+input,textarea,button{font-size:16px;}
+button:disabled{opacity:.55;cursor:not-allowed;}
+button{-webkit-user-select:none;user-select:none;}
+.safe-top{padding-top:env(safe-area-inset-top);}
+.safe-bottom{padding-bottom:env(safe-area-inset-bottom);}
+#user-input{-webkit-appearance:none;appearance:none;}
+#user-input:focus{outline:none;}
+.message-enter{animation:messageEnter .22s ease-out;}
+@keyframes messageEnter{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.typing-dot{animation:typing 1.2s infinite ease-in-out;}
+.typing-dot:nth-child(2){animation-delay:.15s;}
+.typing-dot:nth-child(3){animation-delay:.3s;}
+@keyframes typing{0%,60%,100%{opacity:.25;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
+.thinking-avatar{animation:thinkingAvatar 1.8s ease-in-out infinite;}
+@keyframes thinkingAvatar{0%,100%{transform:translateY(0) scale(1);box-shadow:0 0 0 rgba(59,130,246,0);}50%{transform:translateY(-2px) scale(1.04);box-shadow:0 0 18px rgba(59,130,246,.35);}}
+#cqs-intro{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle at 50% 45%,rgba(59,130,246,.18),transparent 26%),radial-gradient(circle at 20% 20%,rgba(168,85,247,.12),transparent 25%),radial-gradient(circle at 80% 80%,rgba(34,211,238,.10),transparent 28%),#020617;transition:opacity .8s ease,visibility .8s ease;}
+#cqs-intro.intro-hidden{opacity:0;visibility:hidden;pointer-events:none;}
+.intro-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.intro-particle{position:absolute;width:3px;height:3px;border-radius:50%;background:white;opacity:.35;animation:particleFloat linear infinite;}
+@keyframes particleFloat{from{transform:translateY(30vh);opacity:0;}20%{opacity:.45;}80%{opacity:.3;}to{transform:translateY(-30vh);opacity:0;}}
+.intro-inner{position:relative;z-index:2;width:100%;padding:24px;text-align:center;}
+.intro-hex-core{width:110px;height:110px;margin:0 auto 28px;position:relative;display:flex;align-items:center;justify-content:center;}
+.intro-hex{position:absolute;inset:0;clip-path:polygon(25% 6.7%,75% 6.7%,100% 50%,75% 93.3%,25% 93.3%,0 50%);background:conic-gradient(from 0deg,#ff004c,#ff8a00,#ffe600,#20ff70,#00d9ff,#695cff,#ff28d7,#ff004c);animation:coreRotate 5s linear infinite,coreFloat 2.8s ease-in-out infinite;filter:drop-shadow(0 0 14px rgba(0,217,255,.35)) drop-shadow(0 0 35px rgba(168,85,247,.25));}
+.intro-hex::after{content:"";position:absolute;inset:4px;clip-path:inherit;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.9),transparent 8%),linear-gradient(135deg,#0f172a,#111827 50%,#020617);}
+.intro-hex-letter{position:relative;z-index:3;font-size:38px;font-weight:900;background:linear-gradient(90deg,#ff3b30,#ff9500,#ffe600,#32d74b,#00c7ff,#5856d6,#ff2d55);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 8px rgba(255,255,255,.2));animation:rainbowShift 3s linear infinite;}
+@keyframes coreRotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes coreFloat{0%,100%{margin-top:0;}50%{margin-top:-7px;}}
+@keyframes rainbowShift{from{background-position:0% 50%;}to{background-position:300% 50%;}}
+#intro-title{min-height:70px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:7px;padding:0 8px;}
+.intro-letter{position:relative;width:30px;height:35px;display:flex;align-items:center;justify-content:center;clip-path:polygon(25% 6.7%,75% 6.7%,100% 50%,75% 93.3%,25% 93.3%,0 50%);background:conic-gradient(from 20deg,#ff1744,#ff9100,#ffea00,#00e676,#00b8ff,#536dfe,#d500f9,#ff1744);opacity:0;transform:perspective(500px) rotateY(-180deg) rotateZ(-20deg) scale(.25);animation:introLetterIn .72s cubic-bezier(.16,1,.3,1) forwards;}
+.intro-letter::before{content:"";position:absolute;inset:2px;clip-path:inherit;background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.02) 45%,rgba(0,0,0,.45));z-index:1;}
+.intro-letter::after{content:"";position:absolute;inset:5px;clip-path:inherit;background:#020617;z-index:2;}
+.intro-letter span{position:relative;z-index:3;font-size:15px;font-weight:900;background:linear-gradient(90deg,#ff453a,#ff9f0a,#ffd60a,#30d158,#64d2ff,#5e5ce6,#ff375f);background-size:400% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rainbowShift 2.4s linear infinite;}
+.intro-letter.space{width:10px;clip-path:none;background:none;animation:none;opacity:1;transform:none;}
+@keyframes introLetterIn{0%{opacity:0;transform:perspective(500px) rotateY(-180deg) rotateZ(-25deg) scale(.2);filter:drop-shadow(0 0 0 rgba(255,255,255,0));}55%{opacity:1;transform:perspective(500px) rotateY(25deg) rotateZ(5deg) scale(1.12);}100%{opacity:1;transform:perspective(500px) rotateY(0deg) rotateZ(0deg) scale(1);filter:drop-shadow(0 0 8px rgba(0,217,255,.28)) drop-shadow(0 0 16px rgba(255,0,200,.16));}}
+.intro-subtitle{margin-top:16px;color:#64748b;font-size:9px;letter-spacing:.35em;text-transform:uppercase;opacity:0;animation:subtitleIn .8s 1.5s ease forwards;}
+@keyframes subtitleIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.profile-avatar{width:78px;height:78px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#4f46e5,#06b6d4);border:2px solid rgba(99,102,241,.35);box-shadow:0 0 20px rgba(99,102,241,.18);}
+.profile-avatar-placeholder{width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#4f46e5,#06b6d4);border:2px solid rgba(99,102,241,.35);font-size:25px;}
+#history-drawer,#config-modal,#confirm-modal,#profile-modal{transition:opacity .2s ease;}
+#history-drawer.hidden,#config-modal.hidden,#confirm-modal.hidden,#profile-modal.hidden{opacity:0;pointer-events:none;}
+#history-panel{transition:transform .25s cubic-bezier(.16,1,.3,1);}
+#history-drawer.hidden #history-panel{transform:translateX(-100%);}
+.modal-content{transform:translateY(0) scale(1);transition:transform .2s ease,opacity .2s ease;}
+.modal-overlay.hidden .modal-content{transform:translateY(8px) scale(.98);opacity:0;}
+.voice-recording{background:rgb(127 29 29)!important;color:rgb(248 113 113)!important;animation:voicePulse 1s infinite;}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 rgba(239,68,68,0);}50%{box-shadow:0 0 18px rgba(239,68,68,.35);}}
+.profile-menu-card{background:linear-gradient(145deg,rgba(30,41,59,.98),rgba(15,23,42,.98));}
+</style>
 </head>
-
-
 <body class="bg-slate-950 text-slate-100">
 
-
-<!-- =============================================================
-     CQS AI INTRO
-============================================================= -->
-
 <div id="cqs-intro">
-
+    <div id="intro-particles" class="intro-particles"></div>
     <div class="intro-inner">
-
-        <div class="intro-avatar">
-            <div class="intro-face">🧐</div>
+        <div class="intro-hex-core">
+            <div class="intro-hex"></div>
+            <div class="intro-hex-letter">C</div>
         </div>
-
-        <div
-            id="intro-title"
-            class="intro-title"
-        ></div>
-
-        <div class="intro-subtitle">
-            intelligent console
-        </div>
-
+        <div id="intro-title"></div>
+        <div class="intro-subtitle">INTELLIGENT CONSOLE · CQS AI</div>
     </div>
-
 </div>
 
-
-<!-- =============================================================
-     APPLICATION
-============================================================= -->
-
-<div
-    id="app"
-    class="w-full flex flex-col bg-slate-950"
-    style="
-        height:100vh;
-        height:100dvh;
-        min-height:100svh;
-    "
->
-
-
-    <!-- =========================================================
-         HEADER
-    ========================================================= -->
-
-    <header
-        class="
-            shrink-0
-            px-4
-            py-3
-            flex
-            items-center
-            justify-between
-            border-b
-            border-slate-800
-            bg-slate-900/90
-            backdrop-blur-md
-            z-20
-            safe-top
-        "
-    >
-
-        <div class="flex items-center space-x-2 min-w-0">
-
-            <button
-                id="history-btn"
-                type="button"
-                aria-label="打开菜单"
-                class="
-                    w-9
-                    h-9
-                    shrink-0
-                    flex
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-slate-800
-                    text-slate-300
-                    active:scale-95
-                    transition
-                "
-            >
-                <i class="fa-solid fa-bars"></i>
-            </button>
-
-
-            <h1
-                id="current-title"
-                class="
-                    text-base
-                    font-semibold
-                    tracking-wide
-                    truncate
-                "
-            >
-                AI 对话中心
-            </h1>
-
+<div id="app" class="w-full flex flex-col bg-slate-950" style="height:100vh;height:100dvh;min-height:100svh;">
+<header class="shrink-0 px-4 py-3 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md z-20 safe-top">
+    <div class="flex items-center space-x-2 min-w-0">
+        <button id="history-btn" type="button" aria-label="打开菜单" class="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl bg-slate-800 text-slate-300 active:scale-95 transition">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <h1 id="current-title" class="text-base font-semibold tracking-wide truncate">AI 对话中心</h1>
+    </div>
+    <div class="flex items-center space-x-2 shrink-0">
+        <button id="sound-toggle-btn" type="button" aria-label="音效开关" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 text-indigo-400 active:scale-95 transition">
+            <i id="sound-icon" class="fa-solid fa-volume-high text-sm"></i>
+        </button>
+        <div class="text-[11px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-full font-mono whitespace-nowrap">
+            <span id="token-count">0</span> tokens
         </div>
+        <button id="export-btn" type="button" aria-label="导出" class="w-9 h-9 flex items-center justify-center rounded-xl bg-indigo-600 text-white active:scale-95 transition shadow-lg shadow-indigo-600/30">
+            <i class="fa-solid fa-download text-sm"></i>
+        </button>
+    </div>
+</header>
 
+<main id="chat-container" class="flex-1 relative overflow-y-auto overscroll-contain p-4 space-y-4" style="padding-bottom:110px;"></main>
 
-        <div class="flex items-center space-x-2 shrink-0">
+<nav class="shrink-0 p-3 bg-slate-900/95 border-t border-slate-800 backdrop-blur-lg z-20 flex items-center space-x-2 safe-bottom">
+    <button id="upload-btn" type="button" aria-label="上传文件" class="w-12 h-12 bg-slate-800 text-slate-300 rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition">
+        <i class="fa-solid fa-paperclip text-sm"></i>
+    </button>
+    <button id="voice-btn" type="button" aria-label="语音聊天" class="w-12 h-12 bg-slate-800 text-slate-300 rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition">
+        <i id="voice-icon" class="fa-solid fa-microphone text-sm"></i>
+    </button>
+    <input type="text" id="user-input" autocomplete="off" autocapitalize="sentences" enterkeyhint="send" placeholder="输入消息..." class="flex-1 min-w-0 bg-slate-800 text-slate-100 placeholder-slate-500 text-base rounded-xl px-4 py-3 border border-slate-700/60 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition">
+    <button id="send-btn" type="button" aria-label="发送" class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30">
+        <i class="fa-solid fa-paper-plane"></i>
+    </button>
+</nav>
+<input id="file-input" type="file" hidden multiple>
 
-            <!-- SOUND -->
-
-            <button
-                id="sound-toggle-btn"
-                type="button"
-                aria-label="音效开关"
-                class="
-                    w-9
-                    h-9
-                    flex
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-slate-800
-                    text-indigo-400
-                    active:scale-95
-                    transition
-                "
-            >
-                <i
-                    id="sound-icon"
-                    class="fa-solid fa-volume-high text-sm"
-                ></i>
+<div id="history-drawer" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden">
+    <div id="history-panel" class="absolute left-0 top-0 bottom-0 w-[84%] max-w-sm bg-slate-900 border-r border-slate-800 p-4 flex flex-col safe-top safe-bottom">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+            <h2 class="text-sm font-semibold text-slate-200 flex items-center space-x-2">
+                <i class="fa-solid fa-compass text-indigo-400"></i>
+                <span>控制台菜单</span>
+            </h2>
+            <button id="close-drawer" type="button" class="text-slate-400 w-8 h-8 flex items-center justify-center rounded-lg">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-
-
-            <!-- TOKEN -->
-
-            <div
-                class="
-                    text-[11px]
-                    bg-indigo-500/10
-                    text-indigo-400
-                    border
-                    border-indigo-500/20
-                    px-2
-                    py-1
-                    rounded-full
-                    font-mono
-                    whitespace-nowrap
-                "
-            >
-
-                <span id="token-count">0</span>
-
-                tokens
-
+        </div>
+        
+        <button id="profile-open-btn" type="button" class="w-full mb-3 p-3 rounded-2xl profile-menu-card border border-slate-800 flex items-center space-x-3 text-left active:scale-[.99] transition">
+            <div id="menu-avatar-container" class="shrink-0"></div>
+            <div class="min-w-0 flex-1">
+                <div id="menu-profile-name" class="text-sm font-semibold text-slate-100 truncate">我的资料</div>
+                <div id="menu-profile-bio" class="text-[11px] text-slate-500 mt-1 truncate">设置头像和自我介绍</div>
             </div>
-
-
-            <!-- EXPORT -->
-
-            <button
-                id="export-btn"
-                type="button"
-                aria-label="导出"
-                class="
-                    w-9
-                    h-9
-                    flex
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-indigo-600
-                    text-white
-                    active:scale-95
-                    transition
-                "
-            >
-                <i class="fa-solid fa-download text-sm"></i>
-            </button>
-
-        </div>
-
-    </header>
-
-
-    <!-- =========================================================
-         CHAT
-    ========================================================= -->
-
-    <main
-        id="chat-container"
-        class="
-            flex-1
-            relative
-            overflow-y-auto
-            overscroll-contain
-            p-4
-            space-y-4
-        "
-        style="padding-bottom:110px;"
-    ></main>
-
-
-    <!-- =========================================================
-         INPUT NAV
-    ========================================================= -->
-
-    <nav
-        class="
-            shrink-0
-            p-3
-            bg-slate-900/95
-            border-t
-            border-slate-800
-            backdrop-blur-lg
-            z-20
-            flex
-            items-center
-            space-x-2
-            safe-bottom
-        "
-    >
-
-        <!-- FILE -->
-
-        <button
-            id="upload-btn"
-            type="button"
-            aria-label="上传文件"
-            class="
-                w-12
-                h-12
-                bg-slate-800
-                hover:bg-slate-700
-                text-slate-300
-                rounded-xl
-                flex
-                items-center
-                justify-center
-                shrink-0
-                active:scale-95
-                transition
-            "
-        >
-            <i class="fa-solid fa-paperclip text-sm"></i>
+            <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
         </button>
 
-
-        <!-- VOICE -->
-
-        <button
-            id="voice-btn"
-            type="button"
-            aria-label="语音聊天"
-            class="
-                w-12
-                h-12
-                bg-slate-800
-                hover:bg-slate-700
-                text-slate-300
-                rounded-xl
-                flex
-                items-center
-                justify-center
-                shrink-0
-                active:scale-95
-                transition
-            "
-        >
-            <i
-                id="voice-icon"
-                class="fa-solid fa-microphone text-sm"
-            ></i>
+        <button id="new-chat-btn" type="button" class="w-full mb-3 py-2.5 px-4 bg-indigo-600 text-white rounded-xl text-sm font-medium flex items-center space-x-2 active:scale-[.98] transition shadow-lg shadow-indigo-600/20">
+            <i class="fa-solid fa-plus"></i>
+            <span>开启新话题</span>
         </button>
 
-
-        <!-- TEXT -->
-
-        <input
-            type="text"
-            id="user-input"
-            autocomplete="off"
-            autocapitalize="sentences"
-            enterkeyhint="send"
-            placeholder="输入消息..."
-            class="
-                flex-1
-                min-w-0
-                bg-slate-800
-                text-slate-100
-                placeholder-slate-500
-                text-base
-                rounded-xl
-                px-4
-                py-3
-                border
-                border-slate-700/60
-                focus:border-indigo-500
-                focus:ring-2
-                focus:ring-indigo-500/30
-                transition
-            "
-        >
-
-
-        <!-- SEND -->
-
-        <button
-            id="send-btn"
-            type="button"
-            aria-label="发送"
-            class="
-                w-12
-                h-12
-                bg-indigo-600
-                hover:bg-indigo-500
-                text-white
-                rounded-xl
-                flex
-                items-center
-                justify-center
-                shrink-0
-                active:scale-95
-                transition
-                shadow-lg
-                shadow-indigo-600/30
-            "
-        >
-            <i class="fa-solid fa-paper-plane"></i>
-        </button>
-
-    </nav>
-
-
-    <!-- =========================================================
-         FILE INPUT
-    ========================================================= -->
-
-    <input
-        id="file-input"
-        type="file"
-        hidden
-        multiple
-    >
-
-
-    <!-- =========================================================
-         HISTORY DRAWER
-    ========================================================= -->
-
-    <div
-        id="history-drawer"
-        class="
-            fixed
-            inset-0
-            bg-black/60
-            backdrop-blur-sm
-            z-50
-            hidden
-        "
-    >
-
-        <div
-            id="history-panel"
-            class="
-                absolute
-                left-0
-                top-0
-                bottom-0
-                w-[82%]
-                max-w-sm
-                bg-slate-900
-                border-r
-                border-slate-800
-                p-4
-                flex
-                flex-col
-                safe-top
-                safe-bottom
-            "
-        >
-
-            <div
-                class="
-                    flex
-                    items-center
-                    justify-between
-                    pb-3
-                    border-b
-                    border-slate-800
-                    mb-3
-                "
-            >
-
-                <h2
-                    class="
-                        text-sm
-                        font-semibold
-                        text-slate-200
-                        flex
-                        items-center
-                        space-x-2
-                    "
-                >
-
-                    <i
-                        class="fa-solid fa-compass text-indigo-400"
-                    ></i>
-
-                    <span>控制台菜单</span>
-
-                </h2>
-
-
-                <button
-                    id="close-drawer"
-                    type="button"
-                    aria-label="关闭"
-                    class="
-                        text-slate-400
-                        hover:text-white
-                        w-8
-                        h-8
-                        flex
-                        items-center
-                        justify-center
-                        rounded-lg
-                        hover:bg-slate-800
-                    "
-                >
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-
-            </div>
-
-
-            <!-- NEW CHAT -->
-
-            <button
-                id="new-chat-btn"
-                type="button"
-                class="
-                    w-full
-                    mb-3
-                    py-2.5
-                    px-4
-                    bg-indigo-600
-                    hover:bg-indigo-500
-                    text-white
-                    rounded-xl
-                    text-sm
-                    font-medium
-                    flex
-                    items-center
-                    space-x-2
-                    shadow-lg
-                    shadow-indigo-600/20
-                    active:scale-98
-                    transition
-                "
-            >
-
-                <i class="fa-solid fa-plus"></i>
-
-                <span>开启新话题</span>
-
+        <div class="space-y-1.5 mb-3 pb-3 border-b border-slate-800">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1 mb-1">系统功能</div>
+            <button id="deploy-skill-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 text-slate-300 rounded-xl text-xs flex items-center justify-between">
+                <span class="flex items-center space-x-2"><i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i><span>部署 Skill</span></span>
+                <i class="fa-solid fa-plus text-[10px] text-slate-500"></i>
             </button>
-
-
-            <!-- SYSTEM -->
-
-            <div
-                class="
-                    space-y-1.5
-                    mb-3
-                    pb-3
-                    border-b
-                    border-slate-800
-                "
-            >
-
-                <div
-                    class="
-                        text-[11px]
-                        font-semibold
-                        text-slate-500
-                        uppercase
-                        tracking-wider
-                        px-1
-                        mb-1
-                    "
-                >
-                    系统功能
-                </div>
-
-
-                <button
-                    id="deploy-skill-btn"
-                    type="button"
-                    class="
-                        w-full
-                        py-2
-                        px-3
-                        bg-slate-800/50
-                        hover:bg-slate-800
-                        text-slate-300
-                        rounded-xl
-                        text-xs
-                        flex
-                        items-center
-                        justify-between
-                        transition
-                    "
-                >
-
-                    <span
-                        class="flex items-center space-x-2"
-                    >
-
-                        <i
-                            class="
-                                fa-solid
-                                fa-wand-magic-sparkles
-                                text-indigo-400
-                            "
-                        ></i>
-
-                        <span>部署 Skill</span>
-
-                    </span>
-
-
-                    <i
-                        class="
-                            fa-solid
-                            fa-plus
-                            text-[10px]
-                            text-slate-500
-                        "
-                    ></i>
-
-                </button>
-
-
-                <button
-                    id="deploy-agent-btn"
-                    type="button"
-                    class="
-                        w-full
-                        py-2
-                        px-3
-                        bg-slate-800/50
-                        hover:bg-slate-800
-                        text-slate-300
-                        rounded-xl
-                        text-xs
-                        flex
-                        items-center
-                        justify-between
-                        transition
-                    "
-                >
-
-                    <span
-                        class="flex items-center space-x-2"
-                    >
-
-                        <i
-                            class="
-                                fa-solid
-                                fa-brain
-                                text-emerald-400
-                            "
-                        ></i>
-
-                        <span>部署 Agent</span>
-
-                    </span>
-
-
-                    <i
-                        class="
-                            fa-solid
-                            fa-plus
-                            text-[10px]
-                            text-slate-500
-                        "
-                    ></i>
-
-                </button>
-
-            </div>
-
-
-            <!-- DEPLOYED -->
-
-            <div
-                id="deployed-section"
-                class="
-                    space-y-2
-                    mb-3
-                    pb-3
-                    border-b
-                    border-slate-800
-                    hidden
-                "
-            >
-
-                <div
-                    class="
-                        text-[11px]
-                        font-semibold
-                        text-slate-500
-                        uppercase
-                        tracking-wider
-                        px-1
-                    "
-                >
-                    我的技能与智能体
-                </div>
-
-
-                <div
-                    id="deployed-list"
-                    class="space-y-1"
-                ></div>
-
-            </div>
-
-
-            <!-- HISTORY -->
-
-            <div
-                class="
-                    text-[11px]
-                    font-semibold
-                    text-slate-500
-                    uppercase
-                    tracking-wider
-                    px-1
-                    mb-1
-                "
-            >
-                历史会话
-            </div>
-
-
-            <div
-                id="history-list"
-                class="
-                    flex-1
-                    overflow-y-auto
-                    space-y-1.5
-                    pb-2
-                "
-            ></div>
-
+            <button id="deploy-agent-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 text-slate-300 rounded-xl text-xs flex items-center justify-between">
+                <span class="flex items-center space-x-2"><i class="fa-solid fa-brain text-emerald-400"></i><span>部署 Agent</span></span>
+                <i class="fa-solid fa-plus text-[10px] text-slate-500"></i>
+            </button>
         </div>
 
-    </div>
-
-
-    <!-- =========================================================
-         CONFIG MODAL
-    ========================================================= -->
-
-    <div
-        id="config-modal"
-        class="
-            modal-overlay
-            fixed
-            inset-0
-            bg-black/70
-            backdrop-blur-sm
-            z-[60]
-            hidden
-            flex
-            items-center
-            justify-center
-            p-4
-        "
-    >
-
-        <div
-            class="
-                modal-content
-                bg-slate-900
-                border
-                border-slate-800
-                w-full
-                max-w-sm
-                rounded-2xl
-                p-5
-                shadow-2xl
-                space-y-4
-            "
-        >
-
-            <div
-                class="
-                    flex
-                    items-center
-                    justify-between
-                    pb-2
-                    border-b
-                    border-slate-800
-                "
-            >
-
-                <h3
-                    id="modal-title"
-                    class="
-                        text-sm
-                        font-semibold
-                        text-slate-200
-                    "
-                >
-                    配置
-                </h3>
-
-
-                <button
-                    id="close-modal"
-                    type="button"
-                    class="
-                        text-slate-400
-                        hover:text-white
-                        w-7
-                        h-7
-                        flex
-                        items-center
-                        justify-center
-                        rounded-lg
-                        hover:bg-slate-800
-                    "
-                >
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-
-            </div>
-
-
-            <div class="space-y-3">
-
-                <div>
-
-                    <label
-                        class="
-                            block
-                            text-xs
-                            font-medium
-                            text-slate-400
-                            mb-1
-                        "
-                    >
-                        名称
-                    </label>
-
-
-                    <input
-                        type="text"
-                        id="modal-name-input"
-                        maxlength="80"
-                        class="
-                            w-full
-                            bg-slate-800
-                            text-slate-100
-                            text-sm
-                            rounded-xl
-                            px-3
-                            py-2
-                            border
-                            border-slate-700
-                            focus:border-indigo-500
-                            focus:outline-none
-                        "
-                        placeholder="例如：专业翻译"
-                    >
-
-                </div>
-
-
-                <div>
-
-                    <label
-                        class="
-                            block
-                            text-xs
-                            font-medium
-                            text-slate-400
-                            mb-1
-                        "
-                    >
-                        设定 / 系统提示词
-                    </label>
-
-
-                    <textarea
-                        id="modal-desc-input"
-                        rows="5"
-                        maxlength="20000"
-                        class="
-                            w-full
-                            bg-slate-800
-                            text-slate-100
-                            text-sm
-                            rounded-xl
-                            px-3
-                            py-2
-                            border
-                            border-slate-700
-                            focus:border-indigo-500
-                            focus:outline-none
-                            resize-none
-                        "
-                        placeholder="输入具体的行为设定或规则..."
-                    ></textarea>
-
-                </div>
-
-            </div>
-
-
-            <div class="flex space-x-2 pt-2">
-
-                <button
-                    id="modal-cancel-btn"
-                    type="button"
-                    class="
-                        flex-1
-                        py-2
-                        bg-slate-800
-                        hover:bg-slate-700
-                        text-slate-300
-                        rounded-xl
-                        text-xs
-                        font-medium
-                        transition
-                    "
-                >
-                    取消
-                </button>
-
-
-                <button
-                    id="modal-save-btn"
-                    type="button"
-                    class="
-                        flex-1
-                        py-2
-                        bg-indigo-600
-                        hover:bg-indigo-500
-                        text-white
-                        rounded-xl
-                        text-xs
-                        font-medium
-                        transition
-                        shadow-lg
-                        shadow-indigo-600/30
-                    "
-                >
-                    确认部署
-                </button>
-
-            </div>
-
+        <div id="deployed-section" class="space-y-2 mb-3 pb-3 border-b border-slate-800 hidden">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1">我的技能与智能体</div>
+            <div id="deployed-list" class="space-y-1"></div>
         </div>
 
+        <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1 mb-1">历史会话</div>
+        <div id="history-list" class="flex-1 overflow-y-auto space-y-1.5 pb-2"></div>
     </div>
-
-
-    <!-- =========================================================
-         CONFIRM
-    ========================================================= -->
-
-    <div
-        id="confirm-modal"
-        class="
-            modal-overlay
-            fixed
-            inset-0
-            bg-black/70
-            backdrop-blur-sm
-            z-[70]
-            hidden
-            flex
-            items-center
-            justify-center
-            p-4
-        "
-    >
-
-        <div
-            class="
-                modal-content
-                bg-slate-900
-                border
-                border-slate-800
-                w-full
-                max-w-sm
-                rounded-2xl
-                p-5
-                shadow-2xl
-            "
-        >
-
-            <div class="flex items-start space-x-3">
-
-                <div
-                    class="
-                        w-9
-                        h-9
-                        rounded-xl
-                        bg-red-500/10
-                        text-red-400
-                        flex
-                        items-center
-                        justify-center
-                        shrink-0
-                    "
-                >
-                    <i class="fa-solid fa-trash"></i>
-                </div>
-
-
-                <div>
-
-                    <h3
-                        class="
-                            text-sm
-                            font-semibold
-                            text-slate-100
-                        "
-                    >
-                        删除会话？
-                    </h3>
-
-
-                    <p
-                        class="
-                            text-xs
-                            text-slate-500
-                            mt-1
-                            leading-relaxed
-                        "
-                    >
-                        删除后该会话中的聊天记录将从本地设备移除。
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="flex space-x-2 mt-5">
-
-                <button
-                    id="confirm-cancel"
-                    type="button"
-                    class="
-                        flex-1
-                        py-2
-                        bg-slate-800
-                        hover:bg-slate-700
-                        text-slate-300
-                        rounded-xl
-                        text-xs
-                    "
-                >
-                    取消
-                </button>
-
-
-                <button
-                    id="confirm-delete"
-                    type="button"
-                    class="
-                        flex-1
-                        py-2
-                        bg-red-600
-                        hover:bg-red-500
-                        text-white
-                        rounded-xl
-                        text-xs
-                    "
-                >
-                    删除
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
 </div>
 
+<div id="config-modal" class="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+    <div class="modal-content bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 id="modal-title" class="text-sm font-semibold text-slate-200">配置</h3>
+            <button id="close-modal" type="button" class="text-slate-400 w-7 h-7 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="space-y-3 mt-4">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">名称</label>
+                <input type="text" id="modal-name-input" maxlength="80" class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl px-3 py-2 border border-slate-700 focus:border-indigo-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">设定 / 系统提示词</label>
+                <textarea id="modal-desc-input" rows="5" maxlength="20000" class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl px-3 py-2 border border-slate-700 focus:border-indigo-500 focus:outline-none resize-none"></textarea>
+            </div>
+        </div>
+        <div class="flex space-x-2 pt-4">
+            <button id="modal-cancel-btn" type="button" class="flex-1 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs">取消</button>
+            <button id="modal-save-btn" type="button" class="flex-1 py-2 bg-indigo-600 text-white rounded-xl text-xs">确认部署</button>
+        </div>
+    </div>
+</div>
+
+<div id="profile-modal" class="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[65] hidden flex items-center justify-center p-4">
+    <div class="modal-content bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div>
+                <h3 class="text-sm font-semibold text-slate-100">我的资料</h3>
+                <p class="text-[10px] text-slate-500 mt-1">个性化你的 CQS AI 身份</p>
+            </div>
+            <button id="profile-close-btn" type="button" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="flex flex-col items-center py-5">
+            <div id="profile-avatar-preview"></div>
+            <button id="profile-upload-btn" type="button" class="mt-3 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs text-slate-300 transition">
+                <i class="fa-solid fa-camera mr-1"></i> 上传头像
+            </button>
+        </div>
+        <input id="profile-file-input" type="file" accept="image/*" hidden>
+        <div class="mb-3">
+            <label class="block text-xs text-slate-400 mb-1">名称</label>
+            <input id="profile-name-input" type="text" maxlength="40" placeholder="例如：一诺千金" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+        </div>
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">自我介绍</label>
+            <textarea id="profile-bio-input" rows="4" maxlength="500" placeholder="介绍一下自己，让 CQS AI 更了解你的使用场景..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 resize-none focus:outline-none focus:border-indigo-500"></textarea>
+        </div>
+        <div class="flex space-x-2 mt-5">
+            <button id="profile-cancel-btn" type="button" class="flex-1 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs">取消</button>
+            <button id="profile-save-btn" type="button" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-xs shadow-lg shadow-indigo-600/20">保存资料</button>
+        </div>
+    </div>
+</div>
+
+<div id="confirm-modal" class="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+    <div class="modal-content bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl">
+        <div class="flex items-start space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-trash"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-slate-100">删除会话？</h3>
+                <p class="text-xs text-slate-500 mt-1 leading-relaxed">删除后该会话中的聊天记录将从本地设备移除。</p>
+            </div>
+        </div>
+        <div class="flex space-x-2 mt-5">
+            <button id="confirm-cancel" type="button" class="flex-1 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs">取消</button>
+            <button id="confirm-delete" type="button" class="flex-1 py-2 bg-red-600 text-white rounded-xl text-xs">删除</button>
+        </div>
+    </div>
+</div>
 
 <script>
-
 "use strict";
+const $ = id => document.getElementById(id);
+const chatContainer = $("chat-container");
+const userInput = $("user-input");
+const sendBtn = $("send-btn");
+const tokenCountEl = $("token-count");
+const exportBtn = $("export-btn");
+const historyBtn = $("history-btn");
+const historyDrawer = $("history-drawer");
+const closeDrawer = $("close-drawer");
+const historyList = $("history-list");
+const newChatBtn = $("new-chat-btn");
+const currentTitleEl = $("current-title");
+const deploySkillBtn = $("deploy-skill-btn");
+const deployAgentBtn = $("deploy-agent-btn");
+const deployedSection = $("deployed-section");
+const deployedList = $("deployed-list");
+const configModal = $("config-modal");
+const closeModal = $("close-modal");
+const modalCancelBtn = $("modal-cancel-btn");
+const modalSaveBtn = $("modal-save-btn");
+const modalTitle = $("modal-title");
+const modalNameInput = $("modal-name-input");
+const modalDescInput = $("modal-desc-input");
+const confirmModal = $("confirm-modal");
+const confirmCancel = $("confirm-cancel");
+const confirmDelete = $("confirm-delete");
+const soundToggleBtn = $("sound-toggle-btn");
+const soundIcon = $("sound-icon");
+const uploadBtn = $("upload-btn");
+const fileInput = $("file-input");
+const voiceBtn = $("voice-btn");
+const voiceIcon = $("voice-icon");
+const cqsIntro = $("cqs-intro");
+const introTitle = $("intro-title");
+const introParticles = $("intro-particles");
 
-
-/* =============================================================
-   DOM
-============================================================= */
-
-const chatContainer =
-    document.getElementById("chat-container");
-
-const userInput =
-    document.getElementById("user-input");
-
-const sendBtn =
-    document.getElementById("send-btn");
-
-const tokenCountEl =
-    document.getElementById("token-count");
-
-const exportBtn =
-    document.getElementById("export-btn");
-
-const historyBtn =
-    document.getElementById("history-btn");
-
-const historyDrawer =
-    document.getElementById("history-drawer");
-
-const closeDrawer =
-    document.getElementById("close-drawer");
-
-const historyList =
-    document.getElementById("history-list");
-
-const newChatBtn =
-    document.getElementById("new-chat-btn");
-
-const currentTitleEl =
-    document.getElementById("current-title");
-
-const deploySkillBtn =
-    document.getElementById("deploy-skill-btn");
-
-const deployAgentBtn =
-    document.getElementById("deploy-agent-btn");
-
-const deployedSection =
-    document.getElementById("deployed-section");
-
-const deployedList =
-    document.getElementById("deployed-list");
-
-const configModal =
-    document.getElementById("config-modal");
-
-const closeModal =
-    document.getElementById("close-modal");
-
-const modalCancelBtn =
-    document.getElementById("modal-cancel-btn");
-
-const modalSaveBtn =
-    document.getElementById("modal-save-btn");
-
-const modalTitle =
-    document.getElementById("modal-title");
-
-const modalNameInput =
-    document.getElementById("modal-name-input");
-
-const modalDescInput =
-    document.getElementById("modal-desc-input");
-
-const confirmModal =
-    document.getElementById("confirm-modal");
-
-const confirmCancel =
-    document.getElementById("confirm-cancel");
-
-const confirmDelete =
-    document.getElementById("confirm-delete");
-
-const soundToggleBtn =
-    document.getElementById("sound-toggle-btn");
-
-const soundIcon =
-    document.getElementById("sound-icon");
-
-const uploadBtn =
-    document.getElementById("upload-btn");
-
-const fileInput =
-    document.getElementById("file-input");
-
-const voiceBtn =
-    document.getElementById("voice-btn");
-
-const voiceIcon =
-    document.getElementById("voice-icon");
-
-const cqsIntro =
-    document.getElementById("cqs-intro");
-
-const introTitle =
-    document.getElementById("intro-title");
-
-
-/* =============================================================
-   STATE
-============================================================= */
+const profileOpenBtn = $("profile-open-btn");
+const profileModal = $("profile-modal");
+const profileCloseBtn = $("profile-close-btn");
+const profileCancelBtn = $("profile-cancel-btn");
+const profileSaveBtn = $("profile-save-btn");
+const profileUploadBtn = $("profile-upload-btn");
+const profileFileInput = $("profile-file-input");
+const profileAvatarPreview = $("profile-avatar-preview");
+const profileNameInput = $("profile-name-input");
+const profileBioInput = $("profile-bio-input");
+const menuAvatarContainer = $("menu-avatar-container");
+const menuProfileName = $("menu-profile-name");
+const menuProfileBio = $("menu-profile-bio");
 
 let conversations = [];
-
 let activeConversationId = null;
-
 let deployedItems = [];
-
 let totalTokens = 0;
-
 let isSending = false;
-
 let currentMode = "skill";
-
 let currentSystemPrompt = "";
-
 let pendingDeleteId = null;
-
 let soundEnabled = true;
-
 let selectedFiles = [];
-
 let recognition = null;
-
 let isRecording = false;
 
+let userProfile = { name: "", bio: "", avatar: "" };
+let pendingAvatar = "";
 
-/* =============================================================
-   STORAGE
-============================================================= */
-
-const STORAGE_KEY =
-    "cqs_ai_console_state_v4";
-
-
-/* =============================================================
-   AUDIO
-============================================================= */
+const STORAGE_KEY = "cqs_ai_console_state_v5";
 
 let audioCtx = null;
-
 let lastTypeSound = 0;
 
-
-function initAudio() {
-
-    if (!audioCtx) {
-
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-        if (AudioContext) {
-
-            audioCtx =
-                new AudioContext();
-
-        }
-
+function initAudio(){
+    if(!audioCtx){
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if(AudioContext) audioCtx = new AudioContext();
     }
-
-    if (
-        audioCtx &&
-        audioCtx.state === "suspended"
-    ) {
-
-        audioCtx.resume();
-
-    }
-
+    if(audioCtx && audioCtx.state === "suspended") audioCtx.resume();
 }
 
-
-function playSound(type) {
-
-    if (!soundEnabled) return;
-
-    try {
-
+function playSound(type){
+    if(!soundEnabled) return;
+    try{
         initAudio();
-
-        if (!audioCtx) return;
-
-        const osc =
-            audioCtx.createOscillator();
-
-        const gain =
-            audioCtx.createGain();
-
+        if(!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
         osc.connect(gain);
-
-        gain.connect(
-            audioCtx.destination
-        );
-
-        const now =
-            audioCtx.currentTime;
-
-
-        if (type === "click") {
-
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        if(type === "click"){
             osc.type = "sine";
-
-            osc.frequency.setValueAtTime(
-                720,
-                now
-            );
-
-            gain.gain.setValueAtTime(
-                0.025,
-                now
-            );
-
-            gain.gain.exponentialRampToValueAtTime(
-                0.001,
-                now + 0.035
-            );
-
+            osc.frequency.setValueAtTime(720, now);
+            gain.gain.setValueAtTime(.025, now);
+            gain.gain.exponentialRampToValueAtTime(.001, now + .035);
             osc.start(now);
-
-            osc.stop(now + 0.035);
-
-        }
-
-
-        else if (type === "type") {
-
+            osc.stop(now + .035);
+        }else if(type === "type"){
             osc.type = "sine";
-
-            osc.frequency.setValueAtTime(
-                800,
-                now
-            );
-
-            gain.gain.setValueAtTime(
-                0.018,
-                now
-            );
-
-            gain.gain.exponentialRampToValueAtTime(
-                0.001,
-                now + 0.035
-            );
-
+            osc.frequency.setValueAtTime(800, now);
+            gain.gain.setValueAtTime(.018, now);
+            gain.gain.exponentialRampToValueAtTime(.001, now + .035);
             osc.start(now);
-
-            osc.stop(now + 0.035);
-
-        }
-
-
-        else if (type === "output") {
-
+            osc.stop(now + .035);
+        }else if(type === "output"){
             osc.type = "triangle";
-
-            osc.frequency.setValueAtTime(
-                440,
-                now
-            );
-
-            osc.frequency.exponentialRampToValueAtTime(
-                880,
-                now + 0.1
-            );
-
-            gain.gain.setValueAtTime(
-                0.045,
-                now
-            );
-
-            gain.gain.exponentialRampToValueAtTime(
-                0.001,
-                now + 0.13
-            );
-
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + .1);
+            gain.gain.setValueAtTime(.045, now);
+            gain.gain.exponentialRampToValueAtTime(.001, now + .13);
             osc.start(now);
-
-            osc.stop(now + 0.13);
-
-        }
-
-
-        else if (type === "think") {
-
+            osc.stop(now + .13);
+        }else if(type === "think"){
             osc.type = "sine";
-
-            osc.frequency.setValueAtTime(
-                300,
-                now
-            );
-
-            osc.frequency.linearRampToValueAtTime(
-                360,
-                now + 0.2
-            );
-
-            gain.gain.setValueAtTime(
-                0.035,
-                now
-            );
-
-            gain.gain.exponentialRampToValueAtTime(
-                0.001,
-                now + 0.25
-            );
-
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.linearRampToValueAtTime(360, now + .2);
+            gain.gain.setValueAtTime(.035, now);
+            gain.gain.exponentialRampToValueAtTime(.001, now + .25);
             osc.start(now);
-
-            osc.stop(now + 0.25);
-
+            osc.stop(now + .25);
+        }else if(type === "intro"){
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(260, now);
+            osc.frequency.exponentialRampToValueAtTime(620, now + .12);
+            gain.gain.setValueAtTime(.035, now);
+            gain.gain.exponentialRampToValueAtTime(.001, now + .16);
+            osc.start(now);
+            osc.stop(now + .16);
         }
-
-    } catch {
-
-        /* Audio failure must never break chat */
-
-    }
-
+    }catch{}
 }
 
+function createIntroParticles(){
+    introParticles.innerHTML = "";
+    for(let i = 0; i < 26; i++){
+        const particle = document.createElement("div");
+        particle.className = "intro-particle";
+        particle.style.left = `${Math.random()*100}%`;
+        particle.style.top = `${30 + Math.random()*70}%`;
+        particle.style.animationDuration = `${3 + Math.random()*5}s`;
+        particle.style.animationDelay = `${Math.random()*3}s`;
+        introParticles.appendChild(particle);
+    }
+}
 
-/* =============================================================
-   INTRO
-============================================================= */
-
-function playIntro() {
-
-    const text =
-        "CQS AI WELCOME";
-
+function playIntro(){
+    createIntroParticles();
     introTitle.innerHTML = "";
-
-    let index = 0;
-
-    const cursor =
-        document.createElement("span");
-
-    cursor.className =
-        "intro-cursor";
-
-    introTitle.appendChild(cursor);
-
-
-    function next() {
-
-        if (index >= text.length) {
-
-            setTimeout(() => {
-
-                cqsIntro.classList.add(
-                    "intro-hidden"
-                );
-
-            }, 650);
-
+    const text = "CQS AI WELCOME";
+    [...text].forEach((character, index) => {
+        const letter = document.createElement("div");
+        if(character === " "){
+            letter.className = "intro-letter space";
+            introTitle.appendChild(letter);
             return;
-
         }
-
-
-        const character =
-            text[index];
-
-        const node =
-            document.createTextNode(
-                character
-            );
-
-        introTitle.insertBefore(
-            node,
-            cursor
-        );
-
-        index++;
-
-        if (character !== " ") {
-
-            playSound("type");
-
-        }
-
-        setTimeout(
-            next,
-            character === " " ? 55 : 75
-        );
-
-    }
-
-    next();
-
-}
-
-
-/* =============================================================
-   ID
-============================================================= */
-
-function createId(prefix = "id") {
-
-    return (
-        prefix +
-        "_" +
-        Date.now().toString(36) +
-        "_" +
-        Math.random()
-            .toString(36)
-            .slice(2, 9)
-    );
-
-}
-
-
-/* =============================================================
-   CONVERSATION
-============================================================= */
-
-function createConversation() {
-
-    return {
-
-        id:
-            createId("chat"),
-
-        title:
-            "新对话",
-
-        createdAt:
-            Date.now(),
-
-        updatedAt:
-            Date.now(),
-
-        messages: [],
-
-        systemPrompt:
-            "",
-
-        systemName:
-            "",
-
-        systemType:
-            ""
-
-    };
-
-}
-
-
-/* =============================================================
-   STORAGE
-============================================================= */
-
-function saveState() {
-
-    try {
-
-        localStorage.setItem(
-
-            STORAGE_KEY,
-
-            JSON.stringify({
-
-                conversations,
-
-                activeConversationId,
-
-                deployedItems,
-
-                totalTokens,
-
-                soundEnabled
-
-            })
-
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Storage save error:",
-            error
-        );
-
-    }
-
-}
-
-
-function loadState() {
-
-    try {
-
-        const raw =
-            localStorage.getItem(
-                STORAGE_KEY
-            );
-
-
-        if (!raw) {
-
-            const first =
-                createConversation();
-
-            conversations = [first];
-
-            activeConversationId =
-                first.id;
-
-            saveState();
-
-            updateSoundUI();
-
-            return;
-
-        }
-
-
-        const state =
-            JSON.parse(raw);
-
-
-        if (
-            state &&
-            Array.isArray(
-                state.conversations
-            )
-        ) {
-
-            conversations =
-                state.conversations.filter(
-                    item =>
-                        item &&
-                        typeof item.id === "string" &&
-                        Array.isArray(item.messages)
-                );
-
-        }
-
-
-        if (
-            !Array.isArray(conversations) ||
-            conversations.length === 0
-        ) {
-
-            const first =
-                createConversation();
-
-            conversations = [first];
-
-        }
-
-
-        if (
-            typeof state.activeConversationId ===
-            "string" &&
-            conversations.some(
-                item =>
-                    item.id ===
-                    state.activeConversationId
-            )
-        ) {
-
-            activeConversationId =
-                state.activeConversationId;
-
-        } else {
-
-            activeConversationId =
-                conversations[0].id;
-
-        }
-
-
-        if (
-            Array.isArray(
-                state.deployedItems
-            )
-        ) {
-
-            deployedItems =
-                state.deployedItems.filter(
-                    item =>
-                        item &&
-                        typeof item.name === "string" &&
-                        typeof item.prompt === "string" &&
-                        (
-                            item.type === "skill" ||
-                            item.type === "agent"
-                        )
-                );
-
-        }
-
-
-        if (
-            Number.isFinite(
-                Number(state.totalTokens)
-            )
-        ) {
-
-            totalTokens =
-                Math.max(
-                    0,
-                    Number(
-                        state.totalTokens
-                    )
-                );
-
-        }
-
-
-        if (
-            typeof state.soundEnabled ===
-            "boolean"
-        ) {
-
-            soundEnabled =
-                state.soundEnabled;
-
-        }
-
-
-    } catch {
-
-        const first =
-            createConversation();
-
-        conversations = [first];
-
-        activeConversationId =
-            first.id;
-
-        deployedItems = [];
-
-        totalTokens = 0;
-
-        soundEnabled = true;
-
-    }
-
-
-    updateSoundUI();
-
-    saveState();
-
-}
-
-
-/* =============================================================
-   SOUND UI
-============================================================= */
-
-function updateSoundUI() {
-
-    if (soundEnabled) {
-
-        soundIcon.className =
-            "fa-solid fa-volume-high text-sm text-indigo-400";
-
-        soundToggleBtn.classList.remove(
-            "opacity-50"
-        );
-
-    } else {
-
-        soundIcon.className =
-            "fa-solid fa-volume-xmark text-sm text-slate-500";
-
-        soundToggleBtn.classList.add(
-            "opacity-50"
-        );
-
-    }
-
-}
-
-
-soundToggleBtn.addEventListener(
-    "click",
-    () => {
-
-        initAudio();
-
-        soundEnabled =
-            !soundEnabled;
-
-        updateSoundUI();
-
-        saveState();
-
-        if (soundEnabled) {
-
-            playSound("output");
-
-        }
-
-    }
-);
-
-
-/* =============================================================
-   ACTIVE CONVERSATION
-============================================================= */
-
-function getActiveConversation() {
-
-    return conversations.find(
-        item =>
-            item.id ===
-            activeConversationId
-    ) || null;
-
-}
-
-
-function ensureActiveConversation() {
-
-    let conversation =
-        getActiveConversation();
-
-
-    if (conversation) {
-
-        return conversation;
-
-    }
-
-
-    conversation =
-        createConversation();
-
-    conversations.unshift(
-        conversation
-    );
-
-    activeConversationId =
-        conversation.id;
-
-    saveState();
-
-    return conversation;
-
-}
-
-
-/* =============================================================
-   TOKEN
-============================================================= */
-
-function updateTokenDisplay() {
-
-    tokenCountEl.textContent =
-        Number(
-            totalTokens || 0
-        ).toLocaleString();
-
-}
-
-
-/* =============================================================
-   SCROLL
-============================================================= */
-
-function scrollToBottom() {
-
-    requestAnimationFrame(() => {
-
-        chatContainer.scrollTop =
-            chatContainer.scrollHeight;
-
+        letter.className = "intro-letter";
+        letter.style.animationDelay = `${index * .085}s`;
+        const span = document.createElement("span");
+        span.textContent = character;
+        letter.appendChild(span);
+        introTitle.appendChild(letter);
+        setTimeout(() => { playSound("intro"); }, index * 85 + 100);
     });
-
+    setTimeout(() => { cqsIntro.classList.add("intro-hidden"); }, 2700);
 }
 
-
-/* =============================================================
-   WELCOME
-============================================================= */
-
-function showWelcome() {
-
-    const conversation =
-        getActiveConversation();
-
-
-    if (
-        !conversation ||
-        conversation.messages.length > 0
-    ) {
-
-        return;
-
-    }
-
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "flex items-start space-x-3 message-enter";
-
-
-    const avatar =
-        document.createElement("div");
-
-    avatar.className =
-        "w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-md shadow-blue-500/20";
-
-
-    const span =
-        document.createElement("span");
-
-    span.className =
-        "text-xs select-none";
-
-    span.textContent =
-        "🧐";
-
-
-    avatar.appendChild(span);
-
-
-    const bubble =
-        document.createElement("div");
-
-    bubble.className =
-        "bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[82%] text-sm text-slate-200 shadow-lg";
-
-
-    if (currentSystemPrompt) {
-
-        bubble.textContent =
-            `已加载「${
-                conversation.systemName ||
-                "当前设定"
-            }」。你可以开始对话。`;
-
-    } else {
-
-        bubble.textContent =
-            "你好！我是 CQS AI，你可以在下方输入框与我开始对话。";
-
-    }
-
-
-    wrapper.appendChild(avatar);
-
-    wrapper.appendChild(bubble);
-
-    chatContainer.appendChild(wrapper);
-
+function createId(prefix="id"){
+    return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,9);
 }
 
-
-/* =============================================================
-   MESSAGE UI
-============================================================= */
-
-function appendUI(
-    role,
-    text,
-    save = true
-) {
-
-    const isUser =
-        role === "user";
-
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        `flex items-start space-x-3 message-enter ${
-            isUser
-                ? "flex-row-reverse space-x-reverse"
-                : ""
-        }`;
-
-
-    const avatar =
-        document.createElement("div");
-
-
-    avatar.className =
-        `w-8 h-8 rounded-full ${
-            isUser
-                ? "bg-emerald-600"
-                : "bg-blue-600 shadow-md shadow-blue-500/20"
-        } flex items-center justify-center shrink-0`;
-
-
-    if (isUser) {
-
-        const icon =
-            document.createElement("i");
-
-        icon.className =
-            "fa-solid fa-user text-xs text-white";
-
-        avatar.appendChild(icon);
-
-    } else {
-
-        const span =
-            document.createElement("span");
-
-        span.className =
-            "text-xs select-none";
-
-        span.textContent =
-            "🧐";
-
-        avatar.appendChild(span);
-
-    }
-
-
-    const bubble =
-        document.createElement("div");
-
-    bubble.className =
-        `${isUser
-            ? "bg-indigo-600 text-white"
-            : "bg-slate-900 border border-slate-800 text-slate-200"
-        } rounded-2xl p-3.5 max-w-[82%] text-sm shadow-lg whitespace-pre-wrap break-words`;
-
-
-    bubble.textContent =
-        String(text);
-
-
-    wrapper.appendChild(avatar);
-
-    wrapper.appendChild(bubble);
-
-    chatContainer.appendChild(wrapper);
-
-
-    if (save) {
-
-        const conversation =
-            ensureActiveConversation();
-
-
-        conversation.messages.push({
-
-            role,
-
-            content:
-                String(text)
-
-        });
-
-
-        conversation.updatedAt =
-            Date.now();
-
-
-        updateConversationTitle(
-            conversation
-        );
-
-
-        saveState();
-
-        renderHistory();
-
-    }
-
-
-    scrollToBottom();
-
-    return wrapper;
-
+function createConversation(){
+    return {
+        id: createId("chat"),
+        title: "新对话",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        messages: [],
+        systemPrompt: "",
+        systemName: "",
+        systemType: ""
+    };
 }
 
-
-/* =============================================================
-   THINKING
-============================================================= */
-
-function createLoading() {
-
-    playSound("think");
-
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.id =
-        "loading-message";
-
-    wrapper.className =
-        "flex items-start space-x-3 message-enter";
-
-
-    const avatar =
-        document.createElement("div");
-
-    avatar.className =
-        "thinking-avatar w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0";
-
-
-    const span =
-        document.createElement("span");
-
-    span.className =
-        "text-xs select-none";
-
-    span.textContent =
-        "🧐";
-
-
-    avatar.appendChild(span);
-
-
-    const bubble =
-        document.createElement("div");
-
-    bubble.className =
-        "bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-sm text-slate-400 flex items-center space-x-1.5";
-
-
-    const textSpan =
-        document.createElement("span");
-
-    textSpan.className =
-        "text-xs text-blue-400 font-medium";
-
-    textSpan.textContent =
-        "深度思考中";
-
-    bubble.appendChild(textSpan);
-
-
-    for (
-        let i = 0;
-        i < 3;
-        i++
-    ) {
-
-        const dot =
-            document.createElement("span");
-
-        dot.className =
-            "typing-dot text-blue-400";
-
-        dot.textContent =
-            "●";
-
-        bubble.appendChild(dot);
-
+function saveState(){
+    try{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            conversations,
+            activeConversationId,
+            deployedItems,
+            totalTokens,
+            soundEnabled,
+            userProfile
+        }));
+    }catch(error){
+        console.error("Storage save error:", error);
     }
-
-
-    wrapper.appendChild(avatar);
-
-    wrapper.appendChild(bubble);
-
-    chatContainer.appendChild(wrapper);
-
-    scrollToBottom();
-
-    return wrapper;
-
 }
 
-
-function removeLoading() {
-
-    const loading =
-        document.getElementById(
-            "loading-message"
-        );
-
-    if (loading) {
-
-        loading.remove();
-
-    }
-
-}
-
-
-/* =============================================================
-   CONVERSATION TITLE
-============================================================= */
-
-function updateConversationTitle(
-    conversation
-) {
-
-    if (!conversation) return;
-
-
-    const firstUserMessage =
-        conversation.messages.find(
-            message =>
-                message.role ===
-                "user"
-        );
-
-
-    if (
-        firstUserMessage &&
-        firstUserMessage.content
-    ) {
-
-        const title =
-            firstUserMessage.content
-                .replace(/\s+/g, " ")
-                .trim();
-
-
-        conversation.title =
-            title.length > 28
-                ? title.slice(0, 28) + "…"
-                : title;
-
-    }
-
-
-    conversation.updatedAt =
-        Date.now();
-
-}
-
-
-/* =============================================================
-   RENDER CURRENT
-============================================================= */
-
-function renderCurrentConversation() {
-
-    chatContainer.innerHTML = "";
-
-
-    const conversation =
-        ensureActiveConversation();
-
-
-    currentTitleEl.textContent =
-        conversation.title ||
-        "新对话";
-
-
-    currentSystemPrompt =
-        conversation.systemPrompt ||
-        "";
-
-
-    if (conversation.systemName) {
-
-        currentTitleEl.textContent =
-            `${
-                conversation.systemType === "agent"
-                    ? "Agent"
-                    : "Skill"
-            }: ${conversation.systemName}`;
-
-    }
-
-
-    for (
-        const message of
-        conversation.messages
-    ) {
-
-        if (
-            !message ||
-            (
-                message.role !== "user" &&
-                message.role !== "assistant"
-            )
-        ) {
-
-            continue;
-
-        }
-
-
-        appendUI(
-            message.role,
-            message.content,
-            false
-        );
-
-    }
-
-
-    showWelcome();
-
-    scrollToBottom();
-
-}
-
-
-/* =============================================================
-   HISTORY
-============================================================= */
-
-function renderHistory() {
-
-    historyList.innerHTML = "";
-
-
-    const sorted =
-        [...conversations].sort(
-            (a, b) =>
-                Number(b.updatedAt || 0) -
-                Number(a.updatedAt || 0)
-        );
-
-
-    if (!sorted.length) {
-
-        const empty =
-            document.createElement("div");
-
-        empty.className =
-            "text-xs text-slate-500 text-center py-4";
-
-        empty.textContent =
-            "暂无历史会话";
-
-        historyList.appendChild(empty);
-
-        return;
-
-    }
-
-
-    sorted.forEach(
-        conversation => {
-
-            const row =
-                document.createElement("div");
-
-
-            row.className =
-                `group p-2.5 rounded-xl cursor-pointer flex items-center justify-between gap-2 transition ${
-                    conversation.id ===
-                    activeConversationId
-                        ? "bg-indigo-600/20 border border-indigo-500/20"
-                        : "bg-slate-800/40 hover:bg-slate-800"
-                }`;
-
-
-            const left =
-                document.createElement("div");
-
-            left.className =
-                "min-w-0 flex-1";
-
-
-            const title =
-                document.createElement("div");
-
-            title.className =
-                "text-xs text-slate-200 truncate";
-
-            title.textContent =
-                conversation.title ||
-                "新对话";
-
-
-            const count =
-                document.createElement("div");
-
-            count.className =
-                "text-[10px] text-slate-500 mt-0.5";
-
-            count.textContent =
-                `${conversation.messages.length} 条消息`;
-
-
-            left.appendChild(title);
-
-            left.appendChild(count);
-
-
-            const deleteBtn =
-                document.createElement("button");
-
-            deleteBtn.type =
-                "button";
-
-            deleteBtn.className =
-                "w-7 h-7 shrink-0 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition";
-
-            deleteBtn.setAttribute(
-                "aria-label",
-                "删除会话"
-            );
-
-
-            const deleteIcon =
-                document.createElement("i");
-
-            deleteIcon.className =
-                "fa-solid fa-trash text-[10px]";
-
-
-            deleteBtn.appendChild(
-                deleteIcon
-            );
-
-
-            row.appendChild(left);
-
-            row.appendChild(deleteBtn);
-
-
-            left.addEventListener(
-                "click",
-                () =>
-                    switchConversation(
-                        conversation.id
-                    )
-            );
-
-
-            deleteBtn.addEventListener(
-                "click",
-                event => {
-
-                    event.stopPropagation();
-
-                    askDeleteConversation(
-                        conversation.id
-                    );
-
-                }
-            );
-
-
-            historyList.appendChild(row);
-
-        }
-    );
-
-}
-
-
-/* =============================================================
-   SWITCH
-============================================================= */
-
-function switchConversation(id) {
-
-    playSound("click");
-
-
-    const conversation =
-        conversations.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!conversation) return;
-
-
-    activeConversationId =
-        id;
-
-
-    currentSystemPrompt =
-        conversation.systemPrompt ||
-        "";
-
-
-    saveState();
-
-    renderCurrentConversation();
-
-    renderHistory();
-
-    closeHistory();
-
-}
-
-
-/* =============================================================
-   NEW CHAT
-============================================================= */
-
-function startNewChat() {
-
-    playSound("click");
-
-
-    const conversation =
-        createConversation();
-
-
-    conversations.unshift(
-        conversation
-    );
-
-
-    activeConversationId =
-        conversation.id;
-
-
-    currentSystemPrompt =
-        "";
-
-
-    saveState();
-
-    renderCurrentConversation();
-
-    renderHistory();
-
-    closeHistory();
-
-    userInput.focus();
-
-}
-
-
-newChatBtn.addEventListener(
-    "click",
-    startNewChat
-);
-
-
-/* =============================================================
-   DELETE
-============================================================= */
-
-function askDeleteConversation(id) {
-
-    playSound("click");
-
-    pendingDeleteId =
-        id;
-
-    confirmModal.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-function closeConfirmModal() {
-
-    confirmModal.classList.add(
-        "hidden"
-    );
-
-    pendingDeleteId =
-        null;
-
-}
-
-
-confirmCancel.addEventListener(
-    "click",
-    closeConfirmModal
-);
-
-
-confirmDelete.addEventListener(
-    "click",
-    () => {
-
-        if (!pendingDeleteId) {
-            return;
-        }
-
-
-        conversations =
-            conversations.filter(
-                item =>
-                    item.id !==
-                    pendingDeleteId
-            );
-
-
-        if (!conversations.length) {
-
-            const conversation =
-                createConversation();
-
-            conversations = [
-                conversation
-            ];
-
-            activeConversationId =
-                conversation.id;
-
-        }
-
-        else if (
-            activeConversationId ===
-            pendingDeleteId
-        ) {
-
-            activeConversationId =
-                conversations[0].id;
-
-        }
-
-
-        saveState();
-
-        renderCurrentConversation();
-
-        renderHistory();
-
-        closeConfirmModal();
-
-    }
-);
-
-
-/* =============================================================
-   SEND
-============================================================= */
-
-async function handleSend() {
-
-    if (isSending) return;
-
-
-    const text =
-        userInput.value.trim();
-
-
-    if (!text) return;
-
-
-    if (text.length > 10000) {
-
-        appendUI(
-            "assistant",
-            "⚠️ 单条消息不能超过 10000 个字符。",
-            true
-        );
-
-        return;
-
-    }
-
-
-    initAudio();
-
-    playSound("click");
-
-
-    const conversation =
-        ensureActiveConversation();
-
-
-    isSending = true;
-
-    sendBtn.disabled = true;
-
-    userInput.disabled = true;
-
-    userInput.value = "";
-
-
-    appendUI(
-        "user",
-        text,
-        true
-    );
-
-
-    createLoading();
-
-
-    try {
-
-        const finalMessages =
-            conversation.messages.map(
-                message => ({
-
-                    role:
-                        message.role,
-
-                    content:
-                        message.content
-
-                })
-            );
-
-
-        const response =
-            await fetch(
-                "/api/chat",
-                {
-
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            messages:
-                                finalMessages,
-
-                            systemPrompt:
-                                currentSystemPrompt ||
-                                ""
-
-                        })
-
-                }
-            );
-
-
-        let data;
-
-
-        try {
-
-            data =
-                await response.json();
-
-        } catch {
-
-            throw new Error(
-                `服务器返回了无法解析的数据 (${response.status})`
-            );
-
-        }
-
-
-        removeLoading();
-
-
-        if (!response.ok) {
-
-            let errorMessage =
-                data?.error ||
-                "服务器请求失败";
-
-
-            if (data?.detail) {
-
-                errorMessage +=
-                    `\n${data.detail}`;
-
-            }
-
-
-            appendUI(
-                "assistant",
-                `⚠️ 错误：${errorMessage}`,
-                true
-            );
-
-
-            return;
-
-        }
-
-
-        const reply =
-            data?.reply ||
-            data?.choices?.[0]?.message?.content;
-
-
-        if (
-            typeof reply !== "string" ||
-            !reply.trim()
-        ) {
-
-            appendUI(
-                "assistant",
-                "⚠️ 错误：未获取到有效的 AI 回复。",
-                true
-            );
-
-            return;
-
-        }
-
-
-        appendUI(
-            "assistant",
-            reply,
-            true
-        );
-
-
-        playSound("output");
-
-
-        const usage =
-            data?.usage;
-
-
-        const realTokens =
-            Number(
-                usage?.total_tokens
-            );
-
-
-        if (
-            Number.isFinite(realTokens) &&
-            realTokens > 0
-        ) {
-
-            totalTokens +=
-                realTokens;
-
-            updateTokenDisplay();
-
+function loadState(){
+    try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw){
+            const first = createConversation();
+            conversations = [first];
+            activeConversationId = first.id;
+            deployedItems = [];
+            totalTokens = 0;
+            userProfile = { name: "", bio: "", avatar: "" };
             saveState();
-
-        }
-
-
-    } catch (error) {
-
-        removeLoading();
-
-
-        let message =
-            error?.message ||
-            "网络连接异常";
-
-
-        if (
-            message ===
-            "Failed to fetch"
-        ) {
-
-            message =
-                "网络繁忙或连接中断，请检查网络后重试。";
-
-        }
-
-
-        appendUI(
-            "assistant",
-            `⚠️ ${message}`,
-            true
-        );
-
-
-    } finally {
-
-        isSending =
-            false;
-
-        sendBtn.disabled =
-            false;
-
-        userInput.disabled =
-            false;
-
-        userInput.focus();
-
-    }
-
-}
-
-
-sendBtn.addEventListener(
-    "click",
-    handleSend
-);
-
-
-userInput.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
-
-            event.preventDefault();
-
-            handleSend();
-
-        }
-
-    }
-);
-
-
-/*
- * 输入音效做节流。
- * 不会每一次快速输入都制造大量声音。
- */
-
-userInput.addEventListener(
-    "input",
-    () => {
-
-        const now =
-            Date.now();
-
-
-        if (
-            now - lastTypeSound <
-            70
-        ) {
-
+            updateSoundUI();
+            updateProfileUI();
             return;
-
         }
-
-
-        lastTypeSound =
-            now;
-
-
-        playSound("type");
-
-    }
-);
-
-
-/* =============================================================
-   SKILL / AGENT
-============================================================= */
-
-function renderDeployedItems() {
-
-    deployedList.innerHTML = "";
-
-
-    if (!deployedItems.length) {
-
-        deployedSection.classList.add(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    deployedSection.classList.remove(
-        "hidden"
-    );
-
-
-    deployedItems.forEach(
-        (item, index) => {
-
-            const row =
-                document.createElement("div");
-
-
-            row.className =
-                "p-2 bg-slate-800/40 rounded-xl text-xs flex items-center justify-between group hover:bg-slate-800 transition";
-
-
-            const left =
-                document.createElement("button");
-
-            left.type =
-                "button";
-
-            left.className =
-                "flex items-center space-x-2 truncate min-w-0 text-left";
-
-
-            const icon =
-                document.createElement("i");
-
-            icon.className =
-                item.type === "skill"
-                    ? "fa-solid fa-wand-magic-sparkles text-indigo-400"
-                    : "fa-solid fa-brain text-emerald-400";
-
-
-            const name =
-                document.createElement("span");
-
-            name.className =
-                "text-slate-300 truncate";
-
-            name.textContent =
-                item.name;
-
-
-            left.appendChild(icon);
-
-            left.appendChild(name);
-
-
-            left.addEventListener(
-                "click",
-                () =>
-                    activateItem(item)
-            );
-
-
-            const deleteBtn =
-                document.createElement("button");
-
-            deleteBtn.type =
-                "button";
-
-            deleteBtn.className =
-                "w-7 h-7 text-slate-500 hover:text-red-400 rounded-lg transition";
-
-            deleteBtn.setAttribute(
-                "aria-label",
-                "删除"
-            );
-
-
-            const deleteIcon =
-                document.createElement("i");
-
-            deleteIcon.className =
-                "fa-solid fa-trash text-[10px]";
-
-
-            deleteBtn.appendChild(
-                deleteIcon
-            );
-
-
-            deleteBtn.addEventListener(
-                "click",
-                event => {
-
-                    event.stopPropagation();
-
-                    deployedItems.splice(
-                        index,
-                        1
-                    );
-
-                    saveState();
-
-                    renderDeployedItems();
-
-                }
-            );
-
-
-            row.appendChild(left);
-
-            row.appendChild(deleteBtn);
-
-            deployedList.appendChild(row);
-
+        const state = JSON.parse(raw);
+        conversations = Array.isArray(state.conversations) ? state.conversations.filter(item => item && typeof item.id === "string" && Array.isArray(item.messages)) : [];
+        if(!conversations.length){
+            const first = createConversation();
+            conversations = [first];
         }
-    );
-
-}
-
-
-function activateItem(item) {
-
-    playSound("click");
-
-
-    const conversation =
-        ensureActiveConversation();
-
-
-    conversation.systemPrompt =
-        item.prompt;
-
-    conversation.systemName =
-        item.name;
-
-    conversation.systemType =
-        item.type;
-
-
-    currentSystemPrompt =
-        item.prompt;
-
-
-    currentTitleEl.textContent =
-        `${
-            item.type === "agent"
-                ? "Agent"
-                : "Skill"
-        }: ${item.name}`;
-
-
-    conversation.updatedAt =
-        Date.now();
-
-
+        if(typeof state.activeConversationId === "string" && conversations.some(item => item.id === state.activeConversationId)){
+            activeConversationId = state.activeConversationId;
+        }else{
+            activeConversationId = conversations[0].id;
+        }
+        deployedItems = Array.isArray(state.deployedItems) ? state.deployedItems.filter(item => item && typeof item.name === "string" && typeof item.prompt === "string") : [];
+        totalTokens = Number.isFinite(Number(state.totalTokens)) ? Math.max(0, Number(state.totalTokens)) : 0;
+        if(typeof state.soundEnabled === "boolean") soundEnabled = state.soundEnabled;
+        if(state.userProfile && typeof state.userProfile === "object"){
+            userProfile = {
+                name: typeof state.userProfile.name === "string" ? state.userProfile.name : "",
+                bio: typeof state.userProfile.bio === "string" ? state.userProfile.bio : "",
+                avatar: typeof state.userProfile.avatar === "string" ? state.userProfile.avatar : ""
+            };
+        }
+    }catch(error){
+        const first = createConversation();
+        conversations = [first];
+        activeConversationId = first.id;
+        deployedItems = [];
+        totalTokens = 0;
+        userProfile = { name: "", bio: "", avatar: "" };
+    }
+    updateSoundUI();
+    updateProfileUI();
     saveState();
-
-    renderCurrentConversation();
-
-    closeHistory();
-
 }
 
+function createAvatarElement(size="normal"){
+    if(userProfile.avatar){
+        const img = document.createElement("img");
+        img.src = userProfile.avatar;
+        img.className = size === "large" ? "profile-avatar" : "w-10 h-10 rounded-full object-cover border border-indigo-500/30";
+        img.alt = "用户头像";
+        return img;
+    }
+    const div = document.createElement("div");
+    div.className = size === "large" ? "profile-avatar-placeholder" : "w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-cyan-500 flex items-center justify-center border border-indigo-500/30";
+    const icon = document.createElement("i");
+    icon.className = "fa-solid fa-user text-white text-sm";
+    div.appendChild(icon);
+    return div;
+}
 
-/* =============================================================
-   CONFIG
-============================================================= */
+function updateProfileUI(){
+    menuAvatarContainer.innerHTML = "";
+    menuAvatarContainer.appendChild(createAvatarElement());
+    menuProfileName.textContent = userProfile.name.trim() ? userProfile.name.trim() : "我的资料";
+    menuProfileBio.textContent = userProfile.bio.trim() ? userProfile.bio.trim() : "设置头像和自我介绍";
+    renderProfilePreview();
+}
 
-function openConfigModal(type) {
+function renderProfilePreview(){
+    profileAvatarPreview.innerHTML = "";
+    profileAvatarPreview.appendChild(createAvatarElement("large"));
+}
 
+function openProfileModal(){
     playSound("click");
-
-
-    currentMode =
-        type;
-
-
-    closeHistory();
-
-
-    modalTitle.textContent =
-        type === "skill"
-            ? "部署新 Skill"
-            : "部署新 Agent";
-
-
-    modalNameInput.value =
-        "";
-
-    modalDescInput.value =
-        "";
-
-
-    modalNameInput.placeholder =
-        type === "skill"
-            ? "例如：代码审查助手"
-            : "例如：全栈架构师";
-
-
-    modalDescInput.placeholder =
-        type === "skill"
-            ? "输入该技能的具体提示词规则..."
-            : "输入该智能体的人设与背景描述...";
-
-
-    configModal.classList.remove(
-        "hidden"
-    );
-
-
-    requestAnimationFrame(
-        () =>
-            modalNameInput.focus()
-    );
-
+    profileNameInput.value = userProfile.name || "";
+    profileBioInput.value = userProfile.bio || "";
+    pendingAvatar = userProfile.avatar || "";
+    renderProfilePreview();
+    profileModal.classList.remove("hidden");
 }
 
-
-deploySkillBtn.addEventListener(
-    "click",
-    () =>
-        openConfigModal("skill")
-);
-
-
-deployAgentBtn.addEventListener(
-    "click",
-    () =>
-        openConfigModal("agent")
-);
-
-
-function closeConfigModal() {
-
-    configModal.classList.add(
-        "hidden"
-    );
-
+function closeProfileModal(){
+    profileModal.classList.add("hidden");
+    pendingAvatar = "";
 }
 
+profileUploadBtn.addEventListener("click", () => {
+    playSound("click");
+    profileFileInput.click();
+});
 
-closeModal.addEventListener(
-    "click",
-    closeConfigModal
-);
+profileFileInput.addEventListener("change", event => {
+    const file = event.target.files?.[0];
+    if(!file) return;
+    if(!file.type.startsWith("image/")){ alert("请选择图片文件。"); return; }
+    if(file.size > 5 * 1024 * 1024){ alert("头像不能超过 5MB。"); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+        pendingAvatar = String(reader.result);
+        renderProfilePreview();
+    };
+    reader.readAsDataURL(file);
+    profileFileInput.value = "";
+});
 
+profileSaveBtn.addEventListener("click", () => {
+    playSound("output");
+    const name = profileNameInput.value.trim().slice(0,40);
+    const bio = profileBioInput.value.trim().slice(0,500);
+    userProfile = {
+        name,
+        bio,
+        avatar: pendingAvatar || userProfile.avatar || ""
+    };
+    saveState();
+    updateProfileUI();
+    closeProfileModal();
+});
 
-modalCancelBtn.addEventListener(
-    "click",
-    closeConfigModal
-);
+profileCancelBtn.addEventListener("click", closeProfileModal);
+profileCloseBtn.addEventListener("click", closeProfileModal);
+profileOpenBtn.addEventListener("click", openProfileModal);
 
+function updateSoundUI(){
+    if(soundEnabled){
+        soundIcon.className = "fa-solid fa-volume-high text-sm text-indigo-400";
+        soundToggleBtn.classList.remove("opacity-50");
+    }else{
+        soundIcon.className = "fa-solid fa-volume-xmark text-sm text-slate-500";
+        soundToggleBtn.classList.add("opacity-50");
+    }
+}
 
-modalSaveBtn.addEventListener(
-    "click",
-    () => {
+soundToggleBtn.addEventListener("click", () => {
+    initAudio();
+    soundEnabled = !soundEnabled;
+    updateSoundUI();
+    saveState();
+    if(soundEnabled) playSound("output");
+});
 
-        const name =
-            modalNameInput.value.trim();
+function getActiveConversation(){
+    return conversations.find(item => item.id === activeConversationId) || null;
+}
 
+function ensureActiveConversation(){
+    let conversation = getActiveConversation();
+    if(conversation) return conversation;
+    conversation = createConversation();
+    conversations.unshift(conversation);
+    activeConversationId = conversation.id;
+    saveState();
+    return conversation;
+}
 
-        const prompt =
-            modalDescInput.value.trim();
+function updateTokenDisplay(){
+    tokenCountEl.textContent = Number(totalTokens || 0).toLocaleString();
+}
 
+function scrollToBottom(){
+    requestAnimationFrame(() => { chatContainer.scrollTop = chatContainer.scrollHeight; });
+}
 
-        if (!name) {
+function showWelcome(){
+    const conversation = getActiveConversation();
+    if(!conversation || conversation.messages.length > 0) return;
+    const wrapper = document.createElement("div");
+    wrapper.className = "flex items-start space-x-3 message-enter";
+    const avatar = document.createElement("div");
+    avatar.className = "w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-600/20";
+    const face = document.createElement("span");
+    face.textContent = "🧐";
+    face.className = "text-xs";
+    avatar.appendChild(face);
+    const bubble = document.createElement("div");
+    bubble.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[82%] text-sm text-slate-200 shadow-lg";
+    if(currentSystemPrompt){
+        bubble.textContent = `已加载「${conversation.systemName || "当前设定"}」。你可以开始对话。`;
+    }else{
+        bubble.textContent = userProfile.name ? `你好，${userProfile.name}！我是 CQS AI，你可以在下方输入框与我开始对话。` : "你好！我是 CQS AI，你可以在下方输入框与我开始对话。";
+    }
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+    chatContainer.appendChild(wrapper);
+}
 
-            modalNameInput.focus();
-
-            return;
-
+function appendUI(role, text, save=true){
+    const isUser = role === "user";
+    const wrapper = document.createElement("div");
+    wrapper.className = `flex items-start space-x-3 message-enter ${isUser ? "flex-row-reverse space-x-reverse" : ""}`;
+    const avatar = document.createElement("div");
+    if(isUser){
+        if(userProfile.avatar){
+            const img = document.createElement("img");
+            img.src = userProfile.avatar;
+            img.alt = "用户";
+            img.className = "w-8 h-8 rounded-full object-cover shrink-0 border border-indigo-500/40 shadow-md";
+            avatar.appendChild(img);
+        }else{
+            avatar.className = "w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0 shadow-md shadow-indigo-600/30";
+            const icon = document.createElement("i");
+            icon.className = "fa-solid fa-user text-xs text-white";
+            avatar.appendChild(icon);
         }
-
-
-        if (!prompt) {
-
-            modalDescInput.focus();
-
-            return;
-
-        }
-
-
-        if (
-            prompt.length >
-            20000
-        ) {
-
-            alert(
-                "System Prompt 不能超过 20000 个字符。"
-            );
-
-            return;
-
-        }
-
-
-        deployedItems.push({
-
-            id:
-                createId("deploy"),
-
-            type:
-                currentMode,
-
-            name:
-                name.substring(0, 80),
-
-            prompt:
-                prompt.substring(
-                    0,
-                    20000
-                )
-
-        });
-
-
+    }else{
+        avatar.className = "w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-md shadow-blue-600/30";
+        const span = document.createElement("span");
+        span.textContent = "🧐";
+        span.className = "text-xs";
+        avatar.appendChild(span);
+    }
+    const bubble = document.createElement("div");
+    bubble.className = `${isUser ? "bg-indigo-600 text-white shadow-indigo-600/20" : "bg-slate-900 border border-slate-800 text-slate-200"} rounded-2xl p-3.5 max-w-[82%] text-sm shadow-lg whitespace-pre-wrap break-words`;
+    bubble.textContent = String(text);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+    chatContainer.appendChild(wrapper);
+    if(save){
+        const conversation = ensureActiveConversation();
+        conversation.messages.push({ role, content: String(text) });
+        conversation.updatedAt = Date.now();
+        updateConversationTitle(conversation);
         saveState();
-
-        renderDeployedItems();
-
-        closeConfigModal();
-
-        playSound("output");
-
+        renderHistory();
     }
-);
+    scrollToBottom();
+    return wrapper;
+}
 
-
-/* =============================================================
-   FILE UPLOAD
-============================================================= */
-
-uploadBtn.addEventListener(
-    "click",
-    () => {
-
-        playSound("click");
-
-        fileInput.click();
-
+function createLoading(){
+    playSound("think");
+    const wrapper = document.createElement("div");
+    wrapper.id = "loading-message";
+    wrapper.className = "flex items-start space-x-3 message-enter";
+    const avatar = document.createElement("div");
+    avatar.className = "thinking-avatar w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0";
+    const span = document.createElement("span");
+    span.textContent = "🧐";
+    span.className = "text-xs";
+    avatar.appendChild(span);
+    const bubble = document.createElement("div");
+    bubble.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-sm text-slate-400 flex items-center space-x-1.5 shadow-lg";
+    const textSpan = document.createElement("span");
+    textSpan.className = "text-xs text-blue-400 font-medium";
+    textSpan.textContent = "深度思考中";
+    bubble.appendChild(textSpan);
+    for(let i=0; i<3; i++){
+        const dot = document.createElement("span");
+        dot.className = "typing-dot text-blue-400";
+        dot.textContent = "●";
+        bubble.appendChild(dot);
     }
-);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+    chatContainer.appendChild(wrapper);
+    scrollToBottom();
+    return wrapper;
+}
 
+function removeLoading(){
+    const loading = $("loading-message");
+    if(loading) loading.remove();
+}
 
-fileInput.addEventListener(
-    "change",
-    () => {
+function updateConversationTitle(conversation){
+    if(!conversation) return;
+    const firstUserMessage = conversation.messages.find(message => message.role === "user");
+    if(firstUserMessage && firstUserMessage.content){
+        const title = firstUserMessage.content.replace(/\s+/g," ").trim();
+        conversation.title = title.length > 28 ? title.slice(0,28) + "…" : title;
+    }
+    conversation.updatedAt = Date.now();
+}
 
-        const files =
-            Array.from(
-                fileInput.files || []
-            );
+function renderCurrentConversation(){
+    chatContainer.innerHTML = "";
+    const conversation = ensureActiveConversation();
+    currentTitleEl.textContent = conversation.title || "新对话";
+    currentSystemPrompt = conversation.systemPrompt || "";
+    if(conversation.systemName){
+        currentTitleEl.textContent = `${conversation.systemType === "agent" ? "Agent" : "Skill"}: ${conversation.systemName}`;
+    }
+    for(const message of conversation.messages){
+        if(!message || (message.role !== "user" && message.role !== "assistant")) continue;
+        appendUI(message.role, message.content, false);
+    }
+    showWelcome();
+    scrollToBottom();
+}
 
+function renderHistory(){
+    historyList.innerHTML = "";
+    const sorted = [...conversations].sort((a,b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
+    sorted.forEach(conversation => {
+        const row = document.createElement("div");
+        row.className = `group p-2.5 rounded-xl cursor-pointer flex items-center justify-between gap-2 transition ${conversation.id === activeConversationId ? "bg-indigo-600/20 border border-indigo-500/30" : "bg-slate-800/40 hover:bg-slate-800/70"}`;
+        const left = document.createElement("div");
+        left.className = "min-w-0 flex-1";
+        const title = document.createElement("div");
+        title.className = "text-xs text-slate-200 truncate";
+        title.textContent = conversation.title || "新对话";
+        const count = document.createElement("div");
+        count.className = "text-[10px] text-slate-500 mt-0.5";
+        count.textContent = `${conversation.messages.length} 条消息`;
+        left.appendChild(title);
+        left.appendChild(count);
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "w-7 h-7 shrink-0 rounded-lg text-slate-500 hover:text-red-400 transition flex items-center justify-center";
+        const icon = document.createElement("i");
+        icon.className = "fa-solid fa-trash text-[10px]";
+        deleteBtn.appendChild(icon);
+        row.appendChild(left);
+        row.appendChild(deleteBtn);
+        left.addEventListener("click", () => { switchConversation(conversation.id); });
+        deleteBtn.addEventListener("click", event => {
+            event.stopPropagation();
+            askDeleteConversation(conversation.id);
+        });
+        historyList.appendChild(row);
+    });
+}
 
-        if (!files.length) {
+function switchConversation(id){
+    playSound("click");
+    const conversation = conversations.find(item => item.id === id);
+    if(!conversation) return;
+    activeConversationId = id;
+    currentSystemPrompt = conversation.systemPrompt || "";
+    saveState();
+    renderCurrentConversation();
+    renderHistory();
+    closeHistory();
+}
+
+function startNewChat(){
+    playSound("click");
+    const conversation = createConversation();
+    conversations.unshift(conversation);
+    activeConversationId = conversation.id;
+    currentSystemPrompt = "";
+    saveState();
+    renderCurrentConversation();
+    renderHistory();
+    closeHistory();
+    userInput.focus();
+}
+
+newChatBtn.addEventListener("click", startNewChat);
+
+function askDeleteConversation(id){
+    playSound("click");
+    pendingDeleteId = id;
+    confirmModal.classList.remove("hidden");
+}
+
+function closeConfirmModal(){
+    confirmModal.classList.add("hidden");
+    pendingDeleteId = null;
+}
+
+confirmCancel.addEventListener("click", closeConfirmModal);
+confirmDelete.addEventListener("click", () => {
+    if(!pendingDeleteId) return;
+    conversations = conversations.filter(item => item.id !== pendingDeleteId);
+    if(!conversations.length){
+        const conversation = createConversation();
+        conversations = [conversation];
+        activeConversationId = conversation.id;
+    }else if(activeConversationId === pendingDeleteId){
+        activeConversationId = conversations[0].id;
+    }
+    saveState();
+    renderCurrentConversation();
+    renderHistory();
+    closeConfirmModal();
+});
+
+async function handleSend(){
+    if(isSending) return;
+    const text = userInput.value.trim();
+    if(!text) return;
+    if(text.length > 10000){
+        appendUI("assistant", "⚠️ 单条消息不能超过 10000 个字符。", true);
+        return;
+    }
+    initAudio();
+    playSound("click");
+    const conversation = ensureActiveConversation();
+    isSending = true;
+    sendBtn.disabled = true;
+    userInput.disabled = true;
+    userInput.value = "";
+    appendUI("user", text, true);
+    createLoading();
+    try{
+        const finalMessages = conversation.messages.map(message => ({ role: message.role, content: message.content }));
+        const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ messages: finalMessages, systemPrompt: currentSystemPrompt || "" })
+        });
+        let data;
+        try{ data = await response.json(); }catch{ throw new Error(`服务器返回了无法解析的数据 (${response.status})`); }
+        removeLoading();
+        if(!response.ok){
+            let errorMessage = data?.error || "服务器请求失败";
+            if(data?.detail) errorMessage += `\n${data.detail}`;
+            appendUI("assistant", `⚠️ 错误：${errorMessage}`, true);
             return;
         }
-
-
-        selectedFiles =
-            files;
-
-
-        files.forEach(
-            file => {
-
-                appendUI(
-                    "user",
-                    `📎 已选择文件：${file.name}\n类型：${
-                        file.type ||
-                        "未知"
-                    }\n大小：${formatFileSize(
-                        file.size
-                    )}`,
-                    true
-                );
-
-            }
-        );
-
-
-        /*
-         * 这里故意不伪造“文件已经被 DeepSeek 读取”。
-         *
-         * 后续接入文件解析 API 时，
-         * 可以从 selectedFiles 获取真实 File 对象。
-         */
-
-        appendUI(
-            "assistant",
-            "📎 文件入口已准备完成。当前版本保留文件上传接口，后续可接入 PDF、DOCX、TXT、图片或其他文件解析 API。",
-            true
-        );
-
-
-        fileInput.value = "";
-
+        const reply = data?.reply || data?.choices?.[0]?.message?.content;
+        if(typeof reply !== "string" || !reply.trim()){
+            appendUI("assistant", "⚠️ 错误：未获取到有效的 AI 回复。", true);
+            return;
+        }
+        appendUI("assistant", reply, true);
+        playSound("output");
+        const usage = data?.usage;
+        const realTokens = Number(usage?.total_tokens);
+        if(Number.isFinite(realTokens) && realTokens > 0){
+            totalTokens += realTokens;
+            updateTokenDisplay();
+            saveState();
+        }
+    }catch(error){
+        removeLoading();
+        let message = error?.message || "网络连接异常";
+        if(message === "Failed to fetch") message = "网络繁忙或连接中断，请检查网络后重试。";
+        appendUI("assistant", `⚠️ ${message}`, true);
+    }finally{
+        isSending = false;
+        sendBtn.disabled = false;
+        userInput.disabled = false;
+        userInput.focus();
     }
-);
-
-
-function formatFileSize(bytes) {
-
-    if (!Number.isFinite(bytes)) {
-        return "未知";
-    }
-
-
-    if (bytes < 1024) {
-        return `${bytes} B`;
-    }
-
-
-    if (bytes < 1024 * 1024) {
-        return `${(
-            bytes / 1024
-        ).toFixed(1)} KB`;
-    }
-
-
-    return `${(
-        bytes /
-        1024 /
-        1024
-    ).toFixed(1)} MB`;
-
 }
 
-
-/* =============================================================
-   VOICE
-============================================================= */
-
-function setupVoiceRecognition() {
-
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-
-
-    if (!SpeechRecognition) {
-
-        return false;
-
+sendBtn.addEventListener("click", handleSend);
+userInput.addEventListener("keydown", event => {
+    if(event.key === "Enter" && !event.shiftKey){
+        event.preventDefault();
+        handleSend();
     }
+});
+userInput.addEventListener("input", () => {
+    const now = Date.now();
+    if(now - lastTypeSound < 70) return;
+    lastTypeSound = now;
+    playSound("type");
+});
 
+function renderDeployedItems(){
+    deployedList.innerHTML = "";
+    if(!deployedItems.length){
+        deployedSection.classList.add("hidden");
+        return;
+    }
+    deployedSection.classList.remove("hidden");
+    deployedItems.forEach((item, index) => {
+        const row = document.createElement("div");
+        row.className = "p-2 bg-slate-800/40 rounded-xl text-xs flex items-center justify-between";
+        const left = document.createElement("button");
+        left.type = "button";
+        left.className = "flex items-center space-x-2 truncate min-w-0 text-left flex-1";
+        const icon = document.createElement("i");
+        icon.className = item.type === "skill" ? "fa-solid fa-wand-magic-sparkles text-indigo-400" : "fa-solid fa-brain text-emerald-400";
+        const name = document.createElement("span");
+        name.className = "text-slate-300 truncate";
+        name.textContent = item.name;
+        left.appendChild(icon);
+        left.appendChild(name);
+        left.addEventListener("click", () => activateItem(item));
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "w-7 h-7 text-slate-500 hover:text-red-400 flex items-center justify-center shrink-0";
+        const deleteIcon = document.createElement("i");
+        deleteIcon.className = "fa-solid fa-trash text-[10px]";
+        deleteBtn.appendChild(deleteIcon);
+        deleteBtn.addEventListener("click", event => {
+            event.stopPropagation();
+            deployedItems.splice(index, 1);
+            saveState();
+            renderDeployedItems();
+        });
+        row.appendChild(left);
+        row.appendChild(deleteBtn);
+        deployedList.appendChild(row);
+    });
+}
 
-    recognition =
-        new SpeechRecognition();
+function activateItem(item){
+    playSound("click");
+    const conversation = ensureActiveConversation();
+    conversation.systemPrompt = item.prompt;
+    conversation.systemName = item.name;
+    conversation.systemType = item.type;
+    currentSystemPrompt = item.prompt;
+    conversation.updatedAt = Date.now();
+    saveState();
+    renderCurrentConversation();
+    closeHistory();
+}
 
+function openConfigModal(type){
+    playSound("click");
+    currentMode = type;
+    closeHistory();
+    modalTitle.textContent = type === "skill" ? "部署新 Skill" : "部署新 Agent";
+    modalNameInput.value = "";
+    modalDescInput.value = "";
+    modalNameInput.placeholder = type === "skill" ? "例如：代码审查助手" : "例如：全栈架构师";
+    modalDescInput.placeholder = type === "skill" ? "输入该技能的具体提示词规则..." : "输入该智能体的人设与背景描述...";
+    configModal.classList.remove("hidden");
+}
 
-    recognition.lang =
-        "zh-CN";
+deploySkillBtn.addEventListener("click", () => openConfigModal("skill"));
+deployAgentBtn.addEventListener("click", () => openConfigModal("agent"));
 
+function closeConfigModal(){ configModal.classList.add("hidden"); }
+closeModal.addEventListener("click", closeConfigModal);
+modalCancelBtn.addEventListener("click", closeConfigModal);
 
-    recognition.continuous =
-        false;
+modalSaveBtn.addEventListener("click", () => {
+    const name = modalNameInput.value.trim();
+    const prompt = modalDescInput.value.trim();
+    if(!name){ modalNameInput.focus(); return; }
+    if(!prompt){ modalDescInput.focus(); return; }
+    deployedItems.push({
+        id: createId("deploy"),
+        type: currentMode,
+        name: name.substring(0,80),
+        prompt: prompt.substring(0,20000)
+    });
+    saveState();
+    renderDeployedItems();
+    closeConfigModal();
+    playSound("output");
+});
 
+uploadBtn.addEventListener("click", () => {
+    playSound("click");
+    fileInput.click();
+});
 
-    recognition.interimResults =
-        true;
+fileInput.addEventListener("change", () => {
+    const files = Array.from(fileInput.files || []);
+    if(!files.length) return;
+    selectedFiles = files;
+    files.forEach(file => {
+        appendUI("user", `📎 已选择文件：${file.name}\n类型：${file.type || "未知"}\n大小：${formatFileSize(file.size)}`, true);
+    });
+    appendUI("assistant", "📎 文件入口已准备完成。当前版本保留真实 File 对象，后续可以接入 PDF、DOCX、TXT、图片或其他文件解析 API。", true);
+    fileInput.value = "";
+});
 
+function formatFileSize(bytes){
+    if(!Number.isFinite(bytes)) return "未知";
+    if(bytes < 1024) return `${bytes} B`;
+    if(bytes < 1024*1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
 
-    recognition.onstart =
-        () => {
-
-            isRecording =
-                true;
-
-
-            voiceBtn.classList.add(
-                "voice-recording"
-            );
-
-
-            voiceIcon.className =
-                "fa-solid fa-stop text-sm";
-
-
-            userInput.placeholder =
-                "正在聆听...";
-
-
-            playSound("think");
-
-        };
-
-
-    recognition.onresult =
-        event => {
-
-            let finalText =
-                "";
-
-
-            let interimText =
-                "";
-
-
-            for (
-                let i = event.resultIndex;
-                i < event.results.length;
-                i++
-            ) {
-
-                const transcript =
-                    event.results[i][0]
-                        .transcript;
-
-
-                if (
-                    event.results[i]
-                        .isFinal
-                ) {
-
-                    finalText +=
-                        transcript;
-
-                } else {
-
-                    interimText +=
-                        transcript;
-
-                }
-
-            }
-
-
-            if (finalText) {
-
-                userInput.value =
-                    finalText;
-
-            } else if (interimText) {
-
-                userInput.value =
-                    interimText;
-
-            }
-
-        };
-
-
-    recognition.onerror =
-        event => {
-
-            console.warn(
-                "Speech recognition:",
-                event.error
-            );
-
-        };
-
-
-    recognition.onend =
-        () => {
-
-            isRecording =
-                false;
-
-
-            voiceBtn.classList.remove(
-                "voice-recording"
-            );
-
-
-            voiceIcon.className =
-                "fa-solid fa-microphone text-sm";
-
-
-            userInput.placeholder =
-                "输入消息...";
-
-
-            if (
-                userInput.value.trim()
-            ) {
-
-                userInput.focus();
-
-            }
-
-        };
-
-
+function setupVoiceRecognition(){
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRecognition) return false;
+    recognition = new SpeechRecognition();
+    recognition.lang = "zh-CN";
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.onstart = () => {
+        isRecording = true;
+        voiceBtn.classList.add("voice-recording");
+        voiceIcon.className = "fa-solid fa-stop text-sm";
+        userInput.placeholder = "正在聆听...";
+        playSound("think");
+    };
+    recognition.onresult = event => {
+        let finalText = "";
+        let interimText = "";
+        for(let i = event.resultIndex; i < event.results.length; i++){
+            const transcript = event.results[i][0].transcript;
+            if(event.results[i].isFinal) finalText += transcript;
+            else interimText += transcript;
+        }
+        if(finalText) userInput.value = finalText;
+        else if(interimText) userInput.value = interimText;
+    };
+    recognition.onerror = event => { console.warn("Speech recognition:", event.error); };
+    recognition.onend = () => {
+        isRecording = false;
+        voiceBtn.classList.remove("voice-recording");
+        voiceIcon.className = "fa-solid fa-microphone text-sm";
+        userInput.placeholder = "输入消息...";
+        if(userInput.value.trim()) userInput.focus();
+    };
     return true;
-
 }
-
 
 setupVoiceRecognition();
 
+voiceBtn.addEventListener("click", () => {
+    initAudio();
+    playSound("click");
+    if(!recognition){ alert("当前浏览器不支持 Web Speech API。语音入口已保留。"); return; }
+    if(isRecording){ recognition.stop(); return; }
+    try{ recognition.start(); }catch(error){ console.warn("Voice start error:", error); }
+});
 
-voiceBtn.addEventListener(
-    "click",
-    () => {
-
-        initAudio();
-
-        playSound("click");
-
-
-        if (!recognition) {
-
-            alert(
-                "当前浏览器不支持 Web Speech API。语音聊天入口已保留，后续可以接入独立语音 API。"
-            );
-
-            return;
-
-        }
-
-
-        if (isRecording) {
-
-            recognition.stop();
-
-            return;
-
-        }
-
-
-        try {
-
-            recognition.start();
-
-        } catch (error) {
-
-            console.warn(
-                "Voice start error:",
-                error
-            );
-
-        }
-
+exportBtn.addEventListener("click", () => {
+    playSound("click");
+    try{
+        const exportData = {
+            exportedAt: new Date().toISOString(),
+            activeConversationId,
+            totalTokens,
+            userProfile,
+            conversations,
+            deployedItems
+        };
+        const json = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = `cqs_ai_backup_${Date.now()}.json`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(() => { URL.revokeObjectURL(url); }, 1000);
+    }catch{
+        alert("导出失败，请稍后重试。");
     }
-);
+});
 
+historyBtn.addEventListener("click", () => {
+    playSound("click");
+    renderHistory();
+    updateProfileUI();
+    historyDrawer.classList.remove("hidden");
+});
 
-/* =============================================================
-   EXPORT
-============================================================= */
+closeDrawer.addEventListener("click", closeHistory);
+function closeHistory(){ historyDrawer.classList.add("hidden"); }
 
-exportBtn.addEventListener(
-    "click",
-    () => {
+historyDrawer.addEventListener("click", event => {
+    if(event.target === historyDrawer) closeHistory();
+});
 
-        playSound("click");
-
-
-        try {
-
-            const exportData = {
-
-                exportedAt:
-                    new Date().toISOString(),
-
-                activeConversationId,
-
-                totalTokens,
-
-                conversations,
-
-                deployedItems
-
-            };
-
-
-            const json =
-                JSON.stringify(
-                    exportData,
-                    null,
-                    2
-                );
-
-
-            const blob =
-                new Blob(
-                    [json],
-                    {
-                        type:
-                            "application/json"
-                    }
-                );
-
-
-            const url =
-                URL.createObjectURL(
-                    blob
-                );
-
-
-            const anchor =
-                document.createElement(
-                    "a"
-                );
-
-
-            anchor.href =
-                url;
-
-
-            anchor.download =
-                `cqs_ai_backup_${Date.now()}.json`;
-
-
-            document.body.appendChild(
-                anchor
-            );
-
-
-            anchor.click();
-
-            anchor.remove();
-
-
-            setTimeout(
-                () =>
-                    URL.revokeObjectURL(
-                        url
-                    ),
-                1000
-            );
-
-
-        } catch {
-
-            alert(
-                "导出失败，请稍后重试。"
-            );
-
-        }
-
+document.addEventListener("keydown", event => {
+    if(event.key === "Escape"){
+        closeHistory();
+        closeConfigModal();
+        closeConfirmModal();
+        closeProfileModal();
     }
-);
+});
 
-
-/* =============================================================
-   DRAWER
-============================================================= */
-
-historyBtn.addEventListener(
-    "click",
-    () => {
-
-        playSound("click");
-
-        renderHistory();
-
-        historyDrawer.classList.remove(
-            "hidden"
-        );
-
-    }
-);
-
-
-closeDrawer.addEventListener(
-    "click",
-    closeHistory
-);
-
-
-function closeHistory() {
-
-    historyDrawer.classList.add(
-        "hidden"
-    );
-
-}
-
-
-historyDrawer.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            historyDrawer
-        ) {
-
-            closeHistory();
-
-        }
-
-    }
-);
-
-
-/* =============================================================
-   ESC
-============================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key ===
-            "Escape"
-        ) {
-
-            closeHistory();
-
-            closeConfigModal();
-
-            closeConfirmModal();
-
-        }
-
-    }
-);
-
-
-/* =============================================================
-   GLOBAL BUTTON AUDIO
-============================================================= */
-
-document.addEventListener(
-    "pointerdown",
-    event => {
-
-        const button =
-            event.target.closest(
-                "button"
-            );
-
-
-        if (!button) return;
-
-
-        if (
-            button ===
-            soundToggleBtn
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            button.disabled
-        ) {
-
-            return;
-
-        }
-
-
-        playSound("click");
-
-    },
-    {
-        passive: true
-    }
-);
-
-
-/* =============================================================
-   INIT
-============================================================= */
+document.addEventListener("pointerdown", event => {
+    const button = event.target.closest("button");
+    if(!button) return;
+    if(button === soundToggleBtn) return;
+    if(button.disabled) return;
+    playSound("click");
+}, { passive: true });
 
 loadState();
-
 updateTokenDisplay();
-
 renderDeployedItems();
-
 renderCurrentConversation();
-
 renderHistory();
-
 updateSoundUI();
+updateProfileUI();
 
-
-/*
- * 等页面完成一小段初始化后播放启动动画。
- */
-
-setTimeout(
-    () => {
-
-        playIntro();
-
-    },
-    250
-);
-
+setTimeout(() => { playIntro(); }, 350);
 </script>
-
 </body>
 </html>
