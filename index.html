@@ -762,6 +762,24 @@ button:disabled {
     animation: messageIn .22s ease both;
 }
 
+/* =========================================================
+   出场动画样式 (新增/修改)
+   ========================================================= */
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-welcome {
+    animation: fadeInDown 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
 @keyframes messageIn {
     from {
         opacity: 0;
@@ -2097,7 +2115,7 @@ button:disabled {
         >
 
             <div
-                class="welcome"
+                class="welcome animate-welcome"
                 id="welcome"
             >
 
@@ -6658,7 +6676,8 @@ window.addEventListener(
    ========================================================= */
 
 })();
-</script>
 
+</script>
 </body>
 </html>
+
