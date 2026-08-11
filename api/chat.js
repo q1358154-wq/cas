@@ -1,8 +1,14 @@
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
-  
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
   const { messages } = req.body;
   const apiKey = process.env.DEEPSEEK_API_KEY;
+
+  if (!apiKey) {
+    return res.status(500).json({ error: 'API Key not configured in environment variables' });
+  }
 
   try {
     const response = await fetch('https://api.deepseek.com/chat/completions', {
@@ -12,14 +18,20 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'deepseek-v4-pro', // 👈 已更新为最新模型名称
+        model: 'deepseek-chat', // 使用官方标准对话模型
         messages: messages,
         stream: false
       })
     });
+
     const data = await response.json();
-    res.status(200).json(data);
+    
+    if (!response.ok) {
+      return res.status(response.status).json({ error: data.error?.message || 'DeepSeek API Error' });
+    }
+
+    return res.status(200).json(data);
   } catch (error) {
-    res.status(500).json({ error: 'API Connection Failed' });
+    return res.status(500).json({ error: 'Server Connection Failed' });
   }
 }
