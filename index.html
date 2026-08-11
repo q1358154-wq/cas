@@ -4,1118 +4,1884 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#020617">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>CQS AI</title>
+<title>CQS AI Global v1.0</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none;}
-*::-webkit-scrollbar{width:0;height:0;}
-html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#020617;overscroll-behavior:none;}
-body{min-height:100vh;min-height:100dvh;color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
-input,textarea,button{font-size:16px;}
-button:disabled{opacity:.55;cursor:not-allowed;}
-button{-webkit-user-select:none;user-select:none;}
-.safe-top{padding-top:env(safe-area-inset-top);}
-.safe-bottom{padding-bottom:env(safe-area-inset-bottom);}
-#user-input{-webkit-appearance:none;appearance:none;}
-#user-input:focus{outline:none;}
-.message-enter{animation:messageEnter .22s ease-out;}
-@keyframes messageEnter{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.typing-dot{animation:typing 1.2s infinite ease-in-out;}
-.typing-dot:nth-child(2){animation-delay:.15s;}
-.typing-dot:nth-child(3){animation-delay:.3s;}
-@keyframes typing{0%,60%,100%{opacity:.25;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
-.thinking-avatar{animation:thinkingAvatar 1.8s ease-in-out infinite;}
-@keyframes thinkingAvatar{0%,100%{transform:translateY(0) scale(1);box-shadow:0 0 0 rgba(59,130,246,0);}50%{transform:translateY(-2px) scale(1.04);box-shadow:0 0 18px rgba(59,130,246,.35);}}
-#cqs-intro{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle at 50% 45%,rgba(59,130,246,.18),transparent 26%),radial-gradient(circle at 20% 20%,rgba(168,85,247,.12),transparent 25%),radial-gradient(circle at 80% 80%,rgba(34,211,238,.10),transparent 28%),#020617;transition:opacity .8s ease,visibility .8s ease;}
-#cqs-intro.intro-hidden{opacity:0;visibility:hidden;pointer-events:none;}
-.intro-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-.intro-particle{position:absolute;width:3px;height:3px;border-radius:50%;background:white;opacity:.35;animation:particleFloat linear infinite;}
-@keyframes particleFloat{from{transform:translateY(30vh);opacity:0;}20%{opacity:.45;}80%{opacity:.3;}to{transform:translateY(-30vh);opacity:0;}}
-.intro-inner{position:relative;z-index:2;width:100%;padding:24px;text-align:center;}
-.intro-hex-core{width:110px;height:110px;margin:0 auto 28px;position:relative;display:flex;align-items:center;justify-content:center;}
-.intro-hex{position:absolute;inset:0;clip-path:polygon(25% 6.7%,75% 6.7%,100% 50%,75% 93.3%,25% 93.3%,0 50%);background:conic-gradient(from 0deg,#ff004c,#ff8a00,#ffe600,#20ff70,#00d9ff,#695cff,#ff28d7,#ff004c);animation:coreRotate 5s linear infinite,coreFloat 2.8s ease-in-out infinite;filter:drop-shadow(0 0 14px rgba(0,217,255,.35)) drop-shadow(0 0 35px rgba(168,85,247,.25));}
-.intro-hex::after{content:"";position:absolute;inset:4px;clip-path:inherit;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.9),transparent 8%),linear-gradient(135deg,#0f172a,#111827 50%,#020617);}
-.intro-hex-letter{position:relative;z-index:3;font-size:38px;font-weight:900;background:linear-gradient(90deg,#ff3b30,#ff9500,#ffe600,#32d74b,#00c7ff,#5856d6,#ff2d55);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 8px rgba(255,255,255,.2));animation:rainbowShift 3s linear infinite;}
-@keyframes coreRotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-@keyframes coreFloat{0%,100%{margin-top:0;}50%{margin-top:-7px;}}
-@keyframes rainbowShift{from{background-position:0% 50%;}to{background-position:300% 50%;}}
-#intro-title{min-height:70px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:7px;padding:0 8px;}
-.intro-letter{position:relative;width:30px;height:35px;display:flex;align-items:center;justify-content:center;clip-path:polygon(25% 6.7%,75% 6.7%,100% 50%,75% 93.3%,25% 93.3%,0 50%);background:conic-gradient(from 20deg,#ff1744,#ff9100,#ffea00,#00e676,#00b8ff,#536dfe,#d500f9,#ff1744);opacity:0;transform:perspective(500px) rotateY(-180deg) rotateZ(-20deg) scale(.25);animation:introLetterIn .72s cubic-bezier(.16,1,.3,1) forwards;}
-.intro-letter::before{content:"";position:absolute;inset:2px;clip-path:inherit;background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.02) 45%,rgba(0,0,0,.45));z-index:1;}
-.intro-letter::after{content:"";position:absolute;inset:5px;clip-path:inherit;background:#020617;z-index:2;}
-.intro-letter span{position:relative;z-index:3;font-size:15px;font-weight:900;background:linear-gradient(90deg,#ff453a,#ff9f0a,#ffd60a,#30d158,#64d2ff,#5e5ce6,#ff375f);background-size:400% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rainbowShift 2.4s linear infinite;}
-.intro-letter.space{width:10px;clip-path:none;background:none;animation:none;opacity:1;transform:none;}
-@keyframes introLetterIn{0%{opacity:0;transform:perspective(500px) rotateY(-180deg) rotateZ(-25deg) scale(.2);filter:drop-shadow(0 0 0 rgba(255,255,255,0));}55%{opacity:1;transform:perspective(500px) rotateY(25deg) rotateZ(5deg) scale(1.12);}100%{opacity:1;transform:perspective(500px) rotateY(0deg) rotateZ(0deg) scale(1);filter:drop-shadow(0 0 8px rgba(0,217,255,.28)) drop-shadow(0 0 16px rgba(255,0,200,.16));}}
-.intro-subtitle{margin-top:16px;color:#64748b;font-size:9px;letter-spacing:.35em;text-transform:uppercase;opacity:0;animation:subtitleIn .8s 1.5s ease forwards;}
-@keyframes subtitleIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.profile-avatar{width:78px;height:78px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#4f46e5,#06b6d4);border:2px solid rgba(99,102,241,.35);box-shadow:0 0 20px rgba(99,102,241,.18);}
-.profile-avatar-placeholder{width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#4f46e5,#06b6d4);border:2px solid rgba(99,102,241,.35);font-size:25px;}
-#history-drawer,#config-modal,#confirm-modal,#profile-modal{transition:opacity .2s ease;}
-#history-drawer.hidden,#config-modal.hidden,#confirm-modal.hidden,#profile-modal.hidden{opacity:0;pointer-events:none;}
-#history-panel{transition:transform .25s cubic-bezier(.16,1,.3,1);}
-#history-drawer.hidden #history-panel{transform:translateX(-100%);}
-.modal-content{transform:translateY(0) scale(1);transition:transform .2s ease,opacity .2s ease;}
-.modal-overlay.hidden .modal-content{transform:translateY(8px) scale(.98);opacity:0;}
-.voice-recording{background:rgb(127 29 29)!important;color:rgb(248 113 113)!important;animation:voicePulse 1s infinite;}
-@keyframes voicePulse{0%,100%{box-shadow:0 0 0 rgba(239,68,68,0);}50%{box-shadow:0 0 18px rgba(239,68,68,.35);}}
-.profile-menu-card{background:linear-gradient(145deg,rgba(30,41,59,.98),rgba(15,23,42,.98));}
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    scrollbar-width:none;
+}
+*::-webkit-scrollbar{
+    width:0;
+    height:0;
+}
+html,
+body{
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    background:#020617;
+    overscroll-behavior:none;
+}
+body{
+    min-height:100vh;
+    min-height:100dvh;
+    color:#f8fafc;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+    -webkit-font-smoothing:antialiased;
+}
+.message-enter{
+    animation:messageEnter .22s ease-out;
+}
+@keyframes messageEnter{
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+/* =========================================================
+   Intro
+========================================================= */
+#cqs-intro{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(59,130,246,.18),
+            transparent 26%
+        ),
+        #020617;
+    transition:
+        opacity .8s ease,
+        visibility .8s ease;
+}
+#cqs-intro.intro-hidden{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+}
+.intro-hex{
+    position:relative;
+    width:110px;
+    height:110px;
+    clip-path:
+        polygon(
+            25% 6.7%,
+            75% 6.7%,
+            100% 50%,
+            75% 93.3%,
+            25% 93.3%,
+            0 50%
+        );
+    background:
+        conic-gradient(
+            from 0deg,
+            #ff004c,
+            #ff8a00,
+            #ffe600,
+            #20ff70,
+            #00d9ff,
+            #695cff,
+            #ff28d7,
+            #ff004c
+        );
+    animation:
+        coreRotate 5s linear infinite;
+    filter:
+        drop-shadow(
+            0 0 14px
+            rgba(0,217,255,.35)
+        );
+    margin-bottom:24px;
+}
+@keyframes coreRotate{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}
+/* =========================================================
+   Thinking UI
+========================================================= */
+.reasoning-box{
+    border:1px solid rgba(99,102,241,.20);
+    background:rgba(15,23,42,.65);
+    border-radius:16px;
+    overflow:hidden;
+    margin-bottom:8px;
+}
+.reasoning-header{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 12px;
+    font-size:12px;
+    color:#a5b4fc;
+    border-bottom:1px solid rgba(99,102,241,.12);
+    user-select:none;
+}
+.reasoning-content{
+    padding:11px 12px;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.65;
+    white-space:pre-wrap;
+    word-break:break-word;
+    max-height:320px;
+    overflow-y:auto;
+}
+.thinking-dot{
+    display:inline-block;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:#818cf8;
+    animation:
+        thinkingPulse 1s infinite ease-in-out;
+}
+.thinking-dot:nth-child(2){
+    animation-delay:.15s;
+}
+.thinking-dot:nth-child(3){
+    animation-delay:.3s;
+}
+@keyframes thinkingPulse{
+    0%,
+    80%,
+    100%{
+        opacity:.25;
+        transform:translateY(0);
+    }
+    40%{
+        opacity:1;
+        transform:translateY(-2px);
+    }
+}
+/* =========================================================
+   Privacy
+========================================================= */
+#privacy-banner{
+    z-index:50;
+}
+/* =========================================================
+   Mobile
+========================================================= */
+@media(max-width:480px){
+    .intro-hex{
+        width:92px;
+        height:92px;
+    }
+    #chat-container{
+        padding-left:12px;
+        padding-right:12px;
+    }
+}
 </style>
 </head>
 <body class="bg-slate-950 text-slate-100">
-
+<!-- =========================================================
+     INTRO
+========================================================= -->
 <div id="cqs-intro">
-    <div id="intro-particles" class="intro-particles"></div>
-    <div class="intro-inner">
-        <div class="intro-hex-core">
-            <div class="intro-hex"></div>
-            <div class="intro-hex-letter">C</div>
+    <div class="intro-hex"></div>
+    <div
+        id="intro-typing-text"
+        class="text-sm font-mono tracking-widest text-indigo-400 h-6"
+    ></div>
+</div>
+<!-- =========================================================
+     PRIVACY
+========================================================= -->
+<div
+    id="privacy-banner"
+    class="fixed bottom-0 inset-x-0 z-50 bg-slate-900/95 border-t border-slate-800 p-4 backdrop-blur-md hidden"
+>
+    <div class="max-w-md mx-auto flex flex-col space-y-3">
+        <p
+            id="txt-privacy-desc"
+            class="text-xs text-slate-400 leading-relaxed"
+        ></p>
+        <div class="flex items-center justify-between">
+            <button
+                id="privacy-policy-link"
+                class="text-xs text-indigo-400 underline"
+            >
+                Privacy Policy
+            </button>
+            <button
+                id="privacy-accept"
+                class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg font-medium transition"
+            ></button>
         </div>
-        <div id="intro-title"></div>
-        <div class="intro-subtitle">INTELLIGENT CONSOLE · CQS AI</div>
     </div>
 </div>
-
-<div id="app" class="w-full flex flex-col bg-slate-950" style="height:100vh;height:100dvh;min-height:100svh;">
-<header class="shrink-0 px-4 py-3 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md z-20 safe-top">
-    <div class="flex items-center space-x-2 min-w-0">
-        <button id="history-btn" type="button" aria-label="打开菜单" class="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl bg-slate-800 text-slate-300 active:scale-95 transition">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        <h1 id="current-title" class="text-base font-semibold tracking-wide truncate">AI 对话中心</h1>
-    </div>
-    <div class="flex items-center space-x-2 shrink-0">
-        <button id="sound-toggle-btn" type="button" aria-label="音效开关" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 text-indigo-400 active:scale-95 transition">
-            <i id="sound-icon" class="fa-solid fa-volume-high text-sm"></i>
-        </button>
-        <div class="text-[11px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-full font-mono whitespace-nowrap">
-            <span id="token-count">0</span> tokens
+<!-- =========================================================
+     FILE INPUT
+========================================================= -->
+<input
+    type="file"
+    id="hidden-file-input"
+    class="hidden"
+    multiple
+>
+<!-- =========================================================
+     APP
+========================================================= -->
+<div
+    class="w-full flex flex-col bg-slate-950"
+    style="height:100vh;height:100dvh;"
+>
+<!-- =========================================================
+     HEADER
+========================================================= -->
+<header
+    class="shrink-0 px-4 py-3 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md z-20"
+>
+    <div class="flex items-center space-x-3">
+        <h1
+            id="txt-title"
+            class="text-base font-semibold tracking-wide"
+        >
+            CQS AI Global
+        </h1>
+        <!-- Model -->
+        <div class="relative">
+            <button
+                id="model-select-btn"
+                class="flex items-center space-x-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700 transition"
+            >
+                <span
+                    class="w-2 h-2 rounded-full bg-emerald-500"
+                ></span>
+                <span id="current-model-name">
+                    DeepSeek
+                </span>
+                <i
+                    class="fa-solid fa-chevron-down text-[10px] text-slate-400"
+                ></i>
+            </button>
+            <div
+                id="model-dropdown"
+                class="absolute left-0 mt-2 w-40 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-1 hidden z-30"
+            >
+                <div
+                    class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-200"
+                    data-model="DeepSeek"
+                >
+                    <span>DeepSeek</span>
+                    <i class="fa-solid fa-check text-indigo-400"></i>
+                </div>
+                <div
+                    class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400"
+                    data-model="GPT-4o"
+                >
+                    <span>GPT-4o</span>
+                </div>
+                <div
+                    class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400"
+                    data-model="Claude 3.5"
+                >
+                    <span>Claude 3.5</span>
+                </div>
+                <div
+                    class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400"
+                    data-model="Gemini Pro"
+                >
+                    <span>Gemini Pro</span>
+                </div>
+            </div>
         </div>
-        <button id="export-btn" type="button" aria-label="导出" class="w-9 h-9 flex items-center justify-center rounded-xl bg-indigo-600 text-white active:scale-95 transition shadow-lg shadow-indigo-600/30">
-            <i class="fa-solid fa-download text-sm"></i>
+    </div>
+    <!-- Right -->
+    <div class="flex items-center space-x-2">
+        <button
+            id="sound-toggle-btn"
+            class="text-slate-400 hover:text-slate-200 text-xs px-2 py-1 rounded-md border border-slate-800 bg-slate-900 transition"
+        >
+            <i
+                class="fa-solid fa-volume-high"
+                id="sound-icon"
+            ></i>
         </button>
+        <select
+            id="lang-select"
+            class="bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded-md border border-slate-700 focus:outline-none"
+        >
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="es">Español</option>
+            <option value="ar">العربية</option>
+        </select>
+        <div
+            class="text-[11px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-full font-mono"
+        >
+            <span id="token-count">0</span>
+            tokens
+        </div>
     </div>
 </header>
-
-<main id="chat-container" class="flex-1 relative overflow-y-auto overscroll-contain p-4 space-y-4" style="padding-bottom:110px;"></main>
-
-<nav class="shrink-0 p-3 bg-slate-900/95 border-t border-slate-800 backdrop-blur-lg z-20 flex items-center space-x-2 safe-bottom">
-    <button id="upload-btn" type="button" aria-label="上传文件" class="w-12 h-12 bg-slate-800 text-slate-300 rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition">
-        <i class="fa-solid fa-paperclip text-sm"></i>
+<!-- =========================================================
+     CHAT
+========================================================= -->
+<main
+    id="chat-container"
+    class="flex-1 relative overflow-y-auto p-4 space-y-4"
+    style="padding-bottom:120px;"
+></main>
+<!-- =========================================================
+     ATTACHMENTS
+========================================================= -->
+<div
+    id="attachment-bar"
+    class="hidden shrink-0 px-4 py-2 bg-slate-900/90 border-t border-slate-800 flex items-center space-x-2 overflow-x-auto z-20"
+></div>
+<!-- =========================================================
+     INPUT NAV
+========================================================= -->
+<nav
+    class="shrink-0 p-3 bg-slate-900/95 border-t border-slate-800 z-20 flex items-center space-x-2"
+>
+    <button
+        id="file-btn"
+        type="button"
+        class="w-12 h-12 bg-slate-800 text-slate-300 hover:text-white rounded-xl flex items-center justify-center shrink-0 border border-slate-700 active:scale-95 transition"
+    >
+        <i class="fa-solid fa-paperclip"></i>
     </button>
-    <button id="voice-btn" type="button" aria-label="语音聊天" class="w-12 h-12 bg-slate-800 text-slate-300 rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition">
-        <i id="voice-icon" class="fa-solid fa-microphone text-sm"></i>
+    <button
+        id="voice-btn"
+        type="button"
+        class="w-12 h-12 bg-slate-800 text-slate-300 hover:text-white rounded-xl flex items-center justify-center shrink-0 border border-slate-700 active:scale-95 transition"
+    >
+        <i class="fa-solid fa-microphone"></i>
     </button>
-    <input type="text" id="user-input" autocomplete="off" autocapitalize="sentences" enterkeyhint="send" placeholder="输入消息..." class="flex-1 min-w-0 bg-slate-800 text-slate-100 placeholder-slate-500 text-base rounded-xl px-4 py-3 border border-slate-700/60 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition">
-    <button id="send-btn" type="button" aria-label="发送" class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30">
-        <i class="fa-solid fa-paper-plane"></i>
+    <input
+        type="text"
+        id="user-input"
+        autocomplete="off"
+        class="flex-1 min-w-0 bg-slate-800 text-slate-100 placeholder-slate-500 text-base rounded-xl px-4 py-3 border border-slate-700 focus:border-indigo-500 focus:outline-none"
+    >
+    <button
+        id="action-btn"
+        type="button"
+        class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30"
+    >
+        <i
+            class="fa-solid fa-paper-plane"
+            id="action-icon"
+        ></i>
     </button>
 </nav>
-<input id="file-input" type="file" hidden multiple>
-
-<div id="history-drawer" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden">
-    <div id="history-panel" class="absolute left-0 top-0 bottom-0 w-[84%] max-w-sm bg-slate-900 border-r border-slate-800 p-4 flex flex-col safe-top safe-bottom">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
-            <h2 class="text-sm font-semibold text-slate-200 flex items-center space-x-2">
-                <i class="fa-solid fa-compass text-indigo-400"></i>
-                <span>控制台菜单</span>
-            </h2>
-            <button id="close-drawer" type="button" class="text-slate-400 w-8 h-8 flex items-center justify-center rounded-lg">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-        </div>
-        
-        <button id="profile-open-btn" type="button" class="w-full mb-3 p-3 rounded-2xl profile-menu-card border border-slate-800 flex items-center space-x-3 text-left active:scale-[.99] transition">
-            <div id="menu-avatar-container" class="shrink-0"></div>
-            <div class="min-w-0 flex-1">
-                <div id="menu-profile-name" class="text-sm font-semibold text-slate-100 truncate">我的资料</div>
-                <div id="menu-profile-bio" class="text-[11px] text-slate-500 mt-1 truncate">设置头像和自我介绍</div>
-            </div>
-            <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
-        </button>
-
-        <button id="new-chat-btn" type="button" class="w-full mb-3 py-2.5 px-4 bg-indigo-600 text-white rounded-xl text-sm font-medium flex items-center space-x-2 active:scale-[.98] transition shadow-lg shadow-indigo-600/20">
-            <i class="fa-solid fa-plus"></i>
-            <span>开启新话题</span>
-        </button>
-
-        <div class="space-y-1.5 mb-3 pb-3 border-b border-slate-800">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1 mb-1">系统功能</div>
-            <button id="deploy-skill-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 text-slate-300 rounded-xl text-xs flex items-center justify-between">
-                <span class="flex items-center space-x-2"><i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i><span>部署 Skill</span></span>
-                <i class="fa-solid fa-plus text-[10px] text-slate-500"></i>
-            </button>
-            <button id="deploy-agent-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 text-slate-300 rounded-xl text-xs flex items-center justify-between">
-                <span class="flex items-center space-x-2"><i class="fa-solid fa-brain text-emerald-400"></i><span>部署 Agent</span></span>
-                <i class="fa-solid fa-plus text-[10px] text-slate-500"></i>
-            </button>
-        </div>
-
-        <div id="deployed-section" class="space-y-2 mb-3 pb-3 border-b border-slate-800 hidden">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1">我的技能与智能体</div>
-            <div id="deployed-list" class="space-y-1"></div>
-        </div>
-
-        <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1 mb-1">历史会话</div>
-        <div id="history-list" class="flex-1 overflow-y-auto space-y-1.5 pb-2"></div>
-    </div>
 </div>
-
-<div id="config-modal" class="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-    <div class="modal-content bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h3 id="modal-title" class="text-sm font-semibold text-slate-200">配置</h3>
-            <button id="close-modal" type="button" class="text-slate-400 w-7 h-7 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="space-y-3 mt-4">
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">名称</label>
-                <input type="text" id="modal-name-input" maxlength="80" class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl px-3 py-2 border border-slate-700 focus:border-indigo-500 focus:outline-none">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">设定 / 系统提示词</label>
-                <textarea id="modal-desc-input" rows="5" maxlength="20000" class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl px-3 py-2 border border-slate-700 focus:border-indigo-500 focus:outline-none resize-none"></textarea>
-            </div>
-        </div>
-        <div class="flex space-x-2 pt-4">
-            <button id="modal-cancel-btn" type="button" class="flex-1 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs">取消</button>
-            <button id="modal-save-btn" type="button" class="flex-1 py-2 bg-indigo-600 text-white rounded-xl text-xs">确认部署</button>
-        </div>
-    </div>
-</div>
-
-<div id="profile-modal" class="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[65] hidden flex items-center justify-center p-4">
-    <div class="modal-content bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-            <div>
-                <h3 class="text-sm font-semibold text-slate-100">我的资料</h3>
-                <p class="text-[10px] text-slate-500 mt-1">个性化你的 CQS AI 身份</p>
-            </div>
-            <button id="profile-close-btn" type="button" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="flex flex-col items-center py-5">
-            <div id="profile-avatar-preview"></div>
-            <button id="profile-upload-btn" type="button" class="mt-3 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs text-slate-300 transition">
-                <i class="fa-solid fa-camera mr-1"></i> 上传头像
-            </button>
-        </div>
-        <input id="profile-file-input" type="file" accept="image/*" hidden>
-        <div class="mb-3">
-            <label class="block text-xs text-slate-400 mb-1">名称</label>
-            <input id="profile-name-input" type="text" maxlength="40" placeholder="例如：一诺千金" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-        </div>
-        <div>
-            <label class="block text-xs text-slate-400 mb-1">自我介绍</label>
-            <textarea id="profile-bio-input" rows="4" maxlength="500" placeholder="介绍一下自己，让 CQS AI 更了解你的使用场景..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 resize-none focus:outline-none focus:border-indigo-500"></textarea>
-        </div>
-        <div class="flex space-x-2 mt-5">
-            <button id="profile-cancel-btn" type="button" class="flex-1 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs">取消</button>
-            <button id="profile-save-btn" type="button" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-xs shadow-lg shadow-indigo-600/20">保存资料</button>
-        </div>
-    </div>
-</div>
-
-<div id="confirm-modal" class="modal-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
-    <div class="modal-content bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl">
-        <div class="flex items-start space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-trash"></i>
-            </div>
-            <div>
-                <h3 class="text-sm font-semibold text-slate-100">删除会话？</h3>
-                <p class="text-xs text-slate-500 mt-1 leading-relaxed">删除后该会话中的聊天记录将从本地设备移除。</p>
-            </div>
-        </div>
-        <div class="flex space-x-2 mt-5">
-            <button id="confirm-cancel" type="button" class="flex-1 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs">取消</button>
-            <button id="confirm-delete" type="button" class="flex-1 py-2 bg-red-600 text-white rounded-xl text-xs">删除</button>
-        </div>
-    </div>
-</div>
-
 <script>
 "use strict";
-const $ = id => document.getElementById(id);
-const chatContainer = $("chat-container");
-const userInput = $("user-input");
-const sendBtn = $("send-btn");
-const tokenCountEl = $("token-count");
-const exportBtn = $("export-btn");
-const historyBtn = $("history-btn");
-const historyDrawer = $("history-drawer");
-const closeDrawer = $("close-drawer");
-const historyList = $("history-list");
-const newChatBtn = $("new-chat-btn");
-const currentTitleEl = $("current-title");
-const deploySkillBtn = $("deploy-skill-btn");
-const deployAgentBtn = $("deploy-agent-btn");
-const deployedSection = $("deployed-section");
-const deployedList = $("deployed-list");
-const configModal = $("config-modal");
-const closeModal = $("close-modal");
-const modalCancelBtn = $("modal-cancel-btn");
-const modalSaveBtn = $("modal-save-btn");
-const modalTitle = $("modal-title");
-const modalNameInput = $("modal-name-input");
-const modalDescInput = $("modal-desc-input");
-const confirmModal = $("confirm-modal");
-const confirmCancel = $("confirm-cancel");
-const confirmDelete = $("confirm-delete");
-const soundToggleBtn = $("sound-toggle-btn");
-const soundIcon = $("sound-icon");
-const uploadBtn = $("upload-btn");
-const fileInput = $("file-input");
-const voiceBtn = $("voice-btn");
-const voiceIcon = $("voice-icon");
-const cqsIntro = $("cqs-intro");
-const introTitle = $("intro-title");
-const introParticles = $("intro-particles");
-
-const profileOpenBtn = $("profile-open-btn");
-const profileModal = $("profile-modal");
-const profileCloseBtn = $("profile-close-btn");
-const profileCancelBtn = $("profile-cancel-btn");
-const profileSaveBtn = $("profile-save-btn");
-const profileUploadBtn = $("profile-upload-btn");
-const profileFileInput = $("profile-file-input");
-const profileAvatarPreview = $("profile-avatar-preview");
-const profileNameInput = $("profile-name-input");
-const profileBioInput = $("profile-bio-input");
-const menuAvatarContainer = $("menu-avatar-container");
-const menuProfileName = $("menu-profile-name");
-const menuProfileBio = $("menu-profile-bio");
-
-let conversations = [];
-let activeConversationId = null;
-let deployedItems = [];
-let totalTokens = 0;
-let isSending = false;
-let currentMode = "skill";
-let currentSystemPrompt = "";
-let pendingDeleteId = null;
-let soundEnabled = true;
-let selectedFiles = [];
-let recognition = null;
-let isRecording = false;
-
-let userProfile = { name: "", bio: "", avatar: "" };
-let pendingAvatar = "";
-
-const STORAGE_KEY = "cqs_ai_console_state_v5";
-
-let audioCtx = null;
-let lastTypeSound = 0;
-
-function initAudio(){
-    if(!audioCtx){
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if(AudioContext) audioCtx = new AudioContext();
+/* =========================================================
+   DOM
+========================================================= */
+const $ = id =>
+    document.getElementById(id);
+const chatContainer =
+    $("chat-container");
+const userInput =
+    $("user-input");
+const actionBtn =
+    $("action-btn");
+const actionIcon =
+    $("action-icon");
+const tokenCountEl =
+    $("token-count");
+const cqsIntro =
+    $("cqs-intro");
+const introTypingText =
+    $("intro-typing-text");
+const langSelect =
+    $("lang-select");
+const modelSelectBtn =
+    $("model-select-btn");
+const modelDropdown =
+    $("model-dropdown");
+const privacyBanner =
+    $("privacy-banner");
+const privacyAccept =
+    $("privacy-accept");
+const voiceBtn =
+    $("voice-btn");
+const fileBtn =
+    $("file-btn");
+const hiddenFileInput =
+    $("hidden-file-input");
+const attachmentBar =
+    $("attachment-bar");
+const soundToggleBtn =
+    $("sound-toggle-btn");
+const soundIcon =
+    $("sound-icon");
+/* =========================================================
+   STATE
+========================================================= */
+let currentLanguage =
+    localStorage.getItem("cqs_lang") ||
+    "zh";
+let currentModel =
+    localStorage.getItem("cqs_model") ||
+    "DeepSeek";
+let soundEnabled =
+    localStorage.getItem("cqs_sound") !==
+    "false";
+let messages;
+try {
+    messages =
+        JSON.parse(
+            localStorage.getItem(
+                "cqs_messages"
+            ) || "[]"
+        );
+    if (!Array.isArray(messages)) {
+        messages = [];
     }
-    if(audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+} catch {
+    messages = [];
 }
-
-function playSound(type){
-    if(!soundEnabled) return;
-    try{
-        initAudio();
-        if(!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        const now = audioCtx.currentTime;
-        if(type === "click"){
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(720, now);
-            gain.gain.setValueAtTime(.025, now);
-            gain.gain.exponentialRampToValueAtTime(.001, now + .035);
-            osc.start(now);
-            osc.stop(now + .035);
-        }else if(type === "type"){
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(800, now);
-            gain.gain.setValueAtTime(.018, now);
-            gain.gain.exponentialRampToValueAtTime(.001, now + .035);
-            osc.start(now);
-            osc.stop(now + .035);
-        }else if(type === "output"){
-            osc.type = "triangle";
-            osc.frequency.setValueAtTime(440, now);
-            osc.frequency.exponentialRampToValueAtTime(880, now + .1);
-            gain.gain.setValueAtTime(.045, now);
-            gain.gain.exponentialRampToValueAtTime(.001, now + .13);
-            osc.start(now);
-            osc.stop(now + .13);
-        }else if(type === "think"){
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(300, now);
-            osc.frequency.linearRampToValueAtTime(360, now + .2);
-            gain.gain.setValueAtTime(.035, now);
-            gain.gain.exponentialRampToValueAtTime(.001, now + .25);
-            osc.start(now);
-            osc.stop(now + .25);
-        }else if(type === "intro"){
-            osc.type = "triangle";
-            osc.frequency.setValueAtTime(260, now);
-            osc.frequency.exponentialRampToValueAtTime(620, now + .12);
-            gain.gain.setValueAtTime(.035, now);
-            gain.gain.exponentialRampToValueAtTime(.001, now + .16);
-            osc.start(now);
-            osc.stop(now + .16);
-        }
-    }catch{}
+let totalTokens =
+    parseInt(
+        localStorage.getItem(
+            "cqs_tokens"
+        ) || "0",
+        10
+    );
+if (!Number.isFinite(totalTokens)) {
+    totalTokens = 0;
 }
-
-function createIntroParticles(){
-    introParticles.innerHTML = "";
-    for(let i = 0; i < 26; i++){
-        const particle = document.createElement("div");
-        particle.className = "intro-particle";
-        particle.style.left = `${Math.random()*100}%`;
-        particle.style.top = `${30 + Math.random()*70}%`;
-        particle.style.animationDuration = `${3 + Math.random()*5}s`;
-        particle.style.animationDelay = `${Math.random()*3}s`;
-        introParticles.appendChild(particle);
+let conversationId =
+    localStorage.getItem(
+        "cqs_conv_id"
+    ) ||
+    "cqs_" + Date.now();
+let selectedAttachments = [];
+let activeController = null;
+let isGenerating = false;
+/* =========================================================
+   i18n
+========================================================= */
+const i18n = {
+    zh: {
+        title:
+            "CQS AI 全球版",
+        inputPlaceholder:
+            "输入消息...",
+        welcome:
+            "欢迎来到 CQS AI Global。AI 思考与流式网关已就绪。",
+        privacyDesc:
+            "我们尊重您的隐私。CQS AI Global 安全处理网关数据以保障通信安全。",
+        accept:
+            "接受",
+        thinking:
+            "正在思考",
+        thinkingDone:
+            "思考完成",
+        stopped:
+            "生成已停止",
+        attachment:
+            "[附件已发送]"
+    },
+    en: {
+        title:
+            "CQS AI Global",
+        inputPlaceholder:
+            "Type a message...",
+        welcome:
+            "Welcome to CQS AI Global. AI reasoning and streaming gateway ready.",
+        privacyDesc:
+            "We respect your privacy. CQS AI Global secures gateway data transmission.",
+        accept:
+            "Accept",
+        thinking:
+            "Thinking",
+        thinkingDone:
+            "Thinking completed",
+        stopped:
+            "Generation stopped",
+        attachment:
+            "[Attachment Sent]"
+    },
+    ja: {
+        title:
+            "CQS AI グローバル",
+        inputPlaceholder:
+            "メッセージを入力...",
+        welcome:
+            "CQS AI Globalへようこそ。AI推論とストリーミングゲートウェイの準備が完了しました。",
+        privacyDesc:
+            "プライバシーを尊重します。CQS AI Globalはデータを安全に保護します。",
+        accept:
+            "同意する",
+        thinking:
+            "思考中",
+        thinkingDone:
+            "思考完了",
+        stopped:
+            "生成を停止しました",
+        attachment:
+            "[添付ファイル送信]"
+    },
+    ko: {
+        title:
+            "CQS AI 글로벌",
+        inputPlaceholder:
+            "메시지 입력...",
+        welcome:
+            "CQS AI Global에 오신 것을 환영합니다. AI 추론 및 스트리밍 게이트웨이가 준비되었습니다.",
+        privacyDesc:
+            "개인정보를 존중합니다. CQS AI Global은 데이터를 안전하게 처리합니다.",
+        accept:
+            "동의",
+        thinking:
+            "생각 중",
+        thinkingDone:
+            "생각 완료",
+        stopped:
+            "생성이 중지되었습니다",
+        attachment:
+            "[첨부 파일 전송]"
+    },
+    fr: {
+        title:
+            "CQS AI Global",
+        inputPlaceholder:
+            "Tapez un message...",
+        welcome:
+            "Bienvenue sur CQS AI Global. Le raisonnement et le streaming sont prêts.",
+        privacyDesc:
+            "Nous respectons votre vie privée. Sécurité des données garantie.",
+        accept:
+            "Accepter",
+        thinking:
+            "Réflexion",
+        thinkingDone:
+            "Réflexion terminée",
+        stopped:
+            "Génération arrêtée",
+        attachment:
+            "[Pièce jointe envoyée]"
+    },
+    de: {
+        title:
+            "CQS AI Global",
+        inputPlaceholder:
+            "Nachricht eingeben...",
+        welcome:
+            "Willkommen bei CQS AI Global. KI-Denken und Streaming sind bereit.",
+        privacyDesc:
+            "Wir respektieren Ihre Privatsphäre. Sichere Datenverarbeitung.",
+        accept:
+            "Akzeptieren",
+        thinking:
+            "Denkt nach",
+        thinkingDone:
+            "Denken abgeschlossen",
+        stopped:
+            "Generierung gestoppt",
+        attachment:
+            "[Anhang gesendet]"
+    },
+    es: {
+        title:
+            "CQS AI Global",
+        inputPlaceholder:
+            "Escribe un mensaje...",
+        welcome:
+            "Bienvenido a CQS AI Global. Razonamiento y streaming listos.",
+        privacyDesc:
+            "Respetamos su privacidad. CQS AI Global protege sus datos de forma segura.",
+        accept:
+            "Aceptar",
+        thinking:
+            "Pensando",
+        thinkingDone:
+            "Pensamiento completado",
+        stopped:
+            "Generación detenida",
+        attachment:
+            "[Archivo adjunto enviado]"
+    },
+    ar: {
+        title:
+            "CQS AI العالمي",
+        inputPlaceholder:
+            "اكتب رسالة...",
+        welcome:
+            "مرحباً بك في CQS AI Global. التفكير والبث جاهزان.",
+        privacyDesc:
+            "نحن نحترم خصوصيتك. يتم استخدام البيانات بأمان لتوفير الخدمات.",
+        accept:
+            "قبول",
+        thinking:
+            "جارٍ التفكير",
+        thinkingDone:
+            "اكتمل التفكير",
+        stopped:
+            "تم إيقاف التوليد",
+        attachment:
+            "[تم إرسال المرفق]"
+    }
+};
+/* =========================================================
+   Speech
+========================================================= */
+const speechLangs = {
+    zh: "zh-CN",
+    en: "en-US",
+    ja: "ja-JP",
+    ko: "ko-KR",
+    fr: "fr-FR",
+    de: "de-DE",
+    es: "es-ES",
+    ar: "ar-SA"
+};
+/* =========================================================
+   Audio
+========================================================= */
+const audioCtx =
+    (
+        typeof window !== "undefined" &&
+        (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )
+    )
+        ? new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )()
+        : null;
+function playSound(type) {
+    if (
+        !soundEnabled ||
+        !audioCtx
+    ) {
+        return;
+    }
+    if (
+        audioCtx.state ===
+        "suspended"
+    ) {
+        audioCtx.resume();
+    }
+    const osc =
+        audioCtx.createOscillator();
+    const gain =
+        audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(
+        audioCtx.destination
+    );
+    const now =
+        audioCtx.currentTime;
+    if (type === "send") {
+        osc.frequency.setValueAtTime(
+            440,
+            now
+        );
+        osc.frequency
+            .exponentialRampToValueAtTime(
+                880,
+                now + .1
+            );
+        gain.gain.setValueAtTime(
+            .08,
+            now
+        );
+        gain.gain
+            .linearRampToValueAtTime(
+                0,
+                now + .1
+            );
+        osc.start(now);
+        osc.stop(now + .1);
+    }
+    else if (type === "receive") {
+        osc.frequency.setValueAtTime(
+            600,
+            now
+        );
+        osc.frequency
+            .exponentialRampToValueAtTime(
+                300,
+                now + .15
+            );
+        gain.gain.setValueAtTime(
+            .06,
+            now
+        );
+        gain.gain
+            .linearRampToValueAtTime(
+                0,
+                now + .15
+            );
+        osc.start(now);
+        osc.stop(now + .15);
+    }
+    else if (type === "thinking") {
+        osc.frequency.setValueAtTime(
+            260,
+            now
+        );
+        osc.frequency
+            .linearRampToValueAtTime(
+                420,
+                now + .12
+            );
+        gain.gain.setValueAtTime(
+            .035,
+            now
+        );
+        gain.gain
+            .linearRampToValueAtTime(
+                0,
+                now + .12
+            );
+        osc.start(now);
+        osc.stop(now + .12);
     }
 }
-
-function playIntro(){
-    createIntroParticles();
-    introTitle.innerHTML = "";
-    const text = "CQS AI WELCOME";
-    [...text].forEach((character, index) => {
-        const letter = document.createElement("div");
-        if(character === " "){
-            letter.className = "intro-letter space";
-            introTitle.appendChild(letter);
-            return;
+/* =========================================================
+   UI Strings
+========================================================= */
+function updateUIStrings() {
+    const t =
+        i18n[currentLanguage] ||
+        i18n.en;
+    $("txt-title").textContent =
+        t.title;
+    userInput.placeholder =
+        t.inputPlaceholder;
+    $("txt-privacy-desc").textContent =
+        t.privacyDesc;
+    privacyAccept.textContent =
+        t.accept;
+    langSelect.value =
+        currentLanguage;
+    $("current-model-name").textContent =
+        currentModel;
+    tokenCountEl.textContent =
+        totalTokens.toLocaleString();
+    document
+        .querySelectorAll(
+            ".model-option"
+        )
+        .forEach(opt => {
+            const m =
+                opt.getAttribute(
+                    "data-model"
+                );
+            if (m === currentModel) {
+                opt.classList.remove(
+                    "text-slate-400"
+                );
+                opt.classList.add(
+                    "text-slate-200"
+                );
+                if (
+                    !opt.querySelector("i")
+                ) {
+                    opt.insertAdjacentHTML(
+                        "beforeend",
+                        '<i class="fa-solid fa-check text-indigo-400"></i>'
+                    );
+                }
+            } else {
+                opt.classList.remove(
+                    "text-slate-200"
+                );
+                opt.classList.add(
+                    "text-slate-400"
+                );
+                const icon =
+                    opt.querySelector("i");
+                if (icon) {
+                    icon.remove();
+                }
+            }
+        });
+    soundIcon.className =
+        soundEnabled
+            ? "fa-solid fa-volume-high text-emerald-400"
+            : "fa-solid fa-volume-xmark text-slate-500";
+}
+/* =========================================================
+   Language
+========================================================= */
+langSelect.addEventListener(
+    "change",
+    e => {
+        currentLanguage =
+            e.target.value;
+        localStorage.setItem(
+            "cqs_lang",
+            currentLanguage
+        );
+        updateUIStrings();
+    }
+);
+/* =========================================================
+   Sound
+========================================================= */
+soundToggleBtn.addEventListener(
+    "click",
+    () => {
+        soundEnabled =
+            !soundEnabled;
+        localStorage.setItem(
+            "cqs_sound",
+            soundEnabled
+        );
+        updateUIStrings();
+    }
+);
+/* =========================================================
+   Privacy
+========================================================= */
+if (
+    !localStorage.getItem(
+        "cqs_privacy"
+    )
+) {
+    privacyBanner.classList.remove(
+        "hidden"
+    );
+}
+privacyAccept.addEventListener(
+    "click",
+    () => {
+        localStorage.setItem(
+            "cqs_privacy",
+            "true"
+        );
+        privacyBanner.classList.add(
+            "hidden"
+        );
+    }
+);
+/* =========================================================
+   Model Dropdown
+========================================================= */
+modelSelectBtn.addEventListener(
+    "click",
+    () => {
+        modelDropdown.classList.toggle(
+            "hidden"
+        );
+    }
+);
+document.addEventListener(
+    "click",
+    e => {
+        if (
+            !modelSelectBtn.contains(
+                e.target
+            ) &&
+            !modelDropdown.contains(
+                e.target
+            )
+        ) {
+            modelDropdown.classList.add(
+                "hidden"
+            );
         }
-        letter.className = "intro-letter";
-        letter.style.animationDelay = `${index * .085}s`;
-        const span = document.createElement("span");
-        span.textContent = character;
-        letter.appendChild(span);
-        introTitle.appendChild(letter);
-        setTimeout(() => { playSound("intro"); }, index * 85 + 100);
+    }
+);
+document
+    .querySelectorAll(
+        ".model-option"
+    )
+    .forEach(opt => {
+        opt.addEventListener(
+            "click",
+            () => {
+                currentModel =
+                    opt.getAttribute(
+                        "data-model"
+                    );
+                localStorage.setItem(
+                    "cqs_model",
+                    currentModel
+                );
+                updateUIStrings();
+                modelDropdown.classList.add(
+                    "hidden"
+                );
+            }
+        );
     });
-    setTimeout(() => { cqsIntro.classList.add("intro-hidden"); }, 2700);
+/* =========================================================
+   Intro
+========================================================= */
+async function runIntroAnimation() {
+    const text =
+        "CQS AI GLOBAL v1.0";
+    for (
+        let i = 0;
+        i <= text.length;
+        i++
+    ) {
+        introTypingText.textContent =
+            text.slice(0, i) +
+            (
+                i < text.length
+                    ? "_"
+                    : ""
+            );
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    60
+                )
+        );
+    }
+    await new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                400
+            )
+    );
+    cqsIntro.classList.add(
+        "intro-hidden"
+    );
 }
-
-function createId(prefix="id"){
-    return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,9);
+runIntroAnimation();
+/* =========================================================
+   Save
+========================================================= */
+function saveState() {
+    localStorage.setItem(
+        "cqs_messages",
+        JSON.stringify(messages)
+    );
+    localStorage.setItem(
+        "cqs_tokens",
+        String(totalTokens)
+    );
+    localStorage.setItem(
+        "cqs_conv_id",
+        conversationId
+    );
 }
-
-function createConversation(){
+/* =========================================================
+   Create Assistant Thinking UI
+========================================================= */
+function createAssistantUI() {
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+    wrapper.className =
+        "flex items-start space-x-3 message-enter";
+    const bubbleContainer =
+        document.createElement(
+            "div"
+        );
+    bubbleContainer.className =
+        "max-w-[82%] flex flex-col space-y-2";
+    // =====================================================
+    // Reasoning Box
+    // =====================================================
+    const reasoningBox =
+        document.createElement(
+            "div"
+        );
+    reasoningBox.className =
+        "reasoning-box hidden";
+    const reasoningHeader =
+        document.createElement(
+            "div"
+        );
+    reasoningHeader.className =
+        "reasoning-header";
+    const brain =
+        document.createElement(
+            "i"
+        );
+    brain.className =
+        "fa-solid fa-brain";
+    const reasoningTitle =
+        document.createElement(
+            "span"
+        );
+    const t =
+        i18n[currentLanguage] ||
+        i18n.en;
+    reasoningTitle.textContent =
+        t.thinking;
+    const dots =
+        document.createElement(
+            "span"
+        );
+    dots.className =
+        "flex items-center gap-1 ml-auto";
+    for (
+        let i = 0;
+        i < 3;
+        i++
+    ) {
+        const dot =
+            document.createElement(
+                "span"
+            );
+        dot.className =
+            "thinking-dot";
+        dots.appendChild(dot);
+    }
+    reasoningHeader.appendChild(
+        brain
+    );
+    reasoningHeader.appendChild(
+        reasoningTitle
+    );
+    reasoningHeader.appendChild(
+        dots
+    );
+    const reasoningContent =
+        document.createElement(
+            "div"
+        );
+    reasoningContent.className =
+        "reasoning-content";
+    reasoningBox.appendChild(
+        reasoningHeader
+    );
+    reasoningBox.appendChild(
+        reasoningContent
+    );
+    bubbleContainer.appendChild(
+        reasoningBox
+    );
+    // =====================================================
+    // Final Answer
+    // =====================================================
+    const bubble =
+        document.createElement(
+            "div"
+        );
+    bubble.className =
+        "bg-slate-900 border border-slate-800 text-slate-200 rounded-2xl p-3.5 text-sm shadow-lg whitespace-pre-wrap break-words";
+    bubbleContainer.appendChild(
+        bubble
+    );
+    wrapper.appendChild(
+        bubbleContainer
+    );
+    chatContainer.appendChild(
+        wrapper
+    );
+    chatContainer.scrollTop =
+        chatContainer.scrollHeight;
     return {
-        id: createId("chat"),
-        title: "新对话",
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        messages: [],
-        systemPrompt: "",
-        systemName: "",
-        systemType: ""
+        wrapper,
+        bubble,
+        reasoningBox,
+        reasoningHeader,
+        reasoningTitle,
+        reasoningContent
     };
 }
-
-function saveState(){
-    try{
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({
-            conversations,
-            activeConversationId,
-            deployedItems,
-            totalTokens,
-            soundEnabled,
-            userProfile
-        }));
-    }catch(error){
-        console.error("Storage save error:", error);
+/* =========================================================
+   Normal Message UI
+========================================================= */
+function appendUI(
+    role,
+    text,
+    attachments = []
+) {
+    const isUser =
+        role === "user";
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+    wrapper.className =
+        `flex items-start space-x-3 message-enter ${
+            isUser
+                ? "flex-row-reverse space-x-reverse"
+                : ""
+        }`;
+    const bubbleContainer =
+        document.createElement(
+            "div"
+        );
+    bubbleContainer.className =
+        "max-w-[82%] flex flex-col space-y-2";
+    // Attachments
+    if (
+        attachments &&
+        attachments.length > 0
+    ) {
+        const attWrapper =
+            document.createElement(
+                "div"
+            );
+        attWrapper.className =
+            `flex flex-wrap gap-1.5 ${
+                isUser
+                    ? "justify-end"
+                    : "justify-start"
+            }`;
+        attachments.forEach(
+            att => {
+                const chip =
+                    document.createElement(
+                        "span"
+                    );
+                chip.className =
+                    "text-[11px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-1 rounded-md flex items-center space-x-1";
+                const icon =
+                    document.createElement(
+                        "i"
+                    );
+                icon.className =
+                    "fa-solid fa-file-lines text-indigo-400";
+                const nameSpan =
+                    document.createElement(
+                        "span"
+                    );
+                nameSpan.className =
+                    "truncate max-w-[120px]";
+                nameSpan.textContent =
+                    att.name;
+                chip.appendChild(icon);
+                chip.appendChild(nameSpan);
+                attWrapper.appendChild(
+                    chip
+                );
+            }
+        );
+        bubbleContainer.appendChild(
+            attWrapper
+        );
     }
+    const bubble =
+        document.createElement(
+            "div"
+        );
+    bubble.className =
+        `${
+            isUser
+                ? "bg-indigo-600 text-white"
+                : "bg-slate-900 border border-slate-800 text-slate-200"
+        } rounded-2xl p-3.5 text-sm shadow-lg whitespace-pre-wrap break-words`;
+    bubble.textContent =
+        text;
+    bubbleContainer.appendChild(
+        bubble
+    );
+    wrapper.appendChild(
+        bubbleContainer
+    );
+    chatContainer.appendChild(
+        wrapper
+    );
+    chatContainer.scrollTop =
+        chatContainer.scrollHeight;
+    return bubble;
 }
-
-function loadState(){
-    try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw){
-            const first = createConversation();
-            conversations = [first];
-            activeConversationId = first.id;
-            deployedItems = [];
-            totalTokens = 0;
-            userProfile = { name: "", bio: "", avatar: "" };
-            saveState();
-            updateSoundUI();
-            updateProfileUI();
+/* =========================================================
+   Restore Messages
+========================================================= */
+if (messages.length > 0) {
+    messages.forEach(
+        m => {
+            appendUI(
+                m.role,
+                m.content,
+                m.attachments || []
+            );
+        }
+    );
+} else {
+    const welcomeText =
+        i18n[currentLanguage]
+            .welcome;
+    appendUI(
+        "assistant",
+        welcomeText
+    );
+    messages.push({
+        role:
+            "assistant",
+        content:
+            welcomeText,
+        model:
+            currentModel,
+        timestamp:
+            Date.now()
+    });
+    saveState();
+}
+/* =========================================================
+   File
+========================================================= */
+fileBtn.addEventListener(
+    "click",
+    () =>
+        hiddenFileInput.click()
+);
+hiddenFileInput.addEventListener(
+    "change",
+    e => {
+        const files =
+            Array.from(
+                e.target.files
+            );
+        files.forEach(
+            f => {
+                selectedAttachments.push({
+                    name:
+                        f.name,
+                    size:
+                        f.size,
+                    type:
+                        f.type
+                });
+            }
+        );
+        renderAttachmentBar();
+        hiddenFileInput.value =
+            "";
+    }
+);
+function renderAttachmentBar() {
+    if (
+        selectedAttachments.length ===
+        0
+    ) {
+        attachmentBar.classList.add(
+            "hidden"
+        );
+        attachmentBar.innerHTML =
+            "";
+        return;
+    }
+    attachmentBar.classList.remove(
+        "hidden"
+    );
+    attachmentBar.innerHTML =
+        "";
+    selectedAttachments.forEach(
+        (att, idx) => {
+            const tag =
+                document.createElement(
+                    "div"
+                );
+            tag.className =
+                "flex items-center space-x-1.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-lg shrink-0";
+            const icon =
+                document.createElement(
+                    "i"
+                );
+            icon.className =
+                "fa-solid fa-file text-indigo-400";
+            const nameSpan =
+                document.createElement(
+                    "span"
+                );
+            nameSpan.className =
+                "truncate max-w-[100px]";
+            nameSpan.textContent =
+                att.name;
+            const delBtn =
+                document.createElement(
+                    "button"
+                );
+            delBtn.className =
+                "text-slate-400 hover:text-red-400 ml-1";
+            delBtn.innerHTML =
+                '<i class="fa-solid fa-xmark"></i>';
+            delBtn.addEventListener(
+                "click",
+                () => {
+                    selectedAttachments.splice(
+                        idx,
+                        1
+                    );
+                    renderAttachmentBar();
+                }
+            );
+            tag.appendChild(icon);
+            tag.appendChild(nameSpan);
+            tag.appendChild(delBtn);
+            attachmentBar.appendChild(
+                tag
+            );
+        }
+    );
+}
+/* =========================================================
+   Voice
+========================================================= */
+voiceBtn.addEventListener(
+    "click",
+    () => {
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert(
+                "Speech recognition not supported."
+            );
             return;
         }
-        const state = JSON.parse(raw);
-        conversations = Array.isArray(state.conversations) ? state.conversations.filter(item => item && typeof item.id === "string" && Array.isArray(item.messages)) : [];
-        if(!conversations.length){
-            const first = createConversation();
-            conversations = [first];
-        }
-        if(typeof state.activeConversationId === "string" && conversations.some(item => item.id === state.activeConversationId)){
-            activeConversationId = state.activeConversationId;
-        }else{
-            activeConversationId = conversations[0].id;
-        }
-        deployedItems = Array.isArray(state.deployedItems) ? state.deployedItems.filter(item => item && typeof item.name === "string" && typeof item.prompt === "string") : [];
-        totalTokens = Number.isFinite(Number(state.totalTokens)) ? Math.max(0, Number(state.totalTokens)) : 0;
-        if(typeof state.soundEnabled === "boolean") soundEnabled = state.soundEnabled;
-        if(state.userProfile && typeof state.userProfile === "object"){
-            userProfile = {
-                name: typeof state.userProfile.name === "string" ? state.userProfile.name : "",
-                bio: typeof state.userProfile.bio === "string" ? state.userProfile.bio : "",
-                avatar: typeof state.userProfile.avatar === "string" ? state.userProfile.avatar : ""
+        const recognition =
+            new SpeechRecognition();
+        recognition.lang =
+            speechLangs[
+                currentLanguage
+            ] || "en-US";
+        recognition.interimResults =
+            true;
+        recognition.continuous =
+            false;
+        recognition.start();
+        voiceBtn.classList.add(
+            "text-indigo-400",
+            "border-indigo-500",
+            "bg-slate-800"
+        );
+        recognition.onresult =
+            event => {
+                let transcript =
+                    "";
+                for (
+                    let i =
+                        event.resultIndex;
+                    i <
+                        event.results.length;
+                    i++
+                ) {
+                    transcript +=
+                        event.results[i][0]
+                            .transcript;
+                }
+                userInput.value =
+                    transcript;
             };
+        recognition.onerror =
+            () => {
+                voiceBtn.classList.remove(
+                    "text-indigo-400",
+                    "border-indigo-500"
+                );
+            };
+        recognition.onend =
+            () => {
+                voiceBtn.classList.remove(
+                    "text-indigo-400",
+                    "border-indigo-500"
+                );
+            };
+    }
+);
+/* =========================================================
+   Send
+========================================================= */
+async function handleAction() {
+    // =====================================================
+    // Stop
+    // =====================================================
+    if (isGenerating) {
+        if (activeController) {
+            try {
+                activeController.abort();
+            } catch {}
         }
-    }catch(error){
-        const first = createConversation();
-        conversations = [first];
-        activeConversationId = first.id;
-        deployedItems = [];
-        totalTokens = 0;
-        userProfile = { name: "", bio: "", avatar: "" };
+        isGenerating =
+            false;
+        setButtonState(
+            "send"
+        );
+        return;
     }
-    updateSoundUI();
-    updateProfileUI();
-    saveState();
-}
-
-function createAvatarElement(size="normal"){
-    if(userProfile.avatar){
-        const img = document.createElement("img");
-        img.src = userProfile.avatar;
-        img.className = size === "large" ? "profile-avatar" : "w-10 h-10 rounded-full object-cover border border-indigo-500/30";
-        img.alt = "用户头像";
-        return img;
+    // =====================================================
+    // Input
+    // =====================================================
+    const text =
+        userInput.value.trim();
+    if (
+        !text &&
+        selectedAttachments.length === 0
+    ) {
+        return;
     }
-    const div = document.createElement("div");
-    div.className = size === "large" ? "profile-avatar-placeholder" : "w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-cyan-500 flex items-center justify-center border border-indigo-500/30";
-    const icon = document.createElement("i");
-    icon.className = "fa-solid fa-user text-white text-sm";
-    div.appendChild(icon);
-    return div;
-}
-
-function updateProfileUI(){
-    menuAvatarContainer.innerHTML = "";
-    menuAvatarContainer.appendChild(createAvatarElement());
-    menuProfileName.textContent = userProfile.name.trim() ? userProfile.name.trim() : "我的资料";
-    menuProfileBio.textContent = userProfile.bio.trim() ? userProfile.bio.trim() : "设置头像和自我介绍";
-    renderProfilePreview();
-}
-
-function renderProfilePreview(){
-    profileAvatarPreview.innerHTML = "";
-    profileAvatarPreview.appendChild(createAvatarElement("large"));
-}
-
-function openProfileModal(){
-    playSound("click");
-    profileNameInput.value = userProfile.name || "";
-    profileBioInput.value = userProfile.bio || "";
-    pendingAvatar = userProfile.avatar || "";
-    renderProfilePreview();
-    profileModal.classList.remove("hidden");
-}
-
-function closeProfileModal(){
-    profileModal.classList.add("hidden");
-    pendingAvatar = "";
-}
-
-profileUploadBtn.addEventListener("click", () => {
-    playSound("click");
-    profileFileInput.click();
-});
-
-profileFileInput.addEventListener("change", event => {
-    const file = event.target.files?.[0];
-    if(!file) return;
-    if(!file.type.startsWith("image/")){ alert("请选择图片文件。"); return; }
-    if(file.size > 5 * 1024 * 1024){ alert("头像不能超过 5MB。"); return; }
-    const reader = new FileReader();
-    reader.onload = () => {
-        pendingAvatar = String(reader.result);
-        renderProfilePreview();
+    // =====================================================
+    // Attachments
+    // =====================================================
+    const currentAtts =
+        selectedAttachments.map(
+            att => ({
+                name:
+                    att.name,
+                size:
+                    att.size,
+                type:
+                    att.type
+            })
+        );
+    selectedAttachments =
+        [];
+    renderAttachmentBar();
+    userInput.value =
+        "";
+    const t =
+        i18n[currentLanguage] ||
+        i18n.en;
+    // =====================================================
+    // User UI
+    // =====================================================
+    appendUI(
+        "user",
+        text ||
+            t.attachment,
+        currentAtts
+    );
+    // =====================================================
+    // User Message
+    // =====================================================
+    const userMessage = {
+        role:
+            "user",
+        content:
+            text,
+        attachments:
+            currentAtts,
+        model:
+            currentModel,
+        timestamp:
+            Date.now()
     };
-    reader.readAsDataURL(file);
-    profileFileInput.value = "";
-});
-
-profileSaveBtn.addEventListener("click", () => {
-    playSound("output");
-    const name = profileNameInput.value.trim().slice(0,40);
-    const bio = profileBioInput.value.trim().slice(0,500);
-    userProfile = {
-        name,
-        bio,
-        avatar: pendingAvatar || userProfile.avatar || ""
-    };
+    messages.push(
+        userMessage
+    );
     saveState();
-    updateProfileUI();
-    closeProfileModal();
-});
-
-profileCancelBtn.addEventListener("click", closeProfileModal);
-profileCloseBtn.addEventListener("click", closeProfileModal);
-profileOpenBtn.addEventListener("click", openProfileModal);
-
-function updateSoundUI(){
-    if(soundEnabled){
-        soundIcon.className = "fa-solid fa-volume-high text-sm text-indigo-400";
-        soundToggleBtn.classList.remove("opacity-50");
-    }else{
-        soundIcon.className = "fa-solid fa-volume-xmark text-sm text-slate-500";
-        soundToggleBtn.classList.add("opacity-50");
-    }
-}
-
-soundToggleBtn.addEventListener("click", () => {
-    initAudio();
-    soundEnabled = !soundEnabled;
-    updateSoundUI();
-    saveState();
-    if(soundEnabled) playSound("output");
-});
-
-function getActiveConversation(){
-    return conversations.find(item => item.id === activeConversationId) || null;
-}
-
-function ensureActiveConversation(){
-    let conversation = getActiveConversation();
-    if(conversation) return conversation;
-    conversation = createConversation();
-    conversations.unshift(conversation);
-    activeConversationId = conversation.id;
-    saveState();
-    return conversation;
-}
-
-function updateTokenDisplay(){
-    tokenCountEl.textContent = Number(totalTokens || 0).toLocaleString();
-}
-
-function scrollToBottom(){
-    requestAnimationFrame(() => { chatContainer.scrollTop = chatContainer.scrollHeight; });
-}
-
-function showWelcome(){
-    const conversation = getActiveConversation();
-    if(!conversation || conversation.messages.length > 0) return;
-    const wrapper = document.createElement("div");
-    wrapper.className = "flex items-start space-x-3 message-enter";
-    const avatar = document.createElement("div");
-    avatar.className = "w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-600/20";
-    const face = document.createElement("span");
-    face.textContent = "🧐";
-    face.className = "text-xs";
-    avatar.appendChild(face);
-    const bubble = document.createElement("div");
-    bubble.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[82%] text-sm text-slate-200 shadow-lg";
-    if(currentSystemPrompt){
-        bubble.textContent = `已加载「${conversation.systemName || "当前设定"}」。你可以开始对话。`;
-    }else{
-        bubble.textContent = userProfile.name ? `你好，${userProfile.name}！我是 CQS AI，你可以在下方输入框与我开始对话。` : "你好！我是 CQS AI，你可以在下方输入框与我开始对话。";
-    }
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(bubble);
-    chatContainer.appendChild(wrapper);
-}
-
-function appendUI(role, text, save=true){
-    const isUser = role === "user";
-    const wrapper = document.createElement("div");
-    wrapper.className = `flex items-start space-x-3 message-enter ${isUser ? "flex-row-reverse space-x-reverse" : ""}`;
-    const avatar = document.createElement("div");
-    if(isUser){
-        if(userProfile.avatar){
-            const img = document.createElement("img");
-            img.src = userProfile.avatar;
-            img.alt = "用户";
-            img.className = "w-8 h-8 rounded-full object-cover shrink-0 border border-indigo-500/40 shadow-md";
-            avatar.appendChild(img);
-        }else{
-            avatar.className = "w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0 shadow-md shadow-indigo-600/30";
-            const icon = document.createElement("i");
-            icon.className = "fa-solid fa-user text-xs text-white";
-            avatar.appendChild(icon);
+    playSound(
+        "send"
+    );
+    // =====================================================
+    // Generation
+    // =====================================================
+    isGenerating =
+        true;
+    setButtonState(
+        "stop"
+    );
+    activeController =
+        new AbortController();
+    // =====================================================
+    // Assistant UI
+    // =====================================================
+    const assistantUI =
+        createAssistantUI();
+    let fullText =
+        "";
+    let reasoningText =
+        "";
+    let hasReasoning =
+        false;
+    let reasoningFinished =
+        false;
+    let hasReceivedAnswer =
+        false;
+    try {
+        // =================================================
+        // Context
+        // =================================================
+        const contextMessages =
+            messages
+                .filter(
+                    m =>
+                        m &&
+                        (
+                            m.role ===
+                                "user" ||
+                            m.role ===
+                                "assistant"
+                        ) &&
+                        typeof
+                            m.content ===
+                            "string"
+                )
+                .map(
+                    m => ({
+                        role:
+                            m.role,
+                        content:
+                            m.content
+                    })
+                );
+        // =================================================
+        // Request
+        // =================================================
+        const response =
+            await fetch(
+                "/api/chat",
+                {
+                    method:
+                        "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                        "Accept":
+                            "text/event-stream"
+                    },
+                    body:
+                        JSON.stringify({
+                            conversationId,
+                            model:
+                                currentModel,
+                            messages:
+                                contextMessages,
+                            attachments:
+                                currentAtts
+                        }),
+                    signal:
+                        activeController.signal
+                }
+            );
+        // =================================================
+        // HTTP Error
+        // =================================================
+        if (!response.ok) {
+            let errorMessage =
+                `Gateway Error: HTTP ${response.status}`;
+            try {
+                const errorData =
+                    await response.json();
+                if (
+                    errorData &&
+                    typeof
+                        errorData.error ===
+                        "string"
+                ) {
+                    errorMessage =
+                        errorData.error;
+                }
+            } catch {}
+            if (
+                response.status ===
+                401
+            ) {
+                errorMessage =
+                    "AI API Key 无效或已失效";
+            }
+            if (
+                response.status ===
+                429
+            ) {
+                errorMessage =
+                    "AI 服务请求过于频繁，请稍后再试";
+            }
+            if (
+                response.status >=
+                500
+            ) {
+                errorMessage =
+                    "AI 网关或上游服务暂时不可用";
+            }
+            throw new Error(
+                errorMessage
+            );
         }
-    }else{
-        avatar.className = "w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-md shadow-blue-600/30";
-        const span = document.createElement("span");
-        span.textContent = "🧐";
-        span.className = "text-xs";
-        avatar.appendChild(span);
-    }
-    const bubble = document.createElement("div");
-    bubble.className = `${isUser ? "bg-indigo-600 text-white shadow-indigo-600/20" : "bg-slate-900 border border-slate-800 text-slate-200"} rounded-2xl p-3.5 max-w-[82%] text-sm shadow-lg whitespace-pre-wrap break-words`;
-    bubble.textContent = String(text);
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(bubble);
-    chatContainer.appendChild(wrapper);
-    if(save){
-        const conversation = ensureActiveConversation();
-        conversation.messages.push({ role, content: String(text) });
-        conversation.updatedAt = Date.now();
-        updateConversationTitle(conversation);
+        // =================================================
+        // Stream
+        // =================================================
+        if (!response.body) {
+            throw new Error(
+                "服务器没有返回流式数据"
+            );
+        }
+        const reader =
+            response.body.getReader();
+        const decoder =
+            new TextDecoder(
+                "utf-8"
+            );
+        let buffer =
+            "";
+        // =================================================
+        // Stream Loop
+        // =================================================
+        while (true) {
+            const {
+                value,
+                done
+            } =
+                await reader.read();
+            if (done) {
+                break;
+            }
+            buffer +=
+                decoder.decode(
+                    value,
+                    {
+                        stream:
+                            true
+                    }
+                );
+            const events =
+                buffer.split(
+                    /\r?\n\r?\n/
+                );
+            buffer =
+                events.pop() ||
+                "";
+            for (
+                const event
+                of events
+            ) {
+                const lines =
+                    event.split(
+                        /\r?\n/
+                    );
+                const dataLines =
+                    lines
+                        .filter(
+                            line =>
+                                line.startsWith(
+                                    "data:"
+                                )
+                        )
+                        .map(
+                            line =>
+                                line
+                                    .slice(5)
+                                    .trim()
+                        );
+                if (
+                    dataLines.length ===
+                    0
+                ) {
+                    continue;
+                }
+                const data =
+                    dataLines.join(
+                        "\n"
+                    );
+                if (!data) {
+                    continue;
+                }
+                let packet;
+                try {
+                    packet =
+                        JSON.parse(
+                            data
+                        );
+                } catch {
+                    continue;
+                }
+                // =================================================
+                // REASONING
+                // =================================================
+                if (
+                    packet.type ===
+                        "reasoning" &&
+                    typeof
+                        packet.content ===
+                        "string"
+                ) {
+                    if (
+                        !hasReasoning
+                    ) {
+                        hasReasoning =
+                            true;
+                        assistantUI
+                            .reasoningBox
+                            .classList.remove(
+                                "hidden"
+                            );
+                        playSound(
+                            "thinking"
+                        );
+                    }
+                    reasoningText +=
+                        packet.content;
+                    assistantUI
+                        .reasoningContent
+                        .textContent =
+                        reasoningText;
+                    chatContainer.scrollTop =
+                        chatContainer.scrollHeight;
+                }
+                // =================================================
+                // FINAL ANSWER
+                // =================================================
+                if (
+                    packet.type ===
+                        "delta" &&
+                    typeof
+                        packet.content ===
+                        "string"
+                ) {
+                    if (
+                        hasReasoning &&
+                        !reasoningFinished
+                    ) {
+                        reasoningFinished =
+                            true;
+                        assistantUI
+                            .reasoningTitle
+                            .textContent =
+                            t.thinkingDone;
+                        const dots =
+                            assistantUI
+                                .reasoningHeader
+                                .querySelector(
+                                    ".thinking-dot"
+                                );
+                        if (dots) {
+                            assistantUI
+                                .reasoningHeader
+                                .querySelectorAll(
+                                    ".thinking-dot"
+                                )
+                                .forEach(
+                                    dot =>
+                                        dot.remove()
+                                );
+                        }
+                    }
+                    hasReceivedAnswer =
+                        true;
+                    fullText +=
+                        packet.content;
+                    assistantUI
+                        .bubble
+                        .textContent =
+                        fullText;
+                    chatContainer.scrollTop =
+                        chatContainer.scrollHeight;
+                    if (
+                        fullText.length %
+                            8 ===
+                        0
+                    ) {
+                        playSound(
+                            "receive"
+                        );
+                    }
+                }
+                // =================================================
+                // USAGE
+                // =================================================
+                if (
+                    packet.type ===
+                        "usage" &&
+                    packet.usage
+                ) {
+                    const usage =
+                        packet.usage;
+                    if (
+                        typeof
+                            usage.total_tokens ===
+                            "number"
+                    ) {
+                        totalTokens =
+                            Number(
+                                totalTokens ||
+                                    0
+                            ) +
+                            usage.total_tokens;
+                        tokenCountEl.textContent =
+                            totalTokens.toLocaleString();
+                        saveState();
+                    }
+                }
+                // =================================================
+                // ERROR
+                // =================================================
+                if (
+                    packet.type ===
+                        "error"
+                ) {
+                    throw new Error(
+                        packet.error ||
+                        "AI 流式请求失败"
+                    );
+                }
+                // =================================================
+                // DONE
+                // =================================================
+                if (
+                    packet.type ===
+                        "done"
+                ) {
+                    continue;
+                }
+            }
+        }
+        // =====================================================
+        // Decoder Flush
+        // =====================================================
+        buffer +=
+            decoder.decode();
+        // =====================================================
+        // Empty Response
+        // =====================================================
+        if (
+            !fullText.trim() &&
+            !reasoningText.trim()
+        ) {
+            throw new Error(
+                "AI 返回了空响应"
+            );
+        }
+        // =====================================================
+        // Save Assistant
+        // =====================================================
+        messages.push({
+            role:
+                "assistant",
+            content:
+                fullText,
+            model:
+                currentModel,
+            timestamp:
+                Date.now()
+        });
         saveState();
-        renderHistory();
-    }
-    scrollToBottom();
-    return wrapper;
-}
-
-function createLoading(){
-    playSound("think");
-    const wrapper = document.createElement("div");
-    wrapper.id = "loading-message";
-    wrapper.className = "flex items-start space-x-3 message-enter";
-    const avatar = document.createElement("div");
-    avatar.className = "thinking-avatar w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0";
-    const span = document.createElement("span");
-    span.textContent = "🧐";
-    span.className = "text-xs";
-    avatar.appendChild(span);
-    const bubble = document.createElement("div");
-    bubble.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-sm text-slate-400 flex items-center space-x-1.5 shadow-lg";
-    const textSpan = document.createElement("span");
-    textSpan.className = "text-xs text-blue-400 font-medium";
-    textSpan.textContent = "深度思考中";
-    bubble.appendChild(textSpan);
-    for(let i=0; i<3; i++){
-        const dot = document.createElement("span");
-        dot.className = "typing-dot text-blue-400";
-        dot.textContent = "●";
-        bubble.appendChild(dot);
-    }
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(bubble);
-    chatContainer.appendChild(wrapper);
-    scrollToBottom();
-    return wrapper;
-}
-
-function removeLoading(){
-    const loading = $("loading-message");
-    if(loading) loading.remove();
-}
-
-function updateConversationTitle(conversation){
-    if(!conversation) return;
-    const firstUserMessage = conversation.messages.find(message => message.role === "user");
-    if(firstUserMessage && firstUserMessage.content){
-        const title = firstUserMessage.content.replace(/\s+/g," ").trim();
-        conversation.title = title.length > 28 ? title.slice(0,28) + "…" : title;
-    }
-    conversation.updatedAt = Date.now();
-}
-
-function renderCurrentConversation(){
-    chatContainer.innerHTML = "";
-    const conversation = ensureActiveConversation();
-    currentTitleEl.textContent = conversation.title || "新对话";
-    currentSystemPrompt = conversation.systemPrompt || "";
-    if(conversation.systemName){
-        currentTitleEl.textContent = `${conversation.systemType === "agent" ? "Agent" : "Skill"}: ${conversation.systemName}`;
-    }
-    for(const message of conversation.messages){
-        if(!message || (message.role !== "user" && message.role !== "assistant")) continue;
-        appendUI(message.role, message.content, false);
-    }
-    showWelcome();
-    scrollToBottom();
-}
-
-function renderHistory(){
-    historyList.innerHTML = "";
-    const sorted = [...conversations].sort((a,b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
-    sorted.forEach(conversation => {
-        const row = document.createElement("div");
-        row.className = `group p-2.5 rounded-xl cursor-pointer flex items-center justify-between gap-2 transition ${conversation.id === activeConversationId ? "bg-indigo-600/20 border border-indigo-500/30" : "bg-slate-800/40 hover:bg-slate-800/70"}`;
-        const left = document.createElement("div");
-        left.className = "min-w-0 flex-1";
-        const title = document.createElement("div");
-        title.className = "text-xs text-slate-200 truncate";
-        title.textContent = conversation.title || "新对话";
-        const count = document.createElement("div");
-        count.className = "text-[10px] text-slate-500 mt-0.5";
-        count.textContent = `${conversation.messages.length} 条消息`;
-        left.appendChild(title);
-        left.appendChild(count);
-        const deleteBtn = document.createElement("button");
-        deleteBtn.type = "button";
-        deleteBtn.className = "w-7 h-7 shrink-0 rounded-lg text-slate-500 hover:text-red-400 transition flex items-center justify-center";
-        const icon = document.createElement("i");
-        icon.className = "fa-solid fa-trash text-[10px]";
-        deleteBtn.appendChild(icon);
-        row.appendChild(left);
-        row.appendChild(deleteBtn);
-        left.addEventListener("click", () => { switchConversation(conversation.id); });
-        deleteBtn.addEventListener("click", event => {
-            event.stopPropagation();
-            askDeleteConversation(conversation.id);
-        });
-        historyList.appendChild(row);
-    });
-}
-
-function switchConversation(id){
-    playSound("click");
-    const conversation = conversations.find(item => item.id === id);
-    if(!conversation) return;
-    activeConversationId = id;
-    currentSystemPrompt = conversation.systemPrompt || "";
-    saveState();
-    renderCurrentConversation();
-    renderHistory();
-    closeHistory();
-}
-
-function startNewChat(){
-    playSound("click");
-    const conversation = createConversation();
-    conversations.unshift(conversation);
-    activeConversationId = conversation.id;
-    currentSystemPrompt = "";
-    saveState();
-    renderCurrentConversation();
-    renderHistory();
-    closeHistory();
-    userInput.focus();
-}
-
-newChatBtn.addEventListener("click", startNewChat);
-
-function askDeleteConversation(id){
-    playSound("click");
-    pendingDeleteId = id;
-    confirmModal.classList.remove("hidden");
-}
-
-function closeConfirmModal(){
-    confirmModal.classList.add("hidden");
-    pendingDeleteId = null;
-}
-
-confirmCancel.addEventListener("click", closeConfirmModal);
-confirmDelete.addEventListener("click", () => {
-    if(!pendingDeleteId) return;
-    conversations = conversations.filter(item => item.id !== pendingDeleteId);
-    if(!conversations.length){
-        const conversation = createConversation();
-        conversations = [conversation];
-        activeConversationId = conversation.id;
-    }else if(activeConversationId === pendingDeleteId){
-        activeConversationId = conversations[0].id;
-    }
-    saveState();
-    renderCurrentConversation();
-    renderHistory();
-    closeConfirmModal();
-});
-
-async function handleSend(){
-    if(isSending) return;
-    const text = userInput.value.trim();
-    if(!text) return;
-    if(text.length > 10000){
-        appendUI("assistant", "⚠️ 单条消息不能超过 10000 个字符。", true);
-        return;
-    }
-    initAudio();
-    playSound("click");
-    const conversation = ensureActiveConversation();
-    isSending = true;
-    sendBtn.disabled = true;
-    userInput.disabled = true;
-    userInput.value = "";
-    appendUI("user", text, true);
-    createLoading();
-    try{
-        const finalMessages = conversation.messages.map(message => ({ role: message.role, content: message.content }));
-        const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Accept": "application/json" },
-            body: JSON.stringify({ messages: finalMessages, systemPrompt: currentSystemPrompt || "" })
-        });
-        let data;
-        try{ data = await response.json(); }catch{ throw new Error(`服务器返回了无法解析的数据 (${response.status})`); }
-        removeLoading();
-        if(!response.ok){
-            let errorMessage = data?.error || "服务器请求失败";
-            if(data?.detail) errorMessage += `\n${data.detail}`;
-            appendUI("assistant", `⚠️ 错误：${errorMessage}`, true);
-            return;
-        }
-        const reply = data?.reply || data?.choices?.[0]?.message?.content;
-        if(typeof reply !== "string" || !reply.trim()){
-            appendUI("assistant", "⚠️ 错误：未获取到有效的 AI 回复。", true);
-            return;
-        }
-        appendUI("assistant", reply, true);
-        playSound("output");
-        const usage = data?.usage;
-        const realTokens = Number(usage?.total_tokens);
-        if(Number.isFinite(realTokens) && realTokens > 0){
-            totalTokens += realTokens;
-            updateTokenDisplay();
-            saveState();
-        }
-    }catch(error){
-        removeLoading();
-        let message = error?.message || "网络连接异常";
-        if(message === "Failed to fetch") message = "网络繁忙或连接中断，请检查网络后重试。";
-        appendUI("assistant", `⚠️ ${message}`, true);
-    }finally{
-        isSending = false;
-        sendBtn.disabled = false;
-        userInput.disabled = false;
-        userInput.focus();
-    }
-}
-
-sendBtn.addEventListener("click", handleSend);
-userInput.addEventListener("keydown", event => {
-    if(event.key === "Enter" && !event.shiftKey){
-        event.preventDefault();
-        handleSend();
-    }
-});
-userInput.addEventListener("input", () => {
-    const now = Date.now();
-    if(now - lastTypeSound < 70) return;
-    lastTypeSound = now;
-    playSound("type");
-});
-
-function renderDeployedItems(){
-    deployedList.innerHTML = "";
-    if(!deployedItems.length){
-        deployedSection.classList.add("hidden");
-        return;
-    }
-    deployedSection.classList.remove("hidden");
-    deployedItems.forEach((item, index) => {
-        const row = document.createElement("div");
-        row.className = "p-2 bg-slate-800/40 rounded-xl text-xs flex items-center justify-between";
-        const left = document.createElement("button");
-        left.type = "button";
-        left.className = "flex items-center space-x-2 truncate min-w-0 text-left flex-1";
-        const icon = document.createElement("i");
-        icon.className = item.type === "skill" ? "fa-solid fa-wand-magic-sparkles text-indigo-400" : "fa-solid fa-brain text-emerald-400";
-        const name = document.createElement("span");
-        name.className = "text-slate-300 truncate";
-        name.textContent = item.name;
-        left.appendChild(icon);
-        left.appendChild(name);
-        left.addEventListener("click", () => activateItem(item));
-        const deleteBtn = document.createElement("button");
-        deleteBtn.type = "button";
-        deleteBtn.className = "w-7 h-7 text-slate-500 hover:text-red-400 flex items-center justify-center shrink-0";
-        const deleteIcon = document.createElement("i");
-        deleteIcon.className = "fa-solid fa-trash text-[10px]";
-        deleteBtn.appendChild(deleteIcon);
-        deleteBtn.addEventListener("click", event => {
-            event.stopPropagation();
-            deployedItems.splice(index, 1);
-            saveState();
-            renderDeployedItems();
-        });
-        row.appendChild(left);
-        row.appendChild(deleteBtn);
-        deployedList.appendChild(row);
-    });
-}
-
-function activateItem(item){
-    playSound("click");
-    const conversation = ensureActiveConversation();
-    conversation.systemPrompt = item.prompt;
-    conversation.systemName = item.name;
-    conversation.systemType = item.type;
-    currentSystemPrompt = item.prompt;
-    conversation.updatedAt = Date.now();
-    saveState();
-    renderCurrentConversation();
-    closeHistory();
-}
-
-function openConfigModal(type){
-    playSound("click");
-    currentMode = type;
-    closeHistory();
-    modalTitle.textContent = type === "skill" ? "部署新 Skill" : "部署新 Agent";
-    modalNameInput.value = "";
-    modalDescInput.value = "";
-    modalNameInput.placeholder = type === "skill" ? "例如：代码审查助手" : "例如：全栈架构师";
-    modalDescInput.placeholder = type === "skill" ? "输入该技能的具体提示词规则..." : "输入该智能体的人设与背景描述...";
-    configModal.classList.remove("hidden");
-}
-
-deploySkillBtn.addEventListener("click", () => openConfigModal("skill"));
-deployAgentBtn.addEventListener("click", () => openConfigModal("agent"));
-
-function closeConfigModal(){ configModal.classList.add("hidden"); }
-closeModal.addEventListener("click", closeConfigModal);
-modalCancelBtn.addEventListener("click", closeConfigModal);
-
-modalSaveBtn.addEventListener("click", () => {
-    const name = modalNameInput.value.trim();
-    const prompt = modalDescInput.value.trim();
-    if(!name){ modalNameInput.focus(); return; }
-    if(!prompt){ modalDescInput.focus(); return; }
-    deployedItems.push({
-        id: createId("deploy"),
-        type: currentMode,
-        name: name.substring(0,80),
-        prompt: prompt.substring(0,20000)
-    });
-    saveState();
-    renderDeployedItems();
-    closeConfigModal();
-    playSound("output");
-});
-
-uploadBtn.addEventListener("click", () => {
-    playSound("click");
-    fileInput.click();
-});
-
-fileInput.addEventListener("change", () => {
-    const files = Array.from(fileInput.files || []);
-    if(!files.length) return;
-    selectedFiles = files;
-    files.forEach(file => {
-        appendUI("user", `📎 已选择文件：${file.name}\n类型：${file.type || "未知"}\n大小：${formatFileSize(file.size)}`, true);
-    });
-    appendUI("assistant", "📎 文件入口已准备完成。当前版本保留真实 File 对象，后续可以接入 PDF、DOCX、TXT、图片或其他文件解析 API。", true);
-    fileInput.value = "";
-});
-
-function formatFileSize(bytes){
-    if(!Number.isFinite(bytes)) return "未知";
-    if(bytes < 1024) return `${bytes} B`;
-    if(bytes < 1024*1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-}
-
-function setupVoiceRecognition(){
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if(!SpeechRecognition) return false;
-    recognition = new SpeechRecognition();
-    recognition.lang = "zh-CN";
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.onstart = () => {
-        isRecording = true;
-        voiceBtn.classList.add("voice-recording");
-        voiceIcon.className = "fa-solid fa-stop text-sm";
-        userInput.placeholder = "正在聆听...";
-        playSound("think");
-    };
-    recognition.onresult = event => {
-        let finalText = "";
-        let interimText = "";
-        for(let i = event.resultIndex; i < event.results.length; i++){
-            const transcript = event.results[i][0].transcript;
-            if(event.results[i].isFinal) finalText += transcript;
-            else interimText += transcript;
-        }
-        if(finalText) userInput.value = finalText;
-        else if(interimText) userInput.value = interimText;
-    };
-    recognition.onerror = event => { console.warn("Speech recognition:", event.error); };
-    recognition.onend = () => {
-        isRecording = false;
-        voiceBtn.classList.remove("voice-recording");
-        voiceIcon.className = "fa-solid fa-microphone text-sm";
-        userInput.placeholder = "输入消息...";
-        if(userInput.value.trim()) userInput.focus();
-    };
-    return true;
-}
-
-setupVoiceRecognition();
-
-voiceBtn.addEventListener("click", () => {
-    initAudio();
-    playSound("click");
-    if(!recognition){ alert("当前浏览器不支持 Web Speech API。语音入口已保留。"); return; }
-    if(isRecording){ recognition.stop(); return; }
-    try{ recognition.start(); }catch(error){ console.warn("Voice start error:", error); }
-});
-
-exportBtn.addEventListener("click", () => {
-    playSound("click");
-    try{
-        const exportData = {
-            exportedAt: new Date().toISOString(),
-            activeConversationId,
-            totalTokens,
-            userProfile,
-            conversations,
-            deployedItems
-        };
-        const json = JSON.stringify(exportData, null, 2);
-        const blob = new Blob([json], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.download = `cqs_ai_backup_${Date.now()}.json`;
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-        setTimeout(() => { URL.revokeObjectURL(url); }, 1000);
-    }catch{
-        alert("导出失败，请稍后重试。");
-    }
-});
-
-historyBtn.addEventListener("click", () => {
-    playSound("click");
-    renderHistory();
-    updateProfileUI();
-    historyDrawer.classList.remove("hidden");
-});
-
-closeDrawer.addEventListener("click", closeHistory);
-function closeHistory(){ historyDrawer.classList.add("hidden"); }
-
-historyDrawer.addEventListener("click", event => {
-    if(event.target === historyDrawer) closeHistory();
-});
-
-document.addEventListener("keydown", event => {
-    if(event.key === "Escape"){
-        closeHistory();
-        closeConfigModal();
-        closeConfirmModal();
-        closeProfileModal();
-    }
-});
-
-document.addEventListener("pointerdown", event => {
-    const button = event.target.closest("button");
-    if(!button) return;
-    if(button === soundToggleBtn) return;
-    if(button.disabled) return;
-    playSound("click");
-}, { passive: true });
-
-loadState();
-updateTokenDisplay();
-renderDeployedItems();
-renderCurrentConversation();
-renderHistory();
-updateSoundUI();
-updateProfileUI();
-
-setTimeout(() => { playIntro(); }, 350);
-</script>
-</body>
-</html>
+    } catch (err) {
+        // =====================================================
+        // Abort
+        // =====================================================
+        if (
+            err &&
+            err.name ===
+                "AbortError"
+        ) {
+            const stoppedText =
