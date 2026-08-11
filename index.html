@@ -1,67 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
-<
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DeepSeek Global AI Terminal</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
-    body {
-      background: #030712; color: #f3f4f6; font-family: 'Inter', sans-serif;
-      margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; height: 100vh;
-    }
-    .container { width: 100%; max-width: 600px; background: rgba(3, 7, 18, 0.9); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 0 30px rgba(59, 130, 246, 0.1); display: flex; flex-direction: column; height: 80vh; }
-    h2 { font-family: 'Orbitron', sans-serif; color: #60a5fa; font-size: 16px; margin-top: 0; text-align: center; }
-    .chat-box { flex: 1; background: #020617; border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 10px; padding: 12px; overflow-y: auto; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
-    .msg { padding: 8px 12px; border-radius: 8px; max-width: 80%; line-height: 1.4; word-break: break-word; }
-    .msg.user { background: #2563eb; color: #fff; align-self: flex-end; }
-    .msg.assistant { background: #1e293b; color: #e2e8f0; align-self: flex-start; }
-    .input-area { display: flex; gap: 8px; }
-    input { flex: 1; background: #020617; border: 1px solid rgba(59, 130, 246, 0.4); padding: 10px; border-radius: 8px; color: #fff; outline: none; }
-    button { background: #3b82f6; color: #fff; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Orbitron', sans-serif; }
-  </style>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI 智能控制台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { display: none; }
+    </style>
 </head>
-<body>
-<div class="container">
-  <h2>🌍 DEEPSEEK GLOBAL TERMINAL</h2>
-  <div class="chat-box" id="chatBox">
-    <div class="msg assistant">Hello! I am your global AI assistant powered by DeepSeek. How can I help you today?</div>
-  </div>
-  <div class="input-area">
-    <input type="text" id="userInput" placeholder="Ask something in English or any language...">
-    <button onclick="sendMsg()">Send</button>
-  </div>
-</div>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased h-screen w-screen overflow-hidden flex flex-col">
+    <!-- 顶栏状态与功能入口 -->
+    <header class="shrink-0 px-4 py-3 flex items-center justify-between border-b border-slate-800 bg-slate-900/80 backdrop-blur-md z-20">
+        <div class="flex items-center space-x-2">
+            <button id="history-btn" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 text-slate-300 active:scale-95 transition">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </button>
+            <h1 class="text-base font-semibold tracking-wide">AI 对话中心</h1>
+        </div>
+        <div class="flex items-center space-x-3">
+            <div class="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full font-mono">
+                用量: <span id="token-count">0</span> tokens
+            </div>
+            <button id="export-btn" class="w-9 h-9 flex items-center justify-center rounded-xl bg-indigo-600 text-white active:scale-95 transition">
+                <i class="fa-solid fa-download text-sm"></i>
+            </button>
+        </div>
+    </header>
 
-<script>
-async function sendMsg() {
-  const input = document.getElementById('userInput');
-  const chatBox = document.getElementById('chatBox');
-  const text = input.value.trim();
-  if(!text) return;
+    <!-- 聊天内容画布区域 -->
+    <main id="chat-container" class="flex-1 relative overflow-y-auto p-4 space-y-4 pb-28">
+        <!-- 欢迎提示 -->
+        <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-robot text-xs text-white"></i>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[80%] text-sm text-slate-200 shadow-lg">
+                你好！我是你的 AI 助手，请在下方输入框与我开始对话。
+            </div>
+        </div>
+    </main>
 
-  chatBox.innerHTML += `<div class="msg user">${text}</div>`;
-  input.value = '';
-  chatBox.scrollTop = chatBox.scrollHeight;
+    <!-- 底部输入与操作面板 -->
+    <nav class="absolute bottom-0 left-0 right-0 p-3 bg-slate-900/95 border-t border-slate-800 backdrop-blur-lg z-20 flex items-center space-x-2">
+        <input type="text" id="user-input" placeholder="输入消息..." class="flex-1 bg-slate-800 text-slate-100 placeholder-slate-500 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-slate-700/60">
+        <button id="send-btn" class="w-12 h-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </nav>
 
-  const aiMsg = document.createElement('div');
-  aiMsg.className = 'msg assistant';
-  aiMsg.textContent = 'Thinking...';
-  chatBox.appendChild(aiMsg);
+    <!-- 历史记录抽屉 -->
+    <div id="history-drawer" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden transition-opacity">
+        <div class="absolute left-0 top-0 bottom-0 w-4/5 max-w-sm bg-slate-900 border-r border-slate-800 p-4 flex flex-col">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+                <h2 class="text-sm font-semibold text-slate-200">历史对话与话题</h2>
+                <button id="close-drawer" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="history-list" class="flex-1 overflow-y-auto space-y-2">
+                <!-- 动态填充 -->
+            </div>
+        </div>
+    </div>
 
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text })
-    });
-    const data = await res.json();
-    aiMsg.textContent = data.reply || 'Error getting response.';
-  } catch (e) {
-    aiMsg.textContent = 'Network connection error.';
-  }
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-</script>
+    <!-- 交互逻辑脚本 -->
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const tokenCountEl = document.getElementById('token-count');
+        const exportBtn = document.getElementById('export-btn');
+        const historyBtn = document.getElementById('history-btn');
+        const historyDrawer = document.getElementById('history-drawer');
+        const closeDrawer = document.getElementById('close-drawer');
+        const historyList = document.getElementById('history-list');
+
+        let messages = JSON.parse(localStorage.getItem('chat_messages') || '[]');
+        let totalTokens = parseInt(localStorage.getItem('total_tokens') || '0');
+
+        tokenCountEl.textContent = totalTokens;
+
+        // 渲染本地历史消息
+        function renderMessages() {
+            if (messages.length === 0) return;
+            // 简单清空默认欢迎语以外的内容
+            const existingMsgs = chatContainer.querySelectorAll('.chat-bubble');
+            existingMsgs.forEach(m => m.remove());
+
+            messages.forEach(msg => {
+                appendUI(msg.role === 'user' ? 'user' : 'assistant', msg.content, false);
+            });
+        }
+
+        renderMessages();
+
+        function appendUI(role, text, save = true) {
+            const isUser = role === 'user';
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex items-start space-x-3 chat-bubble ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+            
+            wrapper.innerHTML = `
+                <div class="w-8 h-8 rounded-full ${isUser ? 'bg-emerald-600' : 'bg-indigo-600'} flex items-center justify-center shrink-0">
+                    <i class="fa-solid ${isUser ? 'fa-user' : 'fa-robot'} text-xs text-white"></i>
+                </div>
+                <div class="${isUser ? 'bg-indigo-600 text-white' : 'bg-slate-900 border border-slate-800 text-slate-200'} rounded-2xl p-3.5 max-w-[80%] text-sm shadow-lg">
+                    ${text}
+                </div>
+            `;
+            chatContainer.appendChild(wrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            if (save) {
+                messages.push({ role, content: text });
+                localStorage.setItem('chat_messages', JSON.stringify(messages));
+                // 模拟消耗 token 计数
+                totalTokens += text.length;
+                tokenCountEl.textContent = totalTokens;
+                localStorage.setItem('total_tokens', totalTokens);
+            }
+        }
+
+        async function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            userInput.value = '';
+            appendUI('user', text);
+
+            // 构造加载状态
+            const loadingId = 'loading-' + Date.now();
+            const loadingWrapper = document.createElement('div');
+            loadingWrapper.id = loadingId;
+            loadingWrapper.className = 'flex items-start space-x-3 chat-bubble';
+            loadingWrapper.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-robot text-xs text-white animate-spin"></i>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-sm text-slate-400">思考中...</div>
+            `;
+            chatContainer.appendChild(loadingWrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages: messages })
+                });
+                const data = await res.json();
+                document.getElementById(loadingId).remove();
+                
+                const reply = data.choices && data.choices[0] ? data.choices[0].message.content : '未获取到有效回复';
+                appendUI('assistant', reply);
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                appendUI('assistant', '网络连接异常，请检查配置。');
+            }
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+
+        // 一键导出功能
+        exportBtn.addEventListener('click', () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(messages, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `chat_history_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        });
+
+        // 历史抽屉控制
+        historyBtn.addEventListener('click', () => {
+            historyList.innerHTML = '';
+            if (messages.length === 0) {
+                historyList.innerHTML = '<div class="text-xs text-slate-500 text-center py-4">暂无历史记录</div>';
+            } else {
+                messages.forEach((m, idx) => {
+                    if (m.role === 'user') {
+                        const item = document.createElement('div');
+                        item.className = 'p-2.5 bg-slate-800/60 rounded-xl text-xs text-slate-300 truncate cursor-pointer hover:bg-slate-800';
+                        item.textContent = m.content;
+                        historyList.appendChild(item);
+                    }
+                });
+            }
+            historyDrawer.classList.remove('hidden');
+        });
+
+        closeDrawer.addEventListener('click', () => { historyDrawer.classList.add('hidden'); });
+    </script>
 </body>
 </html>
