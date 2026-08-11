@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'deepseek-v4-pro', // 👈 已更新为最新模型名称
         messages: messages,
         stream: false
       })
