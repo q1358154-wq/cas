@@ -1,40 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#020617">
-
     <title>AI 智能控制台</title>
-
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome -->
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        rel="stylesheet"
-    >
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-
-        /* ========================================
-           基础
-        ======================================== */
-
         * {
             -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
         }
-
-        html,
-        body {
+        html, body {
             width: 100%;
             height: 100%;
             margin: 0;
@@ -42,1359 +20,432 @@
             overflow: hidden;
             background: #020617;
         }
-
         body {
             min-height: 100vh;
             min-height: 100dvh;
             color: #f8fafc;
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                "PingFang SC",
-                "Hiragino Sans GB",
-                "Microsoft YaHei",
-                sans-serif;
-
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
             -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
         }
-
-        /* ========================================
-           隐藏滚动条
-        ======================================== */
-
         ::-webkit-scrollbar {
             width: 0;
             height: 0;
             display: none;
         }
-
         * {
             scrollbar-width: none;
         }
-
-        /* ========================================
-           Safe Area
-        ======================================== */
-
         .safe-top {
             padding-top: env(safe-area-inset-top);
         }
-
         .safe-bottom {
             padding-bottom: env(safe-area-inset-bottom);
         }
-
-        /* ========================================
-           防止 iOS 输入框自动缩放
-        ======================================== */
-
-        input,
-        textarea,
-        button {
+        input, textarea, button {
             font-size: 16px;
         }
-
-        /* ========================================
-           消息动画
-        ======================================== */
-
         .message-enter {
             animation: messageEnter 0.2s ease-out;
         }
-
         @keyframes messageEnter {
-
             from {
                 opacity: 0;
                 transform: translateY(8px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
-
         }
-
-        /* ========================================
-           Loading
-        ======================================== */
-
         .typing-dot {
             animation: typing 1.2s infinite ease-in-out;
         }
-
         .typing-dot:nth-child(2) {
             animation-delay: 0.15s;
         }
-
         .typing-dot:nth-child(3) {
             animation-delay: 0.3s;
         }
-
         @keyframes typing {
-
-            0%,
-            60%,
-            100% {
+            0%, 60%, 100% {
                 opacity: 0.25;
                 transform: translateY(0);
             }
-
             30% {
                 opacity: 1;
                 transform: translateY(-2px);
             }
-
         }
-
-        /* ========================================
-           禁用状态
-        ======================================== */
-
         button:disabled {
             opacity: 0.55;
             cursor: not-allowed;
         }
-
-        /* ========================================
-           输入框
-        ======================================== */
-
         #user-input {
             -webkit-appearance: none;
             appearance: none;
         }
-
         #user-input:focus {
             outline: none;
         }
-
-        /* ========================================
-           抽屉动画
-        ======================================== */
-
         #history-drawer {
             transition: opacity 0.2s ease;
         }
-
         #history-panel {
-            transition: transform 0.25s ease;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
         #history-drawer.hidden {
             opacity: 0;
             pointer-events: none;
         }
-
         #history-drawer.hidden #history-panel {
             transform: translateX(-100%);
         }
-
-        /* ========================================
-           错误消息
-        ======================================== */
-
-        .error-text {
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
     </style>
 </head>
-
-
 <body class="bg-slate-950 text-slate-100 overflow-hidden">
-
-<div
-    id="app"
-    class="w-full flex flex-col bg-slate-950"
-    style="
-        height: 100vh;
-        height: 100dvh;
-        min-height: 100svh;
-    "
->
-
-    <!-- ========================================
-         顶部
-    ======================================== -->
-
-    <header
-        class="
-            shrink-0
-            px-4
-            py-3
-            flex
-            items-center
-            justify-between
-            border-b
-            border-slate-800
-            bg-slate-900/90
-            backdrop-blur-md
-            z-20
-            safe-top
-        "
-    >
-
+<div id="app" class="w-full flex flex-col bg-slate-950" style="height: 100vh; height: 100dvh; min-height: 100svh;">
+    <header class="shrink-0 px-4 py-3 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md z-20 safe-top">
         <div class="flex items-center space-x-2">
-
-            <button
-                id="history-btn"
-                type="button"
-                aria-label="历史记录"
-                class="
-                    w-9
-                    h-9
-                    flex
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-slate-800
-                    text-slate-300
-                    active:scale-95
-                    transition
-                "
-            >
-                <i class="fa-solid fa-clock-rotate-left"></i>
+            <button id="history-btn" type="button" aria-label="历史记录与菜单" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 text-slate-300 active:scale-95 transition">
+                <i class="fa-solid fa-bars"></i>
             </button>
-
-            <h1 class="text-base font-semibold tracking-wide">
-                AI 对话中心
-            </h1>
-
+            <h1 class="text-base font-semibold tracking-wide">AI 对话中心</h1>
         </div>
-
-
         <div class="flex items-center space-x-3">
-
-            <div
-                class="
-                    text-xs
-                    bg-indigo-500/10
-                    text-indigo-400
-                    border
-                    border-indigo-500/20
-                    px-2.5
-                    py-1
-                    rounded-full
-                    font-mono
-                "
-            >
-                用量:
-                <span id="token-count">0</span>
-                tokens
+            <div class="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full font-mono">
+                用量: <span id="token-count">0</span> tokens
             </div>
-
-            <button
-                id="export-btn"
-                type="button"
-                aria-label="导出聊天记录"
-                class="
-                    w-9
-                    h-9
-                    flex
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-indigo-600
-                    text-white
-                    active:scale-95
-                    transition
-                "
-            >
+            <button id="export-btn" type="button" aria-label="导出聊天记录" class="w-9 h-9 flex items-center justify-center rounded-xl bg-indigo-600 text-white active:scale-95 transition">
                 <i class="fa-solid fa-download text-sm"></i>
             </button>
-
         </div>
-
     </header>
 
-
-    <!-- ========================================
-         聊天区域
-    ======================================== -->
-
-    <main
-        id="chat-container"
-        class="
-            flex-1
-            relative
-            overflow-y-auto
-            overscroll-contain
-            p-4
-            space-y-4
-        "
-        style="padding-bottom: 110px;"
-    >
-
-        <!-- 欢迎消息 -->
-
+    <main id="chat-container" class="flex-1 relative overflow-y-auto overscroll-contain p-4 space-y-4" style="padding-bottom: 110px;">
         <div class="flex items-start space-x-3 chat-bubble message-enter">
-
-            <div
-                class="
-                    w-8
-                    h-8
-                    rounded-full
-                    bg-indigo-600
-                    flex
-                    items-center
-                    justify-center
-                    shrink-0
-                "
-            >
+            <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
                 <i class="fa-solid fa-robot text-xs text-white"></i>
             </div>
-
-            <div
-                class="
-                    bg-slate-900
-                    border
-                    border-slate-800
-                    rounded-2xl
-                    p-3.5
-                    max-w-[80%]
-                    text-sm
-                    text-slate-200
-                    shadow-lg
-                "
-            >
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[80%] text-sm text-slate-200 shadow-lg">
                 你好！我是你的 AI 助手，请在下方输入框与我开始对话。
             </div>
-
         </div>
-
     </main>
 
-
-    <!-- ========================================
-         底部输入区域
-    ======================================== -->
-
-    <nav
-        class="
-            shrink-0
-            p-3
-            bg-slate-900/95
-            border-t
-            border-slate-800
-            backdrop-blur-lg
-            z-20
-            flex
-            items-center
-            space-x-2
-            safe-bottom
-        "
-    >
-
-        <input
-            type="text"
-            id="user-input"
-            autocomplete="off"
-            autocapitalize="sentences"
-            enterkeyhint="send"
-            placeholder="输入消息..."
-            class="
-                flex-1
-                min-w-0
-                bg-slate-800
-                text-slate-100
-                placeholder-slate-500
-                text-base
-                rounded-xl
-                px-4
-                py-3
-                border
-                border-slate-700/60
-                focus:border-indigo-500
-                focus:ring-2
-                focus:ring-indigo-500/30
-                transition
-            "
-        >
-
-        <button
-            id="send-btn"
-            type="button"
-            aria-label="发送消息"
-            class="
-                w-12
-                h-12
-                bg-indigo-600
-                hover:bg-indigo-500
-                text-white
-                rounded-xl
-                flex
-                items-center
-                justify-center
-                shrink-0
-                active:scale-95
-                transition
-                shadow-lg
-                shadow-indigo-600/30
-            "
-        >
+    <nav class="shrink-0 p-3 bg-slate-900/95 border-t border-slate-800 backdrop-blur-lg z-20 flex items-center space-x-2 safe-bottom">
+        <input type="text" id="user-input" autocomplete="off" autocapitalize="sentences" enterkeyhint="send" placeholder="输入消息..." class="flex-1 min-w-0 bg-slate-800 text-slate-100 placeholder-slate-500 text-base rounded-xl px-4 py-3 border border-slate-700/60 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition">
+        <button id="send-btn" type="button" aria-label="发送消息" class="w-12 h-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30">
             <i class="fa-solid fa-paper-plane"></i>
         </button>
-
     </nav>
 
-
-    <!-- ========================================
-         历史记录抽屉
-    ======================================== -->
-
-    <div
-        id="history-drawer"
-        class="
-            fixed
-            inset-0
-            bg-black/60
-            backdrop-blur-sm
-            z-50
-            hidden
-        "
-    >
-
-        <div
-            id="history-panel"
-            class="
-                absolute
-                left-0
-                top-0
-                bottom-0
-                w-4/5
-                max-w-sm
-                bg-slate-900
-                border-r
-                border-slate-800
-                p-4
-                flex
-                flex-col
-                safe-top
-                safe-bottom
-            "
-        >
-
-            <div
-                class="
-                    flex
-                    items-center
-                    justify-between
-                    pb-3
-                    border-b
-                    border-slate-800
-                    mb-4
-                "
-            >
-
-                <h2 class="text-sm font-semibold text-slate-200">
-                    历史对话与话题
+    <div id="history-drawer" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden">
+        <div id="history-panel" class="absolute left-0 top-0 bottom-0 w-4/5 max-w-xs bg-slate-900 border-r border-slate-800 p-4 flex flex-col safe-top safe-bottom">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+                <h2 class="text-sm font-semibold text-slate-200 flex items-center space-x-2">
+                    <i class="fa-solid fa-compass text-indigo-400"></i>
+                    <span>控制台菜单</span>
                 </h2>
-
-                <button
-                    id="close-drawer"
-                    type="button"
-                    class="text-slate-400 hover:text-white"
-                >
+                <button id="close-drawer" type="button" aria-label="关闭菜单" class="text-slate-400 hover:text-white w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-800">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
-
             </div>
 
-            <div
-                id="history-list"
-                class="flex-1 overflow-y-auto space-y-2"
-            ></div>
+            <button id="new-chat-btn" type="button" class="w-full mb-4 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium flex items-center space-x-2 shadow-lg shadow-indigo-600/20 active:scale-98 transition">
+                <i class="fa-solid fa-plus"></i>
+                <span>开启新话题</span>
+            </button>
 
+            <div class="space-y-1.5 mb-4 pb-3 border-b border-slate-800">
+                <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1 mb-1">系统功能</div>
+                <button id="deploy-skill-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-xl text-xs flex items-center space-x-2.5 transition">
+                    <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i>
+                    <span>部署 Skill</span>
+                </button>
+                <button id="deploy-agent-btn" type="button" class="w-full py-2 px-3 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-xl text-xs flex items-center space-x-2.5 transition">
+                    <i class="fa-solid fa-brain text-emerald-400"></i>
+                    <span>部署 Agent</span>
+                </button>
+            </div>
+
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1 mb-1">历史对话</div>
+            <div id="history-list" class="flex-1 overflow-y-auto space-y-1.5"></div>
         </div>
-
     </div>
-
 </div>
-
-
 <script>
-
-    /* =====================================================
-       DOM
-    ===================================================== */
-
-    const chatContainer =
-        document.getElementById('chat-container');
-
-    const userInput =
-        document.getElementById('user-input');
-
-    const sendBtn =
-        document.getElementById('send-btn');
-
-    const tokenCountEl =
-        document.getElementById('token-count');
-
-    const exportBtn =
-        document.getElementById('export-btn');
-
-    const historyBtn =
-        document.getElementById('history-btn');
-
-    const historyDrawer =
-        document.getElementById('history-drawer');
-
-    const closeDrawer =
-        document.getElementById('close-drawer');
-
-    const historyList =
-        document.getElementById('history-list');
-
-
-    /* =====================================================
-       状态
-    ===================================================== */
+    const chatContainer = document.getElementById('chat-container');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const tokenCountEl = document.getElementById('token-count');
+    const exportBtn = document.getElementById('export-btn');
+    const historyBtn = document.getElementById('history-btn');
+    const historyDrawer = document.getElementById('history-drawer');
+    const closeDrawer = document.getElementById('close-drawer');
+    const historyList = document.getElementById('history-list');
+    const newChatBtn = document.getElementById('new-chat-btn');
+    const deploySkillBtn = document.getElementById('deploy-skill-btn');
+    const deployAgentBtn = document.getElementById('deploy-agent-btn');
 
     let messages = [];
-
     let totalTokens = 0;
-
     let isSending = false;
 
-
-    /* =====================================================
-       LocalStorage 安全读取
-    ===================================================== */
-
     try {
-
-        const savedMessages =
-            localStorage.getItem('chat_messages');
-
-        const savedTokens =
-            localStorage.getItem('total_tokens');
-
+        const savedMessages = localStorage.getItem('chat_messages');
+        const savedTokens = localStorage.getItem('total_tokens');
         if (savedMessages) {
-
-            const parsed =
-                JSON.parse(savedMessages);
-
-            if (Array.isArray(parsed)) {
-                messages = parsed;
-            }
-
+            const parsed = JSON.parse(savedMessages);
+            if (Array.isArray(parsed)) messages = parsed;
         }
-
         if (savedTokens) {
-
-            const parsedTokens =
-                parseInt(savedTokens, 10);
-
-            if (!Number.isNaN(parsedTokens)) {
-                totalTokens = parsedTokens;
-            }
-
+            const parsedTokens = parseInt(savedTokens, 10);
+            if (!Number.isNaN(parsedTokens)) totalTokens = parsedTokens;
         }
-
     } catch (error) {
-
-        console.error(
-            'LocalStorage read error:',
-            error
-        );
-
+        console.error('LocalStorage read error:', error);
     }
-
-
-    tokenCountEl.textContent =
-        totalTokens;
-
-
-    /* =====================================================
-       保存状态
-    ===================================================== */
+    tokenCountEl.textContent = totalTokens;
 
     function saveState() {
-
         try {
-
-            localStorage.setItem(
-                'chat_messages',
-                JSON.stringify(messages)
-            );
-
-            localStorage.setItem(
-                'total_tokens',
-                String(totalTokens)
-            );
-
+            localStorage.setItem('chat_messages', JSON.stringify(messages));
+            localStorage.setItem('total_tokens', String(totalTokens));
         } catch (error) {
-
-            console.error(
-                'LocalStorage save error:',
-                error
-            );
-
+            console.error('LocalStorage save error:', error);
         }
-
     }
 
+    function appendUI(role, text, save = true) {
+        const isUser = role === 'user';
+        const wrapper = document.createElement('div');
+        wrapper.className = `flex items-start space-x-3 chat-bubble message-enter ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
 
-    /* =====================================================
-       创建消息 UI
-       注意：使用 textContent，避免 XSS
-    ===================================================== */
-
-    function appendUI(
-        role,
-        text,
-        save = true
-    ) {
-
-        const isUser =
-            role === 'user';
-
-        const wrapper =
-            document.createElement('div');
-
-        wrapper.className =
-            `flex items-start space-x-3 chat-bubble message-enter ${
-                isUser
-                    ? 'flex-row-reverse space-x-reverse'
-                    : ''
-            }`;
-
-
-        /* 头像 */
-
-        const avatar =
-            document.createElement('div');
-
-        avatar.className =
-            `w-8 h-8 rounded-full ${
-                isUser
-                    ? 'bg-emerald-600'
-                    : 'bg-indigo-600'
-            } flex items-center justify-center shrink-0`;
-
-        const icon =
-            document.createElement('i');
-
-        icon.className =
-            `fa-solid ${
-                isUser
-                    ? 'fa-user'
-                    : 'fa-robot'
-            } text-xs text-white`;
-
+        const avatar = document.createElement('div');
+        avatar.className = `w-8 h-8 rounded-full ${isUser ? 'bg-emerald-600' : 'bg-indigo-600'} flex items-center justify-center shrink-0`;
+        const icon = document.createElement('i');
+        icon.className = `fa-solid ${isUser ? 'fa-user' : 'fa-robot'} text-xs text-white`;
         avatar.appendChild(icon);
 
-
-        /* 内容 */
-
-        const bubble =
-            document.createElement('div');
-
-        bubble.className =
-            `${
-                isUser
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-slate-900 border border-slate-800 text-slate-200'
-            }
-            rounded-2xl
-            p-3.5
-            max-w-[80%]
-            text-sm
-            shadow-lg
-            whitespace-pre-wrap
-            break-words`;
-
-        /* 关键：绝不使用 innerHTML 填用户内容 */
-
-        bubble.textContent =
-            text;
-
+        const bubble = document.createElement('div');
+        bubble.className = `${isUser ? 'bg-indigo-600 text-white' : 'bg-slate-900 border border-slate-800 text-slate-200'} rounded-2xl p-3.5 max-w-[80%] text-sm shadow-lg whitespace-pre-wrap break-words`;
+        bubble.textContent = text;
 
         wrapper.appendChild(avatar);
-
         wrapper.appendChild(bubble);
-
         chatContainer.appendChild(wrapper);
 
-
-        /* 滚动到底部 */
-
         requestAnimationFrame(() => {
-
-            chatContainer.scrollTop =
-                chatContainer.scrollHeight;
-
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         });
-
-
-        /* 保存 */
 
         if (save) {
-
-            messages.push({
-                role,
-                content: text
-            });
-
-            /*
-             * 这里沿用你的原设计：
-             * 用字符数量作为本地用量显示。
-             *
-             * 注意：
-             * 这并不是 DeepSeek 官方 token 数。
-             */
-
-            totalTokens +=
-                text.length;
-
-            tokenCountEl.textContent =
-                totalTokens;
-
+            messages.push({ role, content: text });
+            totalTokens += text.length;
+            tokenCountEl.textContent = totalTokens;
             saveState();
         }
-
         return wrapper;
     }
-
-
-    /* =====================================================
-       Loading
-    ===================================================== */
 
     function createLoading() {
-
-        const wrapper =
-            document.createElement('div');
-
-        wrapper.className =
-            'flex items-start space-x-3 chat-bubble message-enter';
-
-        wrapper.id =
-            'loading-message';
-
-
-        const avatar =
-            document.createElement('div');
-
-        avatar.className =
-            'w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0';
-
-
-        const robot =
-            document.createElement('i');
-
-        robot.className =
-            'fa-solid fa-robot text-xs text-white';
-
-
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-start space-x-3 chat-bubble message-enter';
+        wrapper.id = 'loading-message';
+        const avatar = document.createElement('div');
+        avatar.className = 'w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0';
+        const robot = document.createElement('i');
+        robot.className = 'fa-solid fa-robot text-xs text-white';
         avatar.appendChild(robot);
 
-
-        const bubble =
-            document.createElement('div');
-
-        bubble.className =
-            'bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-sm text-slate-400 flex items-center space-x-1';
-
-
+        const bubble = document.createElement('div');
+        bubble.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-sm text-slate-400 flex items-center space-x-1';
         for (let i = 0; i < 3; i++) {
-
-            const dot =
-                document.createElement('span');
-
-            dot.className =
-                'typing-dot';
-
-            dot.textContent =
-                '●';
-
+            const dot = document.createElement('span');
+            dot.className = 'typing-dot';
+            dot.textContent = '●';
             bubble.appendChild(dot);
-
         }
-
-
         wrapper.appendChild(avatar);
-
         wrapper.appendChild(bubble);
-
         chatContainer.appendChild(wrapper);
-
-
         requestAnimationFrame(() => {
-
-            chatContainer.scrollTop =
-                chatContainer.scrollHeight;
-
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         });
-
-
         return wrapper;
     }
 
-
-    /* =====================================================
-       删除 Loading
-    ===================================================== */
-
     function removeLoading() {
-
-        const loading =
-            document.getElementById(
-                'loading-message'
-            );
-
-        if (loading) {
-            loading.remove();
-        }
-
+        const loading = document.getElementById('loading-message');
+        if (loading) loading.remove();
     }
-
-
-    /* =====================================================
-       渲染历史消息
-    ===================================================== */
 
     function renderMessages() {
-
-        if (!messages.length) {
-            return;
-        }
-
+        if (!messages.length) return;
         messages.forEach(message => {
-
-            if (
-                message &&
-                (message.role === 'user' ||
-                 message.role === 'assistant')
-            ) {
-
-                appendUI(
-                    message.role,
-                    String(message.content || ''),
-                    false
-                );
-
+            if (message && (message.role === 'user' || message.role === 'assistant')) {
+                appendUI(message.role, String(message.content || ''), false);
             }
-
         });
-
     }
-
-
     renderMessages();
 
-
-    /* =====================================================
-       发送消息
-    ===================================================== */
-
     async function handleSend() {
-
-        if (isSending) {
-            return;
-        }
-
-
-        const text =
-            userInput.value.trim();
-
-
-        if (!text) {
-            return;
-        }
-
-
-        /* ==============================================
-           UI 状态
-        ============================================== */
+        if (isSending) return;
+        const text = userInput.value.trim();
+        if (!text) return;
 
         isSending = true;
-
         sendBtn.disabled = true;
-
         userInput.disabled = true;
-
-
-        /* 清空输入 */
-
         userInput.value = '';
 
-
-        /* 显示用户消息 */
-
-        appendUI(
-            'user',
-            text,
-            true
-        );
-
-
-        /* Loading */
-
+        appendUI('user', text, true);
         createLoading();
 
-
         try {
-
-            /* ==========================================
-               构造发送给后端的消息
-            ========================================== */
-
-            const cleanMessages =
-                messages.map(message => ({
-                    role: message.role,
-                    content: message.content
-                }));
-
-
-            /* ==========================================
-               请求 Vercel API
-            ========================================== */
-
-            const response =
-                await fetch(
-                    '/api/chat',
-                    {
-                        method: 'POST',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json',
-
-                            'Accept':
-                                'application/json'
-                        },
-
-                        body: JSON.stringify({
-                            messages:
-                                cleanMessages
-                        })
-                    }
-                );
-
-
-            /* ==========================================
-               获取 JSON
-            ========================================== */
+            const cleanMessages = messages.map(m => ({ role: m.role, content: m.content }));
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ messages: cleanMessages })
+            });
 
             let data;
-
             try {
-
-                data =
-                    await response.json();
-
+                data = await response.json();
             } catch {
-
-                throw new Error(
-                    `服务器返回了无法解析的数据 (${response.status})`
-                );
-
+                throw new Error(`服务器返回了无法解析的数据 (${response.status})`);
             }
 
-
-            /* 删除 Loading */
-
             removeLoading();
-
-
-            /* ==========================================
-               API 错误
-            ========================================== */
 
             if (!response.ok) {
-
-                let errorMessage =
-                    data?.error ||
-                    '服务器请求失败';
-
-                if (data?.detail) {
-
-                    errorMessage +=
-                        `\n${data.detail}`;
-
-                }
-
-                appendUI(
-                    'assistant',
-                    `⚠️ 错误: ${errorMessage}`,
-                    true
-                );
-
+                let errorMessage = data?.error || '服务器请求失败';
+                if (data?.detail) errorMessage += `\n${data.detail}`;
+                appendUI('assistant', `⚠️ 错误: ${errorMessage}`, true);
                 return;
             }
 
-
-            /* ==========================================
-               获取回复
-            ========================================== */
-
-            const reply =
-                data?.reply ||
-                data?.choices?.[0]?.message?.content;
-
-
+            const reply = data?.reply || data?.choices?.[0]?.message?.content;
             if (!reply) {
-
-                appendUI(
-                    'assistant',
-                    '⚠️ 错误: 未获取到有效的 AI 回复。',
-                    true
-                );
-
+                appendUI('assistant', '⚠️ 错误: 未获取到有效的 AI 回复。', true);
                 return;
             }
 
-
-            /* ==========================================
-               显示 AI 回复
-            ========================================== */
-
-            appendUI(
-                'assistant',
-                reply,
-                true
-            );
-
-
-            /* ==========================================
-               如果 DeepSeek 返回真实 usage
-               可以显示真实 token
-            ========================================== */
-
-            if (
-                data?.usage?.total_tokens
-            ) {
-
-                tokenCountEl.textContent =
-                    data.usage.total_tokens;
-
+            appendUI('assistant', reply, true);
+            if (data?.usage?.total_tokens) {
+                tokenCountEl.textContent = data.usage.total_tokens;
             }
-
         } catch (error) {
-
             removeLoading();
-
-
-            console.error(
-                'Chat error:',
-                error
-            );
-
-
-            let message =
-                error?.message ||
-                '网络连接异常';
-
-
-            /*
-             * fetch 网络错误
-             */
-
-            if (
-                message === 'Failed to fetch'
-            ) {
-
-                message =
-                    '无法连接服务器，请检查 Vercel 部署或网络连接。';
-
+            let message = error?.message || '网络连接异常';
+            if (message === 'Failed to fetch') {
+                message = '无法连接服务器，请检查 Vercel 部署或网络连接。';
             }
-
-
-            appendUI(
-                'assistant',
-                `⚠️ ${message}`,
-                true
-            );
-
+            appendUI('assistant', `⚠️ ${message}`, true);
         } finally {
-
-            /* 恢复 UI */
-
             isSending = false;
-
             sendBtn.disabled = false;
-
             userInput.disabled = false;
-
             userInput.focus();
-
         }
-
     }
 
-
-    /* =====================================================
-       点击发送
-    ===================================================== */
-
-    sendBtn.addEventListener(
-        'click',
-        handleSend
-    );
-
-
-    /* =====================================================
-       Enter 发送
-    ===================================================== */
-
-    userInput.addEventListener(
-        'keydown',
-        event => {
-
-            if (
-                event.key === 'Enter' &&
-                !event.shiftKey
-            ) {
-
-                event.preventDefault();
-
-                handleSend();
-
-            }
-
+    sendBtn.addEventListener('click', handleSend);
+    userInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            handleSend();
         }
-    );
+    });
 
+    function startNewChat() {
+        messages = [];
+        totalTokens = 0;
+        tokenCountEl.textContent = '0';
+        localStorage.removeItem('chat_messages');
+        localStorage.removeItem('total_tokens');
 
-    /* =====================================================
-       导出聊天
-    ===================================================== */
+        chatContainer.innerHTML = `
+            <div class="flex items-start space-x-3 chat-bubble message-enter">
+                <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-robot text-xs text-white"></i>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 max-w-[80%] text-sm text-slate-200 shadow-lg">
+                    你好！我是你的 AI 助手，请在下方输入框与我开始对话。
+                </div>
+            </div>
+        `;
+        closeHistory();
+    }
+    newChatBtn.addEventListener('click', startNewChat);
 
-    exportBtn.addEventListener(
-        'click',
-        () => {
+    deploySkillBtn.addEventListener('click', () => {
+        alert('🚀 [部署 Skill] 功能正在规划中，后续支持在此挂载自定义技能与工作流。');
+    });
+    deployAgentBtn.addEventListener('click', () => {
+        alert('🤖 [部署 Agent] 功能正在规划中，后续支持在此配置和发布智能体。');
+    });
 
-            try {
-
-                const json =
-                    JSON.stringify(
-                        messages,
-                        null,
-                        2
-                    );
-
-
-                const blob =
-                    new Blob(
-                        [json],
-                        {
-                            type:
-                                'application/json'
-                        }
-                    );
-
-
-                const url =
-                    URL.createObjectURL(blob);
-
-
-                const anchor =
-                    document.createElement('a');
-
-                anchor.href =
-                    url;
-
-                anchor.download =
-                    `chat_history_${Date.now()}.json`;
-
-
-                document.body.appendChild(
-                    anchor
-                );
-
-                anchor.click();
-
-                anchor.remove();
-
-
-                URL.revokeObjectURL(url);
-
-            } catch (error) {
-
-                console.error(
-                    'Export error:',
-                    error
-                );
-
-            }
-
+    exportBtn.addEventListener('click', () => {
+        try {
+            const json = JSON.stringify(messages, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = `chat_history_${Date.now()}.json`;
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Export error:', error);
         }
-    );
+    });
 
-
-    /* =====================================================
-       历史记录
-    ===================================================== */
-
-    historyBtn.addEventListener(
-        'click',
-        () => {
-
-            historyList.innerHTML = '';
-
-
-            if (!messages.length) {
-
-                const empty =
-                    document.createElement('div');
-
-                empty.className =
-                    'text-xs text-slate-500 text-center py-4';
-
-                empty.textContent =
-                    '暂无历史记录';
-
-                historyList.appendChild(
-                    empty
-                );
-
-            } else {
-
-                messages.forEach(
-                    message => {
-
-                        if (
-                            message.role !== 'user'
-                        ) {
-                            return;
-                        }
-
-
-                        const item =
-                            document.createElement('div');
-
-                        item.className =
-                            'p-2.5 bg-slate-800/60 rounded-xl text-xs text-slate-300 truncate cursor-pointer hover:bg-slate-800 active:bg-slate-700';
-
-
-                        item.textContent =
-                            message.content;
-
-
-                        item.addEventListener(
-                            'click',
-                            () => {
-
-                                userInput.value =
-                                    message.content;
-
-                                closeHistory();
-
-                                userInput.focus();
-
-                            }
-                        );
-
-
-                        historyList.appendChild(
-                            item
-                        );
-
-                    }
-                );
-
-            }
-
-
-            historyDrawer.classList.remove(
-                'hidden'
-            );
-
+    historyBtn.addEventListener('click', () => {
+        historyList.innerHTML = '';
+        if (!messages.length) {
+            const empty = document.createElement('div');
+            empty.className = 'text-xs text-slate-500 text-center py-4';
+            empty.textContent = '暂无历史记录';
+            historyList.appendChild(empty);
+        } else {
+            messages.forEach(message => {
+                if (message.role !== 'user') return;
+                const item = document.createElement('div');
+                item.className = 'p-2.5 bg-slate-800/40 rounded-xl text-xs text-slate-300 truncate cursor-pointer hover:bg-slate-800 active:bg-slate-700 transition';
+                item.textContent = message.content;
+                item.addEventListener('click', () => {
+                    userInput.value = message.content;
+                    closeHistory();
+                    userInput.focus();
+                });
+                historyList.appendChild(item);
+            });
         }
-    );
-
-
-    /* =====================================================
-       关闭历史记录
-    ===================================================== */
+        historyDrawer.classList.remove('hidden');
+    });
 
     function closeHistory() {
-
-        historyDrawer.classList.add(
-            'hidden'
-        );
-
+        historyDrawer.classList.add('hidden');
     }
+    closeDrawer.addEventListener('click', closeHistory);
+    historyDrawer.addEventListener('click', event => {
+        if (event.target === historyDrawer) closeHistory();
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeHistory();
+    });
 
-
-    closeDrawer.addEventListener(
-        'click',
-        closeHistory
-    );
-
-
-    /* 点击背景关闭 */
-
-    historyDrawer.addEventListener(
-        'click',
-        event => {
-
-            if (
-                event.target ===
-                historyDrawer
-            ) {
-
-                closeHistory();
-
-            }
-
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && !isSending) {
+            sendBtn.disabled = false;
+            userInput.disabled = false;
         }
-    );
-
-
-    /* =====================================================
-       Escape 关闭抽屉
-    ===================================================== */
-
-    document.addEventListener(
-        'keydown',
-        event => {
-
-            if (event.key === 'Escape') {
-
-                closeHistory();
-
-            }
-
-        }
-    );
-
-
-    /* =====================================================
-       页面可见时恢复输入
-    ===================================================== */
-
-    document.addEventListener(
-        'visibilitychange',
-        () => {
-
-            if (
-                document.visibilityState ===
-                'visible'
-            ) {
-
-                if (!isSending) {
-
-                    sendBtn.disabled =
-                        false;
-
-                    userInput.disabled =
-                        false;
-
-                }
-
-            }
-
-        }
-    );
-
+    });
 </script>
-
 </body>
 </html>
