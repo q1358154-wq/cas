@@ -1,9 +1,20 @@
+// =========================================================
+// CQS AI Global
+// Notion Secure Gateway
+// /api/notion.js
+//
+// 功能：
+// 1. 创建 Notion 页面
+// 2. 保存 CQS AI 对话
+// 3. 保存 conversationId
+// 4. 保存用户消息
+// 5. 保存 AI 回复
+//
+// 环境变量：
+// NOTION_TOKEN
+// NOTION_PARENT_PAGE_ID
+// =========================================================
 export default async function handler(req, res) {
-    // =========================================================
-    // CQS AI Global
-    // Notion Secure Gateway
-    // /api/notion.js
-    // =========================================================
     // ---------------------------------------------------------
     // Method
     // ---------------------------------------------------------
@@ -30,378 +41,250 @@ export default async function handler(req, res) {
         "strict-origin-when-cross-origin"
     );
     // ---------------------------------------------------------
-    // Notion Token
+    // Environment
     // ---------------------------------------------------------
     const notionToken =
-        process.env.NOTION_API_KEY;
-    if (
-        !notionToken ||
-        !notionToken.trim()
-    ) {
+        process.env.NOTION_TOKEN;
+    const parentPageId =
+        process.env.NOTION_PARENT_PAGE_ID;
+    if (!notionToken) {
         return res.status(500).json({
             success: false,
-            error: "服务器未配置 NOTION_API_KEY"
+            error: "服务器未配置 NOTION_TOKEN"
+        });
+    }
+    if (!parentPageId) {
+        return res.status(500).json({
+            success: false,
+            error: "服务器未配置 NOTION_PARENT_PAGE_ID"
         });
     }
     // ---------------------------------------------------------
     // Main
     // ---------------------------------------------------------
     try {
-        const body =
-            req.body || {};
-        const action =
-            typeof body.action === "string"
-                ? body.action.trim()
+        const body = req.body || {};
+        const conversationId =
+            typeof body.conversationId === "string"
+                ? body.conversationId
+                    .trim()
+                    .substring(0, 100)
                 : "";
+        const title =
+            typeof body.title === "string"
+                ? body.title
+                    .trim()
+                    .substring(0, 200)
+                : "CQS AI 对话";
+        const messages =
+            Array.isArray(body.messages)
+                ? body.messages
+                : [];
         // -----------------------------------------------------
-        // Validate action
+        // Validate
         // -----------------------------------------------------
-        const allowedActions = new Set([
-            "search",
-            "get_page",
-            "create_page",
-            "append_blocks"
-        ]);
-        if (
-            !allowedActions.has(action)
-        ) {
+        if (messages.length === 0) {
             return res.status(400).json({
                 success: false,
-                error:
-                    "不支持的 Notion 操作"
+                error: "没有可保存的对话内容"
             });
         }
         // -----------------------------------------------------
-        // Notion API helper
+        // Clean Messages
         // -----------------------------------------------------
-        async function notionFetch(
-            endpoint,
-            options = {}
-        ) {
-            const response =
-                await fetch(
-                    `https://api.notion.com/v1${endpoint}`,
-                    {
-                        ...options,
-                        headers: {
-                            "Authorization":
-                                `Bearer ${notionToken.trim()}`,
-                            "Content-Type":
-                                "application/json",
-                            "Notion-Version":
-                                "2022-06-28",
-                            ...(options.headers || {})
-                        }
-                    }
-                );
-            const text =
-                await response.text();
-            let data = null;
-            try {
-                data =
-                    text
-                        ? JSON.parse(text)
-                        : null;
-            } catch {
-                data = {
-                    message: text
-                };
+        const cleanMessages = [];
+        for (const message of messages) {
+            if (
+                !message ||
+                typeof message !== "object"
+            ) {
+                continue;
             }
-            if (!response.ok) {
-                const error =
-                    data?.message ||
-                    data?.error ||
-                    `Notion API Error (${response.status})`;
-                const err =
-                    new Error(error);
-                err.status =
-                    response.status;
-                throw err;
-            }
-            return data;
-        }
-        // =====================================================
-        // SEARCH
-        // =====================================================
-        if (action === "search") {
-            const query =
-                typeof body.query === "string"
-                    ? body.query.trim()
-                    : "";
-            if (!query) {
-                return res.status(400).json({
-                    success: false,
-                    error:
-                        "search 操作需要 query"
-                });
-            }
-            if (query.length > 200) {
-                return res.status(400).json({
-                    success: false,
-                    error:
-                        "搜索内容过长"
-                });
-            }
-            const result =
-                await notionFetch(
-                    "/search",
-                    {
-                        method: "POST",
-                        body: JSON.stringify({
-                            query,
-                            page_size: 20,
-                            sort: {
-                                direction: "descending",
-                                timestamp: "last_edited_time"
-                            }
-                        })
-                    }
-                );
-            return res.status(200).json({
-                success: true,
-                action: "search",
-                results:
-                    result?.results || []
-            });
-        }
-        // =====================================================
-        // GET PAGE
-        // =====================================================
-        if (action === "get_page") {
-            const pageId =
-                typeof body.pageId === "string"
-                    ? body.pageId.trim()
-                    : "";
-            if (!pageId) {
-                return res.status(400).json({
-                    success: false,
-                    error:
-                        "get_page 操作需要 pageId"
-                });
-            }
-            const page =
-                await notionFetch(
-                    `/pages/${encodeURIComponent(pageId)}`,
-                    {
-                        method: "GET"
-                    }
-                );
-            const blocks =
-                await notionFetch(
-                    `/blocks/${encodeURIComponent(pageId)}/children?page_size=100`,
-                    {
-                        method: "GET"
-                    }
-                );
-            return res.status(200).json({
-                success: true,
-                action: "get_page",
-                page,
-                blocks:
-                    blocks?.results || []
-            });
-        }
-        // =====================================================
-        // CREATE PAGE
-        // =====================================================
-        if (action === "create_page") {
-            const parentId =
-                typeof body.parentId === "string"
-                    ? body.parentId.trim()
-                    : "";
-            const title =
-                typeof body.title === "string"
-                    ? body.title.trim()
-                    : "";
+            const role =
+                message.role;
             const content =
-                typeof body.content === "string"
-                    ? body.content.trim()
-                    : "";
-            if (!parentId) {
-                return res.status(400).json({
-                    success: false,
-                    error:
-                        "create_page 操作需要 parentId"
-                });
+                message.content;
+            if (
+                role !== "user" &&
+                role !== "assistant"
+            ) {
+                continue;
             }
-            if (!title) {
-                return res.status(400).json({
-                    success: false,
-                    error:
-                        "create_page 操作需要 title"
-                });
+            if (
+                typeof content !== "string" ||
+                !content.trim()
+            ) {
+                continue;
             }
-            if (title.length > 200) {
-                return res.status(400).json({
-                    success: false,
-                    error:
-                        "页面标题过长"
-                });
-            }
-            // -------------------------------------------------
-            // Convert simple text into Notion paragraphs
-            // -------------------------------------------------
-            const blocks = [];
-            if (content) {
-                const paragraphs =
+            cleanMessages.push({
+                role,
+                content:
                     content
-                        .split(/\n+/)
-                        .map(
-                            item =>
-                                item.trim()
-                        )
-                        .filter(Boolean);
-                for (
-                    const paragraph
-                    of paragraphs.slice(0, 100)
-                ) {
-                    blocks.push({
-                        object: "block",
-                        type: "paragraph",
-                        paragraph: {
-                            rich_text: [
-                                {
-                                    type: "text",
-                                    text: {
-                                        content:
-                                            paragraph.slice(
-                                                0,
-                                                2000
-                                            )
-                                    }
-                                }
-                            ]
+                        .trim()
+                        .substring(0, 5000)
+            });
+        }
+        if (cleanMessages.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: "没有合法的对话内容"
+            });
+        }
+        // -----------------------------------------------------
+        // Build Notion Blocks
+        // -----------------------------------------------------
+        const children = [];
+        // conversationId
+        if (conversationId) {
+            children.push({
+                object: "block",
+                type: "paragraph",
+                paragraph: {
+                    rich_text: [
+                        {
+                            type: "text",
+                            text: {
+                                content:
+                                    `Conversation ID: ${conversationId}`
+                            }
                         }
-                    });
+                    ]
                 }
-            }
-            const page =
-                await notionFetch(
-                    "/pages",
-                    {
-                        method: "POST",
-                        body: JSON.stringify({
-                            parent: {
-                                page_id:
-                                    parentId
-                            },
-                            properties: {
-                                title: {
-                                    title: [
-                                        {
-                                            type: "text",
-                                            text: {
-                                                content:
-                                                    title
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            children:
-                                blocks
-                        })
-                    }
-                );
-            return res.status(200).json({
-                success: true,
-                action: "create_page",
-                page
             });
         }
-        // =====================================================
-        // APPEND BLOCKS
-        // =====================================================
-        if (action === "append_blocks") {
-            const pageId =
-                typeof body.pageId === "string"
-                    ? body.pageId.trim()
-                    : "";
-            const content =
-                typeof body.content === "string"
-                    ? body.content.trim()
-                    : "";
-            if (!pageId) {
-                return res.status(400).json({
-                    success: false,
-                    error:
-                        "append_blocks 操作需要 pageId"
-                });
-            }
-            if (!content) {
-                return res.status(400).json({
-                    success: false,
-                    error:
-                        "append_blocks 操作需要 content"
-                });
-            }
-            const paragraphs =
-                content
-                    .split(/\n+/)
-                    .map(
-                        item =>
-                            item.trim()
-                    )
-                    .filter(Boolean)
-                    .slice(0, 100);
-            const children =
-                paragraphs.map(
-                    paragraph => ({
-                        object: "block",
-                        type: "paragraph",
-                        paragraph: {
-                            rich_text: [
-                                {
-                                    type: "text",
-                                    text: {
-                                        content:
-                                            paragraph.slice(
-                                                0,
-                                                2000
-                                            )
-                                    }
-                                }
-                            ]
+        // Divider
+        children.push({
+            object: "block",
+            type: "divider",
+            divider: {}
+        });
+        // Messages
+        for (const message of cleanMessages) {
+            const label =
+                message.role === "user"
+                    ? "👤 用户"
+                    : "🤖 CQS AI";
+            // Role
+            children.push({
+                object: "block",
+                type: "heading_3",
+                heading_3: {
+                    rich_text: [
+                        {
+                            type: "text",
+                            text: {
+                                content: label
+                            }
                         }
-                    })
-                );
-            const result =
-                await notionFetch(
-                    `/blocks/${encodeURIComponent(pageId)}/children`,
-                    {
-                        method: "PATCH",
-                        body: JSON.stringify({
-                            children
-                        })
-                    }
-                );
-            return res.status(200).json({
-                success: true,
-                action: "append_blocks",
-                results:
-                    result?.results || []
+                    ]
+                }
+            });
+            // Content
+            children.push({
+                object: "block",
+                type: "paragraph",
+                paragraph: {
+                    rich_text: [
+                        {
+                            type: "text",
+                            text: {
+                                content:
+                                    message.content
+                            }
+                        }
+                    ]
+                }
             });
         }
-        return res.status(400).json({
-            success: false,
-            error:
-                "未处理的 Notion 操作"
+        // -----------------------------------------------------
+        // Notion API
+        // -----------------------------------------------------
+        const response =
+            await fetch(
+                "https://api.notion.com/v1/pages",
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization":
+                            `Bearer ${notionToken}`,
+                        "Content-Type":
+                            "application/json",
+                        "Notion-Version":
+                            "2022-06-28"
+                    },
+                    body: JSON.stringify({
+                        parent: {
+                            type: "page_id",
+                            page_id:
+                                parentPageId
+                        },
+                        properties: {
+                            title: {
+                                title: [
+                                    {
+                                        type: "text",
+                                        text: {
+                                            content:
+                                                title
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        children:
+                            children.slice(0, 100)
+                    })
+                }
+            );
+        // -----------------------------------------------------
+        // Notion Error
+        // -----------------------------------------------------
+        if (!response.ok) {
+            let errorMessage =
+                `Notion API 请求失败 (${response.status})`;
+            try {
+                const errorData =
+                    await response.json();
+                errorMessage =
+                    errorData?.message ||
+                    errorMessage;
+            } catch {}
+            console.error(
+                "[CQS Notion API Error]",
+                errorMessage
+            );
+            return res.status(
+                response.status
+            ).json({
+                success: false,
+                error: errorMessage
+            });
+        }
+        // -----------------------------------------------------
+        // Success
+        // -----------------------------------------------------
+        const data =
+            await response.json();
+        return res.status(200).json({
+            success: true,
+            message:
+                "对话已成功保存到 Notion",
+            pageId:
+                data.id || null,
+            url:
+                data.url || null,
+            conversationId:
+                conversationId || null
         });
     } catch (error) {
         console.error(
             "[CQS Notion Gateway Error]",
             error
         );
-        const status =
-            Number(error?.status) >= 400 &&
-            Number(error?.status) < 600
-                ? Number(error.status)
-                : 500;
-        return res.status(status).json({
+        return res.status(500).json({
             success: false,
             error:
-                error?.message ||
-                "Notion 服务请求失败"
+                "保存到 Notion 时发生服务器错误"
         });
     }
 }
