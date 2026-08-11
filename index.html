@@ -5,24 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#020617">
 <title>CQS AI Global v1.0</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
 <style>
 *{
     box-sizing:border-box;
     -webkit-tap-highlight-color:transparent;
     scrollbar-width:none;
 }
-
 *::-webkit-scrollbar{
     width:0;
     height:0;
 }
-
-html,
-body{
+html,body{
     width:100%;
     height:100%;
     margin:0;
@@ -31,403 +26,202 @@ body{
     background:#020617;
     overscroll-behavior:none;
 }
-
 body{
     min-height:100vh;
     min-height:100dvh;
     color:#f8fafc;
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
 }
-
 .message-enter{
     animation:messageEnter .22s ease-out;
 }
-
 @keyframes messageEnter{
     from{
         opacity:0;
         transform:translateY(8px);
     }
-
     to{
         opacity:1;
         transform:translateY(0);
     }
 }
-
-/* =========================================================
-   Intro
-========================================================= */
-
 #cqs-intro{
     position:fixed;
     inset:0;
     z-index:9999;
-
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-
     overflow:hidden;
-
-    background:
-        radial-gradient(
-            circle at 50% 45%,
-            rgba(59,130,246,.18),
-            transparent 26%
-        ),
-        #020617;
-
-    transition:
-        opacity .8s ease,
-        visibility .8s ease;
+    background:radial-gradient(circle at 50% 45%,rgba(59,130,246,.18),transparent 26%),#020617;
+    transition:opacity .8s ease,visibility .8s ease;
 }
-
 #cqs-intro.intro-hidden{
     opacity:0;
     visibility:hidden;
     pointer-events:none;
 }
-
 .intro-hex{
     position:relative;
-
     width:110px;
     height:110px;
-
-    clip-path:
-        polygon(
-            25% 6.7%,
-            75% 6.7%,
-            100% 50%,
-            75% 93.3%,
-            25% 93.3%,
-            0 50%
-        );
-
-    background:
-        conic-gradient(
-            from 0deg,
-            #ff004c,
-            #ff8a00,
-            #ffe600,
-            #20ff70,
-            #00d9ff,
-            #695cff,
-            #ff28d7,
-            #ff004c
-        );
-
-    animation:
-        coreRotate 5s linear infinite;
-
-    filter:
-        drop-shadow(
-            0 0 14px
-            rgba(0,217,255,.35)
-        );
-
+    clip-path:polygon(25% 6.7%,75% 6.7%,100% 50%,75% 93.3%,25% 93.3%,0 50%);
+    background:conic-gradient(from 0deg,#ff004c,#ff8a00,#ffe600,#20ff70,#00d9ff,#695cff,#ff28d7,#ff004c);
+    animation:coreRotate 5s linear infinite;
+    filter:drop-shadow(0 0 14px rgba(0,217,255,.35));
     margin-bottom:24px;
 }
-
 @keyframes coreRotate{
-    from{
-        transform:rotate(0deg);
-    }
-
-    to{
-        transform:rotate(360deg);
-    }
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
 }
-
-/* =========================================================
-   Thinking UI
-========================================================= */
-
-.reasoning-box{
-    border:1px solid rgba(99,102,241,.20);
-    background:rgba(15,23,42,.65);
+.thinking-box{
+    border:1px solid rgba(99,102,241,.18);
+    background:rgba(15,23,42,.72);
     border-radius:16px;
     overflow:hidden;
-    margin-bottom:8px;
 }
-
-.reasoning-header{
+.thinking-header{
     display:flex;
     align-items:center;
     gap:8px;
-
     padding:10px 12px;
-
-    font-size:12px;
-
-    color:#a5b4fc;
-
-    border-bottom:1px solid rgba(99,102,241,.12);
-
+    cursor:pointer;
     user-select:none;
 }
-
-.reasoning-content{
-    padding:11px 12px;
-
+.thinking-pulse{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#818cf8;
+    box-shadow:0 0 0 0 rgba(129,140,248,.6);
+    animation:thinkingPulse 1.5s infinite;
+    flex-shrink:0;
+}
+@keyframes thinkingPulse{
+    0%{box-shadow:0 0 0 0 rgba(129,140,248,.6);}
+    70%{box-shadow:0 0 0 7px rgba(129,140,248,0);}
+    100%{box-shadow:0 0 0 0 rgba(129,140,248,0);}
+}
+.thinking-content{
+    max-height:260px;
+    overflow-y:auto;
+    padding:0 12px 12px;
     color:#94a3b8;
-
     font-size:12px;
-    line-height:1.65;
-
+    line-height:1.7;
     white-space:pre-wrap;
     word-break:break-word;
-
-    max-height:320px;
-    overflow-y:auto;
 }
-
-.thinking-dot{
-    display:inline-block;
-    width:5px;
-    height:5px;
-
-    border-radius:50%;
-
-    background:#818cf8;
-
-    animation:
-        thinkingPulse 1s infinite ease-in-out;
+.thinking-box.collapsed .thinking-content{
+    display:none;
 }
-
-.thinking-dot:nth-child(2){
-    animation-delay:.15s;
+.thinking-box.finished .thinking-pulse{
+    animation:none;
+    background:#475569;
+    box-shadow:none;
 }
-
-.thinking-dot:nth-child(3){
-    animation-delay:.3s;
+.thinking-box.finished .thinking-status{
+    color:#64748b;
 }
-
-@keyframes thinkingPulse{
-    0%,
-    80%,
-    100%{
-        opacity:.25;
-        transform:translateY(0);
-    }
-
-    40%{
-        opacity:1;
-        transform:translateY(-2px);
-    }
+.ai-content{
+    white-space:normal !important;
 }
-
-/* =========================================================
-   Privacy
-========================================================= */
-
+.ai-content h1,
+.ai-content h2,
+.ai-content h3{
+    margin:12px 0 8px;
+    font-weight:700;
+    color:#f8fafc;
+}
+.ai-content h1{font-size:1.25rem;}
+.ai-content h2{font-size:1.1rem;}
+.ai-content h3{font-size:1rem;}
+.ai-content p{margin:7px 0;}
+.ai-content ul,
+.ai-content ol{margin:7px 0;padding-left:22px;}
+.ai-content li{margin:4px 0;}
+.ai-content code{
+    background:rgba(15,23,42,.9);
+    border:1px solid rgba(51,65,85,.8);
+    border-radius:5px;
+    padding:1px 5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:.9em;
+}
+.ai-content pre{
+    background:#020617;
+    border:1px solid #1e293b;
+    border-radius:10px;
+    padding:12px;
+    overflow-x:auto;
+    margin:10px 0;
+}
+.ai-content pre code{
+    border:0;
+    padding:0;
+    background:transparent;
+}
+.ai-content blockquote{
+    border-left:3px solid #4f46e5;
+    padding-left:12px;
+    margin:10px 0;
+    color:#94a3b8;
+}
 #privacy-banner{
-    z-index:50;
-}
-
-/* =========================================================
-   Mobile
-========================================================= */
-
-@media(max-width:480px){
-
-    .intro-hex{
-        width:92px;
-        height:92px;
-    }
-
-    #chat-container{
-        padding-left:12px;
-        padding-right:12px;
-    }
+    backdrop-filter:blur(14px);
 }
 </style>
 </head>
-
 <body class="bg-slate-950 text-slate-100">
-
-<!-- =========================================================
-     INTRO
-========================================================= -->
-
 <div id="cqs-intro">
-
     <div class="intro-hex"></div>
-
-    <div
-        id="intro-typing-text"
-        class="text-sm font-mono tracking-widest text-indigo-400 h-6"
-    ></div>
-
+    <div id="intro-typing-text" class="text-sm font-mono tracking-widest text-indigo-400 h-6"></div>
 </div>
-
-<!-- =========================================================
-     PRIVACY
-========================================================= -->
-
-<div
-    id="privacy-banner"
-    class="fixed bottom-0 inset-x-0 z-50 bg-slate-900/95 border-t border-slate-800 p-4 backdrop-blur-md hidden"
->
-
+<div id="privacy-banner" class="fixed bottom-0 inset-x-0 z-50 bg-slate-900/95 border-t border-slate-800 p-4 backdrop-blur-md hidden">
     <div class="max-w-md mx-auto flex flex-col space-y-3">
-
-        <p
-            id="txt-privacy-desc"
-            class="text-xs text-slate-400 leading-relaxed"
-        ></p>
-
+        <p id="txt-privacy-desc" class="text-xs text-slate-400 leading-relaxed"></p>
         <div class="flex items-center justify-between">
-
-            <button
-                id="privacy-policy-link"
-                class="text-xs text-indigo-400 underline"
-            >
-                Privacy Policy
-            </button>
-
-            <button
-                id="privacy-accept"
-                class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg font-medium transition"
-            ></button>
-
+            <button id="privacy-policy-link" class="text-xs text-indigo-400 underline">Privacy Policy</button>
+            <button id="privacy-accept" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg font-medium transition"></button>
         </div>
-
     </div>
-
 </div>
-
-<!-- =========================================================
-     FILE INPUT
-========================================================= -->
-
-<input
-    type="file"
-    id="hidden-file-input"
-    class="hidden"
-    multiple
->
-
-<!-- =========================================================
-     APP
-========================================================= -->
-
-<div
-    class="w-full flex flex-col bg-slate-950"
-    style="height:100vh;height:100dvh;"
->
-
-<!-- =========================================================
-     HEADER
-========================================================= -->
-
-<header
-    class="shrink-0 px-4 py-3 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md z-20"
->
-
+<input type="file" id="hidden-file-input" class="hidden" multiple>
+<div class="w-full flex flex-col bg-slate-950" style="height:100vh;height:100dvh;">
+<header class="shrink-0 px-4 py-3 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md z-20">
     <div class="flex items-center space-x-3">
-
-        <h1
-            id="txt-title"
-            class="text-base font-semibold tracking-wide"
-        >
-            CQS AI Global
-        </h1>
-
-        <!-- Model -->
-
+        <h1 id="txt-title" class="text-base font-semibold tracking-wide">CQS AI Global</h1>
         <div class="relative">
-
-            <button
-                id="model-select-btn"
-                class="flex items-center space-x-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700 transition"
-            >
-
-                <span
-                    class="w-2 h-2 rounded-full bg-emerald-500"
-                ></span>
-
-                <span id="current-model-name">
-                    DeepSeek
-                </span>
-
-                <i
-                    class="fa-solid fa-chevron-down text-[10px] text-slate-400"
-                ></i>
-
+            <button id="model-select-btn" class="flex items-center space-x-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700 transition">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span id="current-model-name">DeepSeek</span>
+                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
             </button>
-
-            <div
-                id="model-dropdown"
-                class="absolute left-0 mt-2 w-40 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-1 hidden z-30"
-            >
-
-                <div
-                    class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-200"
-                    data-model="DeepSeek"
-                >
+            <div id="model-dropdown" class="absolute left-0 mt-2 w-40 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-1 hidden z-30">
+                <div class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-200" data-model="DeepSeek">
                     <span>DeepSeek</span>
                     <i class="fa-solid fa-check text-indigo-400"></i>
                 </div>
-
-                <div
-                    class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400"
-                    data-model="GPT-4o"
-                >
+                <div class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400" data-model="GPT-4o">
                     <span>GPT-4o</span>
                 </div>
-
-                <div
-                    class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400"
-                    data-model="Claude 3.5"
-                >
+                <div class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400" data-model="Claude 3.5">
                     <span>Claude 3.5</span>
                 </div>
-
-                <div
-                    class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400"
-                    data-model="Gemini Pro"
-                >
+                <div class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400" data-model="Gemini Pro">
                     <span>Gemini Pro</span>
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
-    <!-- Right -->
-
     <div class="flex items-center space-x-2">
-
-        <button
-            id="sound-toggle-btn"
-            class="text-slate-400 hover:text-slate-200 text-xs px-2 py-1 rounded-md border border-slate-800 bg-slate-900 transition"
-        >
-
-            <i
-                class="fa-solid fa-volume-high"
-                id="sound-icon"
-            ></i>
-
+        <button id="sound-toggle-btn" class="text-slate-400 hover:text-slate-200 text-xs px-2 py-1 rounded-md border border-slate-800 bg-slate-900 transition">
+            <i class="fa-solid fa-volume-high" id="sound-icon"></i>
         </button>
-
-        <select
-            id="lang-select"
-            class="bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded-md border border-slate-700 focus:outline-none"
-        >
-
+        <select id="lang-select" class="bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded-md border border-slate-700 focus:outline-none">
             <option value="zh">中文</option>
             <option value="en">English</option>
             <option value="ja">日本語</option>
@@ -436,2061 +230,540 @@ body{
             <option value="de">Deutsch</option>
             <option value="es">Español</option>
             <option value="ar">العربية</option>
-
         </select>
-
-        <div
-            class="text-[11px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-full font-mono"
-        >
-
-            <span id="token-count">0</span>
-            tokens
-
+        <div class="text-[11px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-full font-mono">
+            <span id="token-count">0</span> tokens
         </div>
-
     </div>
-
 </header>
-
-<!-- =========================================================
-     CHAT
-========================================================= -->
-
-<main
-    id="chat-container"
-    class="flex-1 relative overflow-y-auto p-4 space-y-4"
-    style="padding-bottom:120px;"
-></main>
-
-<!-- =========================================================
-     ATTACHMENTS
-========================================================= -->
-
-<div
-    id="attachment-bar"
-    class="hidden shrink-0 px-4 py-2 bg-slate-900/90 border-t border-slate-800 flex items-center space-x-2 overflow-x-auto z-20"
-></div>
-
-<!-- =========================================================
-     INPUT NAV
-========================================================= -->
-
-<nav
-    class="shrink-0 p-3 bg-slate-900/95 border-t border-slate-800 z-20 flex items-center space-x-2"
->
-
-    <button
-        id="file-btn"
-        type="button"
-        class="w-12 h-12 bg-slate-800 text-slate-300 hover:text-white rounded-xl flex items-center justify-center shrink-0 border border-slate-700 active:scale-95 transition"
-    >
-
+<main id="chat-container" class="flex-1 relative overflow-y-auto p-4 space-y-4" style="padding-bottom:120px;"></main>
+<div id="attachment-bar" class="hidden shrink-0 px-4 py-2 bg-slate-900/90 border-t border-slate-800 flex items-center space-x-2 overflow-x-auto z-20"></div>
+<nav class="shrink-0 p-3 bg-slate-900/95 border-t border-slate-800 z-20 flex items-center space-x-2">
+    <button id="file-btn" type="button" class="w-12 h-12 bg-slate-800 text-slate-300 hover:text-white rounded-xl flex items-center justify-center shrink-0 border border-slate-700 active:scale-95 transition">
         <i class="fa-solid fa-paperclip"></i>
-
     </button>
-
-    <button
-        id="voice-btn"
-        type="button"
-        class="w-12 h-12 bg-slate-800 text-slate-300 hover:text-white rounded-xl flex items-center justify-center shrink-0 border border-slate-700 active:scale-95 transition"
-    >
-
+    <button id="voice-btn" type="button" class="w-12 h-12 bg-slate-800 text-slate-300 hover:text-white rounded-xl flex items-center justify-center shrink-0 border border-slate-700 active:scale-95 transition">
         <i class="fa-solid fa-microphone"></i>
-
     </button>
-
-    <input
-        type="text"
-        id="user-input"
-        autocomplete="off"
-        class="flex-1 min-w-0 bg-slate-800 text-slate-100 placeholder-slate-500 text-base rounded-xl px-4 py-3 border border-slate-700 focus:border-indigo-500 focus:outline-none"
-    >
-
-    <button
-        id="action-btn"
-        type="button"
-        class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30"
-    >
-
-        <i
-            class="fa-solid fa-paper-plane"
-            id="action-icon"
-        ></i>
-
+    <input type="text" id="user-input" autocomplete="off" class="flex-1 min-w-0 bg-slate-800 text-slate-100 placeholder-slate-500 text-base rounded-xl px-4 py-3 border border-slate-700 focus:border-indigo-500 focus:outline-none">
+    <button id="action-btn" type="button" class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30">
+        <i class="fa-solid fa-paper-plane" id="action-icon"></i>
     </button>
-
 </nav>
-
 </div>
-
 <script>
 "use strict";
+const $ = id => document.getElementById(id);
+const chatContainer = $("chat-container");
+const userInput = $("user-input");
+const actionBtn = $("action-btn");
+const actionIcon = $("action-icon");
+const tokenCountEl = $("token-count");
+const cqsIntro = $("cqs-intro");
+const introTypingText = $("intro-typing-text");
+const langSelect = $("lang-select");
+const modelSelectBtn = $("model-select-btn");
+const modelDropdown = $("model-dropdown");
+const privacyBanner = $("privacy-banner");
+const privacyAccept = $("privacy-accept");
+const voiceBtn = $("voice-btn");
+const fileBtn = $("file-btn");
+const hiddenFileInput = $("hidden-file-input");
+const attachmentBar = $("attachment-bar");
+const soundToggleBtn = $("sound-toggle-btn");
+const soundIcon = $("sound-icon");
 
-/* =========================================================
-   DOM
-========================================================= */
-
-const $ = id =>
-    document.getElementById(id);
-
-const chatContainer =
-    $("chat-container");
-
-const userInput =
-    $("user-input");
-
-const actionBtn =
-    $("action-btn");
-
-const actionIcon =
-    $("action-icon");
-
-const tokenCountEl =
-    $("token-count");
-
-const cqsIntro =
-    $("cqs-intro");
-
-const introTypingText =
-    $("intro-typing-text");
-
-const langSelect =
-    $("lang-select");
-
-const modelSelectBtn =
-    $("model-select-btn");
-
-const modelDropdown =
-    $("model-dropdown");
-
-const privacyBanner =
-    $("privacy-banner");
-
-const privacyAccept =
-    $("privacy-accept");
-
-const voiceBtn =
-    $("voice-btn");
-
-const fileBtn =
-    $("file-btn");
-
-const hiddenFileInput =
-    $("hidden-file-input");
-
-const attachmentBar =
-    $("attachment-bar");
-
-const soundToggleBtn =
-    $("sound-toggle-btn");
-
-const soundIcon =
-    $("sound-icon");
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let currentLanguage =
-    localStorage.getItem("cqs_lang") ||
-    "zh";
-
-let currentModel =
-    localStorage.getItem("cqs_model") ||
-    "DeepSeek";
-
-let soundEnabled =
-    localStorage.getItem("cqs_sound") !==
-    "false";
-
-let messages;
-
+let currentLanguage = localStorage.getItem("cqs_lang") || "zh";
+let currentModel = localStorage.getItem("cqs_model") || "DeepSeek";
+let soundEnabled = localStorage.getItem("cqs_sound") !== "false";
+let messages = [];
 try {
-
-    messages =
-        JSON.parse(
-            localStorage.getItem(
-                "cqs_messages"
-            ) || "[]"
-        );
-
-    if (!Array.isArray(messages)) {
-        messages = [];
-    }
-
+    messages = JSON.parse(localStorage.getItem("cqs_messages") || "[]");
+    if(!Array.isArray(messages)) messages = [];
 } catch {
-
     messages = [];
 }
-
-let totalTokens =
-    parseInt(
-        localStorage.getItem(
-            "cqs_tokens"
-        ) || "0",
-        10
-    );
-
-if (!Number.isFinite(totalTokens)) {
-    totalTokens = 0;
-}
-
-let conversationId =
-    localStorage.getItem(
-        "cqs_conv_id"
-    ) ||
-    "cqs_" + Date.now();
-
+let totalTokens = parseInt(localStorage.getItem("cqs_tokens") || "0", 10) || 0;
+let conversationId = localStorage.getItem("cqs_conv_id") || "cqs_" + Date.now();
 let selectedAttachments = [];
-
 let activeController = null;
-
 let isGenerating = false;
 
-/* =========================================================
-   i18n
-========================================================= */
-
 const i18n = {
-
-    zh: {
-        title:
-            "CQS AI 全球版",
-
-        inputPlaceholder:
-            "输入消息...",
-
-        welcome:
-            "欢迎来到 CQS AI Global。AI 思考与流式网关已就绪。",
-
-        privacyDesc:
-            "我们尊重您的隐私。CQS AI Global 安全处理网关数据以保障通信安全。",
-
-        accept:
-            "接受",
-
-        thinking:
-            "正在思考",
-
-        thinkingDone:
-            "思考完成",
-
-        stopped:
-            "生成已停止",
-
-        attachment:
-            "[附件已发送]"
-    },
-
-    en: {
-        title:
-            "CQS AI Global",
-
-        inputPlaceholder:
-            "Type a message...",
-
-        welcome:
-            "Welcome to CQS AI Global. AI reasoning and streaming gateway ready.",
-
-        privacyDesc:
-            "We respect your privacy. CQS AI Global secures gateway data transmission.",
-
-        accept:
-            "Accept",
-
-        thinking:
-            "Thinking",
-
-        thinkingDone:
-            "Thinking completed",
-
-        stopped:
-            "Generation stopped",
-
-        attachment:
-            "[Attachment Sent]"
-    },
-
-    ja: {
-        title:
-            "CQS AI グローバル",
-
-        inputPlaceholder:
-            "メッセージを入力...",
-
-        welcome:
-            "CQS AI Globalへようこそ。AI推論とストリーミングゲートウェイの準備が完了しました。",
-
-        privacyDesc:
-            "プライバシーを尊重します。CQS AI Globalはデータを安全に保護します。",
-
-        accept:
-            "同意する",
-
-        thinking:
-            "思考中",
-
-        thinkingDone:
-            "思考完了",
-
-        stopped:
-            "生成を停止しました",
-
-        attachment:
-            "[添付ファイル送信]"
-    },
-
-    ko: {
-        title:
-            "CQS AI 글로벌",
-
-        inputPlaceholder:
-            "메시지 입력...",
-
-        welcome:
-            "CQS AI Global에 오신 것을 환영합니다. AI 추론 및 스트리밍 게이트웨이가 준비되었습니다.",
-
-        privacyDesc:
-            "개인정보를 존중합니다. CQS AI Global은 데이터를 안전하게 처리합니다.",
-
-        accept:
-            "동의",
-
-        thinking:
-            "생각 중",
-
-        thinkingDone:
-            "생각 완료",
-
-        stopped:
-            "생성이 중지되었습니다",
-
-        attachment:
-            "[첨부 파일 전송]"
-    },
-
-    fr: {
-        title:
-            "CQS AI Global",
-
-        inputPlaceholder:
-            "Tapez un message...",
-
-        welcome:
-            "Bienvenue sur CQS AI Global. Le raisonnement et le streaming sont prêts.",
-
-        privacyDesc:
-            "Nous respectons votre vie privée. Sécurité des données garantie.",
-
-        accept:
-            "Accepter",
-
-        thinking:
-            "Réflexion",
-
-        thinkingDone:
-            "Réflexion terminée",
-
-        stopped:
-            "Génération arrêtée",
-
-        attachment:
-            "[Pièce jointe envoyée]"
-    },
-
-    de: {
-        title:
-            "CQS AI Global",
-
-        inputPlaceholder:
-            "Nachricht eingeben...",
-
-        welcome:
-            "Willkommen bei CQS AI Global. KI-Denken und Streaming sind bereit.",
-
-        privacyDesc:
-            "Wir respektieren Ihre Privatsphäre. Sichere Datenverarbeitung.",
-
-        accept:
-            "Akzeptieren",
-
-        thinking:
-            "Denkt nach",
-
-        thinkingDone:
-            "Denken abgeschlossen",
-
-        stopped:
-            "Generierung gestoppt",
-
-        attachment:
-            "[Anhang gesendet]"
-    },
-
-    es: {
-        title:
-            "CQS AI Global",
-
-        inputPlaceholder:
-            "Escribe un mensaje...",
-
-        welcome:
-            "Bienvenido a CQS AI Global. Razonamiento y streaming listos.",
-
-        privacyDesc:
-            "Respetamos su privacidad. CQS AI Global protege sus datos de forma segura.",
-
-        accept:
-            "Aceptar",
-
-        thinking:
-            "Pensando",
-
-        thinkingDone:
-            "Pensamiento completado",
-
-        stopped:
-            "Generación detenida",
-
-        attachment:
-            "[Archivo adjunto enviado]"
-    },
-
-    ar: {
-        title:
-            "CQS AI العالمي",
-
-        inputPlaceholder:
-            "اكتب رسالة...",
-
-        welcome:
-            "مرحباً بك في CQS AI Global. التفكير والبث جاهزان.",
-
-        privacyDesc:
-            "نحن نحترم خصوصيتك. يتم استخدام البيانات بأمان لتوفير الخدمات.",
-
-        accept:
-            "قبول",
-
-        thinking:
-            "جارٍ التفكير",
-
-        thinkingDone:
-            "اكتمل التفكير",
-
-        stopped:
-            "تم إيقاف التوليد",
-
-        attachment:
-            "[تم إرسال المرفق]"
-    }
+    zh:{title:"CQS AI 全球版",inputPlaceholder:"输入消息...",welcome:"欢迎来到 CQS AI Global。网关流式管道已就绪。",privacyDesc:"我们尊重您的隐私。CQS AI Global 安全处理网关数据以保障通信安全。",accept:"接受",thinking:"思考中",thinkingDone:"思考完成",stopped:"生成已停止",gatewayError:"CQS AI 网关错误",speechUnsupported:"当前浏览器不支持语音识别。",emptyResponse:"AI 返回了空响应"},
+    en:{title:"CQS AI Global",inputPlaceholder:"Type a message...",welcome:"Welcome to CQS AI Global. Gateway streaming pipeline ready.",privacyDesc:"We respect your privacy. CQS AI Global secures gateway data transmission.",accept:"Accept",thinking:"Thinking",thinkingDone:"Thinking completed",stopped:"Generation stopped",gatewayError:"CQS AI Gateway Error",speechUnsupported:"Speech recognition is not supported.",emptyResponse:"AI returned an empty response"},
+    ja:{title:"CQS AI グローバル",inputPlaceholder:"メッセージを入力...",welcome:"CQS AI Globalへようこそ。ストリーミングパイプライン準備完了。",privacyDesc:"プライバシーを尊重します。CQS AI Globalはデータを安全に保護します。",accept:"同意する",thinking:"思考中",thinkingDone:"思考完了",stopped:"生成を停止しました",gatewayError:"CQS AI ゲートウェイエラー",speechUnsupported:"音声認識はサポートされていません。",emptyResponse:"AIから空の応答が返されました"},
+    ko:{title:"CQS AI 글로벌",inputPlaceholder:"메시지 입력...",welcome:"CQS AI Global에 오신 것을 환영합니다. 스트리밍 파이프라인 준비 완료.",privacyDesc:"개인정보를 존중합니다. CQS AI Global은 데이터를 안전하게 처리합니다.",accept:"동의",thinking:"생각 중",thinkingDone:"생각 완료",stopped:"생성이 중지되었습니다",gatewayError:"CQS AI 게이트웨이 오류",speechUnsupported:"음성 인식을 지원하지 않습니다.",emptyResponse:"AI가 빈 응답을 반환했습니다"},
+    fr:{title:"CQS AI Global",inputPlaceholder:"Tapez un message...",welcome:"Bienvenue sur CQS AI Global. Pipeline de streaming prêt.",privacyDesc:"Nous respectons votre vie privée. Sécurité des données garantie.",accept:"Accepter",thinking:"Réflexion",thinkingDone:"Réflexion terminée",stopped:"Génération arrêtée",gatewayError:"Erreur de passerelle CQS AI",speechUnsupported:"La reconnaissance vocale n'est pas prise en charge.",emptyResponse:"L'IA a renvoyé une réponse vide"},
+    de:{title:"CQS AI Global",inputPlaceholder:"Nachricht eingeben...",welcome:"Willkommen bei CQS AI Global. Streaming-Pipeline bereit.",privacyDesc:"Wir respektieren Ihre Privatsphäre. Sichere Datenverarbeitung.",accept:"Akzeptieren",thinking:"Denken",thinkingDone:"Denken abgeschlossen",stopped:"Generierung gestoppt",gatewayError:"CQS AI Gateway-Fehler",speechUnsupported:"Spracherkennung wird nicht unterstützt.",emptyResponse:"Die KI hat eine leere Antwort zurückgegeben"},
+    es:{title:"CQS AI Global",inputPlaceholder:"Escribe un mensaje...",welcome:"Bienvenido a CQS AI Global. Canal de streaming listo.",privacyDesc:"Respetamos su privacidad. CQS AI Global protege sus datos de forma segura.",accept:"Aceptar",thinking:"Pensando",thinkingDone:"Pensamiento completado",stopped:"Generación detenida",gatewayError:"Error de puerta de enlace CQS AI",speechUnsupported:"El reconocimiento de voz no es compatible.",emptyResponse:"La IA devolvió una respuesta vacía"},
+    ar:{title:"CQS AI العالمي",inputPlaceholder:"اكتب رسالة...",welcome:"مرحباً بك في CQS AI Global. خط بث البيانات جاهز.",privacyDesc:"نحن نحترم خصوصيتك. يتم استخدام البيانات بأمان لتوفير الخدمات.",accept:"قبول",thinking:"جارٍ التفكير",thinkingDone:"اكتمل التفكير",stopped:"تم إيقاف التوليد",gatewayError:"خطأ في بوابة CQS AI",speechUnsupported:"التعرف على الكلام غير مدعوم.",emptyResponse:"أعاد الذكاء الاصطناعي استجابة فارغة"}
 };
+const speechLangs = {zh:"zh-CN",en:"en-US",ja:"ja-JP",ko:"ko-KR",fr:"fr-FR",de:"de-DE",es:"es-ES",ar:"ar-SA"};
 
-/* =========================================================
-   Speech
-========================================================= */
-
-const speechLangs = {
-
-    zh: "zh-CN",
-    en: "en-US",
-    ja: "ja-JP",
-    ko: "ko-KR",
-    fr: "fr-FR",
-    de: "de-DE",
-    es: "es-ES",
-    ar: "ar-SA"
-
-};
-
-/* =========================================================
-   Audio
-========================================================= */
-
-const audioCtx =
-    (
-        typeof window !== "undefined" &&
-        (
-            window.AudioContext ||
-            window.webkitAudioContext
-        )
-    )
-        ? new (
-            window.AudioContext ||
-            window.webkitAudioContext
-        )()
-        : null;
-
-function playSound(type) {
-
-    if (
-        !soundEnabled ||
-        !audioCtx
-    ) {
-        return;
-    }
-
-    if (
-        audioCtx.state ===
-        "suspended"
-    ) {
-        audioCtx.resume();
-    }
-
-    const osc =
-        audioCtx.createOscillator();
-
-    const gain =
-        audioCtx.createGain();
-
+const audioCtx = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
+function playSound(type){
+    if(!soundEnabled || !audioCtx) return;
+    if(audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
     osc.connect(gain);
-
-    gain.connect(
-        audioCtx.destination
-    );
-
-    const now =
-        audioCtx.currentTime;
-
-    if (type === "send") {
-
-        osc.frequency.setValueAtTime(
-            440,
-            now
-        );
-
-        osc.frequency
-            .exponentialRampToValueAtTime(
-                880,
-                now + .1
-            );
-
-        gain.gain.setValueAtTime(
-            .08,
-            now
-        );
-
-        gain.gain
-            .linearRampToValueAtTime(
-                0,
-                now + .1
-            );
-
-        osc.start(now);
-        osc.stop(now + .1);
+    gain.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    if(type === "send"){
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + .1);
+        gain.gain.setValueAtTime(.08, now);
+        gain.gain.linearRampToValueAtTime(0, now + .1);
+        osc.start(now); osc.stop(now + .1);
     }
-
-    else if (type === "receive") {
-
-        osc.frequency.setValueAtTime(
-            600,
-            now
-        );
-
-        osc.frequency
-            .exponentialRampToValueAtTime(
-                300,
-                now + .15
-            );
-
-        gain.gain.setValueAtTime(
-            .06,
-            now
-        );
-
-        gain.gain
-            .linearRampToValueAtTime(
-                0,
-                now + .15
-            );
-
-        osc.start(now);
-        osc.stop(now + .15);
+    if(type === "receive"){
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(300, now + .15);
+        gain.gain.setValueAtTime(.035, now);
+        gain.gain.linearRampToValueAtTime(0, now + .15);
+        osc.start(now); osc.stop(now + .15);
     }
-
-    else if (type === "thinking") {
-
-        osc.frequency.setValueAtTime(
-            260,
-            now
-        );
-
-        osc.frequency
-            .linearRampToValueAtTime(
-                420,
-                now + .12
-            );
-
-        gain.gain.setValueAtTime(
-            .035,
-            now
-        );
-
-        gain.gain
-            .linearRampToValueAtTime(
-                0,
-                now + .12
-            );
-
-        osc.start(now);
-        osc.stop(now + .12);
+    if(type === "done"){
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(780, now + .12);
+        gain.gain.setValueAtTime(.05, now);
+        gain.gain.linearRampToValueAtTime(0, now + .16);
+        osc.start(now); osc.stop(now + .16);
     }
 }
 
-/* =========================================================
-   UI Strings
-========================================================= */
-
-function updateUIStrings() {
-
-    const t =
-        i18n[currentLanguage] ||
-        i18n.en;
-
-    $("txt-title").textContent =
-        t.title;
-
-    userInput.placeholder =
-        t.inputPlaceholder;
-
-    $("txt-privacy-desc").textContent =
-        t.privacyDesc;
-
-    privacyAccept.textContent =
-        t.accept;
-
-    langSelect.value =
-        currentLanguage;
-
-    $("current-model-name").textContent =
-        currentModel;
-
-    tokenCountEl.textContent =
-        totalTokens.toLocaleString();
-
-    document
-        .querySelectorAll(
-            ".model-option"
-        )
-        .forEach(opt => {
-
-            const m =
-                opt.getAttribute(
-                    "data-model"
-                );
-
-            if (m === currentModel) {
-
-                opt.classList.remove(
-                    "text-slate-400"
-                );
-
-                opt.classList.add(
-                    "text-slate-200"
-                );
-
-                if (
-                    !opt.querySelector("i")
-                ) {
-
-                    opt.insertAdjacentHTML(
-                        "beforeend",
-                        '<i class="fa-solid fa-check text-indigo-400"></i>'
-                    );
-                }
-
-            } else {
-
-                opt.classList.remove(
-                    "text-slate-200"
-                );
-
-                opt.classList.add(
-                    "text-slate-400"
-                );
-
-                const icon =
-                    opt.querySelector("i");
-
-                if (icon) {
-                    icon.remove();
-                }
-            }
-        });
-
-    soundIcon.className =
-        soundEnabled
-            ? "fa-solid fa-volume-high text-emerald-400"
-            : "fa-solid fa-volume-xmark text-slate-500";
-}
-
-/* =========================================================
-   Language
-========================================================= */
-
-langSelect.addEventListener(
-    "change",
-    e => {
-
-        currentLanguage =
-            e.target.value;
-
-        localStorage.setItem(
-            "cqs_lang",
-            currentLanguage
-        );
-
-        updateUIStrings();
-    }
-);
-
-/* =========================================================
-   Sound
-========================================================= */
-
-soundToggleBtn.addEventListener(
-    "click",
-    () => {
-
-        soundEnabled =
-            !soundEnabled;
-
-        localStorage.setItem(
-            "cqs_sound",
-            soundEnabled
-        );
-
-        updateUIStrings();
-    }
-);
-
-/* =========================================================
-   Privacy
-========================================================= */
-
-if (
-    !localStorage.getItem(
-        "cqs_privacy"
-    )
-) {
-
-    privacyBanner.classList.remove(
-        "hidden"
-    );
-}
-
-privacyAccept.addEventListener(
-    "click",
-    () => {
-
-        localStorage.setItem(
-            "cqs_privacy",
-            "true"
-        );
-
-        privacyBanner.classList.add(
-            "hidden"
-        );
-    }
-);
-
-/* =========================================================
-   Model Dropdown
-========================================================= */
-
-modelSelectBtn.addEventListener(
-    "click",
-    () => {
-
-        modelDropdown.classList.toggle(
-            "hidden"
-        );
-    }
-);
-
-document.addEventListener(
-    "click",
-    e => {
-
-        if (
-            !modelSelectBtn.contains(
-                e.target
-            ) &&
-            !modelDropdown.contains(
-                e.target
-            )
-        ) {
-
-            modelDropdown.classList.add(
-                "hidden"
-            );
+function updateUIStrings(){
+    const t = i18n[currentLanguage] || i18n.en;
+    $("txt-title").textContent = t.title;
+    userInput.placeholder = t.inputPlaceholder;
+    $("txt-privacy-desc").textContent = t.privacyDesc;
+    privacyAccept.textContent = t.accept;
+    langSelect.value = currentLanguage;
+    $("current-model-name").textContent = currentModel;
+    tokenCountEl.textContent = Number(totalTokens || 0).toLocaleString();
+    document.querySelectorAll(".model-option").forEach(opt=>{
+        const model = opt.getAttribute("data-model");
+        if(model === currentModel){
+            opt.classList.remove("text-slate-400");
+            opt.classList.add("text-slate-200");
+            if(!opt.querySelector("i")) opt.insertAdjacentHTML("beforeend", '<i class="fa-solid fa-check text-indigo-400"></i>');
+        }else{
+            opt.classList.remove("text-slate-200");
+            opt.classList.add("text-slate-400");
+            const icon = opt.querySelector("i");
+            if(icon) icon.remove();
         }
-    }
-);
-
-document
-    .querySelectorAll(
-        ".model-option"
-    )
-    .forEach(opt => {
-
-        opt.addEventListener(
-            "click",
-            () => {
-
-                currentModel =
-                    opt.getAttribute(
-                        "data-model"
-                    );
-
-                localStorage.setItem(
-                    "cqs_model",
-                    currentModel
-                );
-
-                updateUIStrings();
-
-                modelDropdown.classList.add(
-                    "hidden"
-                );
-            }
-        );
     });
-
-/* =========================================================
-   Intro
-========================================================= */
-
-async function runIntroAnimation() {
-
-    const text =
-        "CQS AI GLOBAL v1.0";
-
-    for (
-        let i = 0;
-        i <= text.length;
-        i++
-    ) {
-
-        introTypingText.textContent =
-            text.slice(0, i) +
-            (
-                i < text.length
-                    ? "_"
-                    : ""
-            );
-
-        await new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    60
-                )
-        );
-    }
-
-    await new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                400
-            )
-    );
-
-    cqsIntro.classList.add(
-        "intro-hidden"
-    );
+    soundIcon.className = soundEnabled ? "fa-solid fa-volume-high text-emerald-400" : "fa-solid fa-volume-xmark text-slate-500";
 }
 
+function saveState(){
+    try{
+        localStorage.setItem("cqs_messages", JSON.stringify(messages));
+        localStorage.setItem("cqs_tokens", String(totalTokens));
+        localStorage.setItem("cqs_conv_id", conversationId);
+    }catch(error){
+        console.warn("[CQS AI] Local state save failed", error);
+    }
+}
+
+async function runIntroAnimation(){
+    const text = "CQS AI GLOBAL v1.0";
+    for(let i = 0; i <= text.length; i++){
+        introTypingText.textContent = text.slice(0,i) + (i < text.length ? "_" : "");
+        await new Promise(resolve => setTimeout(resolve, 60));
+    }
+    await new Promise(resolve => setTimeout(resolve, 400));
+    cqsIntro.classList.add("intro-hidden");
+}
 runIntroAnimation();
 
-/* =========================================================
-   Save
-========================================================= */
-
-function saveState() {
-
-    localStorage.setItem(
-        "cqs_messages",
-        JSON.stringify(messages)
-    );
-
-    localStorage.setItem(
-        "cqs_tokens",
-        String(totalTokens)
-    );
-
-    localStorage.setItem(
-        "cqs_conv_id",
-        conversationId
-    );
+function escapeHTML(value){
+    return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function renderMarkdownSafe(text){
+    if(!text) return "";
+    let source = escapeHTML(text);
+    const codeBlocks = [];
+    source = source.replace(/```([\s\S]*?)```/g, (_,code)=>{
+        const index = codeBlocks.length;
+        codeBlocks.push(`<pre><code>${code.trim()}</code></pre>`);
+        return `@@CODEBLOCK_${index}@@`;
+    });
+    source = source.replace(/`([^`]+)`/g, "<code>$1</code>");
+    source = source.replace(/^### (.*)$/gm, "<h3>$1</h3>");
+    source = source.replace(/^## (.*)$/gm, "<h2>$1</h2>");
+    source = source.replace(/^# (.*)$/gm, "<h1>$1</h1>");
+    source = source.replace(/^\> (.*)$/gm, "<blockquote>$1</blockquote>");
+    source = source.replace(/^\s*[-*] (.*)$/gm, "<li>$1</li>");
+    source = source.replace(/(<li>.*<\/li>)/gs, "<ul>$1</ul>");
+    source = source.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    source = source.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    source = source.replace(/\n{2,}/g, "</p><p>");
+    source = source.replace(/\n/g, "<br>");
+    source = "<p>" + source + "</p>";
+    codeBlocks.forEach((block,index)=>{
+        source = source.replace(`@@CODEBLOCK_${index}@@`, block);
+    });
+    return source;
 }
 
-/* =========================================================
-   Create Assistant Thinking UI
-========================================================= */
-
-function createAssistantUI() {
-
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-    wrapper.className =
-        "flex items-start space-x-3 message-enter";
-
-    const bubbleContainer =
-        document.createElement(
-            "div"
-        );
-
-    bubbleContainer.className =
-        "max-w-[82%] flex flex-col space-y-2";
-
-    // =====================================================
-    // Reasoning Box
-    // =====================================================
-
-    const reasoningBox =
-        document.createElement(
-            "div"
-        );
-
-    reasoningBox.className =
-        "reasoning-box hidden";
-
-    const reasoningHeader =
-        document.createElement(
-            "div"
-        );
-
-    reasoningHeader.className =
-        "reasoning-header";
-
-    const brain =
-        document.createElement(
-            "i"
-        );
-
-    brain.className =
-        "fa-solid fa-brain";
-
-    const reasoningTitle =
-        document.createElement(
-            "span"
-        );
-
-    const t =
-        i18n[currentLanguage] ||
-        i18n.en;
-
-    reasoningTitle.textContent =
-        t.thinking;
-
-    const dots =
-        document.createElement(
-            "span"
-        );
-
-    dots.className =
-        "flex items-center gap-1 ml-auto";
-
-    for (
-        let i = 0;
-        i < 3;
-        i++
-    ) {
-
-        const dot =
-            document.createElement(
-                "span"
-            );
-
-        dot.className =
-            "thinking-dot";
-
-        dots.appendChild(dot);
+function appendUI(role, text, attachments = []){
+    const isUser = role === "user";
+    const wrapper = document.createElement("div");
+    wrapper.className = `flex items-start space-x-3 message-enter ${isUser ? "flex-row-reverse space-x-reverse" : ""}`;
+    const bubbleContainer = document.createElement("div");
+    bubbleContainer.className = "max-w-[82%] flex flex-col space-y-2";
+    if(attachments && attachments.length > 0){
+        const attWrapper = document.createElement("div");
+        attWrapper.className = `flex flex-wrap gap-1.5 ${isUser ? "justify-end" : "justify-start"}`;
+        attachments.forEach(att=>{
+            const chip = document.createElement("span");
+            chip.className = "text-[11px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-1 rounded-md flex items-center space-x-1";
+            const icon = document.createElement("i");
+            icon.className = "fa-solid fa-file-lines text-indigo-400";
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "truncate max-w-[120px]";
+            nameSpan.textContent = att.name || "file";
+            chip.appendChild(icon);
+            chip.appendChild(nameSpan);
+            attWrapper.appendChild(chip);
+        });
+        bubbleContainer.appendChild(attWrapper);
     }
-
-    reasoningHeader.appendChild(
-        brain
-    );
-
-    reasoningHeader.appendChild(
-        reasoningTitle
-    );
-
-    reasoningHeader.appendChild(
-        dots
-    );
-
-    const reasoningContent =
-        document.createElement(
-            "div"
-        );
-
-    reasoningContent.className =
-        "reasoning-content";
-
-    reasoningBox.appendChild(
-        reasoningHeader
-    );
-
-    reasoningBox.appendChild(
-        reasoningContent
-    );
-
-    bubbleContainer.appendChild(
-        reasoningBox
-    );
-
-    // =====================================================
-    // Final Answer
-    // =====================================================
-
-    const bubble =
-        document.createElement(
-            "div"
-        );
-
-    bubble.className =
-        "bg-slate-900 border border-slate-800 text-slate-200 rounded-2xl p-3.5 text-sm shadow-lg whitespace-pre-wrap break-words";
-
-    bubbleContainer.appendChild(
-        bubble
-    );
-
-    wrapper.appendChild(
-        bubbleContainer
-    );
-
-    chatContainer.appendChild(
-        wrapper
-    );
-
-    chatContainer.scrollTop =
-        chatContainer.scrollHeight;
-
-    return {
-        wrapper,
-        bubble,
-        reasoningBox,
-        reasoningHeader,
-        reasoningTitle,
-        reasoningContent
-    };
-}
-
-/* =========================================================
-   Normal Message UI
-========================================================= */
-
-function appendUI(
-    role,
-    text,
-    attachments = []
-) {
-
-    const isUser =
-        role === "user";
-
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-    wrapper.className =
-        `flex items-start space-x-3 message-enter ${
-            isUser
-                ? "flex-row-reverse space-x-reverse"
-                : ""
-        }`;
-
-    const bubbleContainer =
-        document.createElement(
-            "div"
-        );
-
-    bubbleContainer.className =
-        "max-w-[82%] flex flex-col space-y-2";
-
-    // Attachments
-    if (
-        attachments &&
-        attachments.length > 0
-    ) {
-
-        const attWrapper =
-            document.createElement(
-                "div"
-            );
-
-        attWrapper.className =
-            `flex flex-wrap gap-1.5 ${
-                isUser
-                    ? "justify-end"
-                    : "justify-start"
-            }`;
-
-        attachments.forEach(
-            att => {
-
-                const chip =
-                    document.createElement(
-                        "span"
-                    );
-
-                chip.className =
-                    "text-[11px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-1 rounded-md flex items-center space-x-1";
-
-                const icon =
-                    document.createElement(
-                        "i"
-                    );
-
-                icon.className =
-                    "fa-solid fa-file-lines text-indigo-400";
-
-                const nameSpan =
-                    document.createElement(
-                        "span"
-                    );
-
-                nameSpan.className =
-                    "truncate max-w-[120px]";
-
-                nameSpan.textContent =
-                    att.name;
-
-                chip.appendChild(icon);
-                chip.appendChild(nameSpan);
-
-                attWrapper.appendChild(
-                    chip
-                );
-            }
-        );
-
-        bubbleContainer.appendChild(
-            attWrapper
-        );
+    const bubble = document.createElement("div");
+    bubble.className = `${isUser ? "bg-indigo-600 text-white" : "bg-slate-900 border border-slate-800 text-slate-200"} rounded-2xl p-3.5 text-sm shadow-lg break-words`;
+    if(isUser){
+        bubble.textContent = text || "";
+    }else{
+        bubble.classList.add("ai-content");
+        bubble.innerHTML = renderMarkdownSafe(text || "");
     }
-
-    const bubble =
-        document.createElement(
-            "div"
-        );
-
-    bubble.className =
-        `${
-            isUser
-                ? "bg-indigo-600 text-white"
-                : "bg-slate-900 border border-slate-800 text-slate-200"
-        } rounded-2xl p-3.5 text-sm shadow-lg whitespace-pre-wrap break-words`;
-
-    bubble.textContent =
-        text;
-
-    bubbleContainer.appendChild(
-        bubble
-    );
-
-    wrapper.appendChild(
-        bubbleContainer
-    );
-
-    chatContainer.appendChild(
-        wrapper
-    );
-
-    chatContainer.scrollTop =
-        chatContainer.scrollHeight;
-
+    bubbleContainer.appendChild(bubble);
+    wrapper.appendChild(bubbleContainer);
+    chatContainer.appendChild(wrapper);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
     return bubble;
 }
 
-/* =========================================================
-   Restore Messages
-========================================================= */
-
-if (messages.length > 0) {
-
-    messages.forEach(
-        m => {
-
-            appendUI(
-                m.role,
-                m.content,
-                m.attachments || []
-            );
-        }
-    );
-
-} else {
-
-    const welcomeText =
-        i18n[currentLanguage]
-            .welcome;
-
-    appendUI(
-        "assistant",
-        welcomeText
-    );
-
-    messages.push({
-        role:
-            "assistant",
-
-        content:
-            welcomeText,
-
-        model:
-            currentModel,
-
-        timestamp:
-            Date.now()
+function createThinkingUI(){
+    const wrapper = document.createElement("div");
+    wrapper.className = "thinking-box message-enter";
+    const header = document.createElement("div");
+    header.className = "thinking-header";
+    const pulse = document.createElement("span");
+    pulse.className = "thinking-pulse";
+    const icon = document.createElement("i");
+    icon.className = "fa-solid fa-brain text-indigo-400 text-xs";
+    const status = document.createElement("span");
+    status.className = "thinking-status text-xs text-slate-400";
+    status.textContent = (i18n[currentLanguage] || i18n.en).thinking;
+    const arrow = document.createElement("i");
+    arrow.className = "fa-solid fa-chevron-down text-[10px] text-slate-600 ml-auto";
+    header.appendChild(pulse);
+    header.appendChild(icon);
+    header.appendChild(status);
+    header.appendChild(arrow);
+    const content = document.createElement("div");
+    content.className = "thinking-content";
+    wrapper.appendChild(header);
+    wrapper.appendChild(content);
+    header.addEventListener("click", ()=>{
+        wrapper.classList.toggle("collapsed");
+        arrow.className = wrapper.classList.contains("collapsed") ? "fa-solid fa-chevron-right text-[10px] text-slate-600 ml-auto" : "fa-solid fa-chevron-down text-[10px] text-slate-600 ml-auto";
     });
+    chatContainer.appendChild(wrapper);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    return {wrapper, content, status, arrow};
+}
 
+function finishThinking(thinkingUI){
+    if(!thinkingUI) return;
+    thinkingUI.wrapper.classList.add("finished");
+    thinkingUI.status.textContent = (i18n[currentLanguage] || i18n.en).thinkingDone;
+    thinkingUI.wrapper.classList.add("collapsed");
+    thinkingUI.arrow.className = "fa-solid fa-chevron-right text-[10px] text-slate-600 ml-auto";
+}
+
+if(messages.length > 0){
+    messages.forEach(m=>{
+        if(m && (m.role === "user" || m.role === "assistant")){
+            appendUI(m.role, m.content || "", m.attachments || []);
+        }
+    });
+}else{
+    const welcomeText = (i18n[currentLanguage] || i18n.en).welcome;
+    appendUI("assistant", welcomeText);
+    messages.push({role:"assistant", content:welcomeText, model:currentModel, timestamp:Date.now()});
     saveState();
 }
 
-/* =========================================================
-   File
-========================================================= */
+if(!localStorage.getItem("cqs_privacy")) privacyBanner.classList.remove("hidden");
+privacyAccept.addEventListener("click", ()=>{
+    localStorage.setItem("cqs_privacy", "true");
+    privacyBanner.classList.add("hidden");
+});
 
-fileBtn.addEventListener(
-    "click",
-    () =>
-        hiddenFileInput.click()
-);
+langSelect.addEventListener("change", event=>{
+    currentLanguage = event.target.value;
+    localStorage.setItem("cqs_lang", currentLanguage);
+    updateUIStrings();
+});
 
-hiddenFileInput.addEventListener(
-    "change",
-    e => {
+soundToggleBtn.addEventListener("click", ()=>{
+    soundEnabled = !soundEnabled;
+    localStorage.setItem("cqs_sound", String(soundEnabled));
+    updateUIStrings();
+});
 
-        const files =
-            Array.from(
-                e.target.files
-            );
-
-        files.forEach(
-            f => {
-
-                selectedAttachments.push({
-                    name:
-                        f.name,
-
-                    size:
-                        f.size,
-
-                    type:
-                        f.type
-                });
-            }
-        );
-
-        renderAttachmentBar();
-
-        hiddenFileInput.value =
-            "";
+modelSelectBtn.addEventListener("click", ()=> modelDropdown.classList.toggle("hidden"));
+document.addEventListener("click", event=>{
+    if(!modelSelectBtn.contains(event.target) && !modelDropdown.contains(event.target)){
+        modelDropdown.classList.add("hidden");
     }
-);
+});
+document.querySelectorAll(".model-option").forEach(opt=>{
+    opt.addEventListener("click", ()=>{
+        currentModel = opt.getAttribute("data-model");
+        localStorage.setItem("cqs_model", currentModel);
+        updateUIStrings();
+        modelDropdown.classList.add("hidden");
+    });
+});
 
-function renderAttachmentBar() {
-
-    if (
-        selectedAttachments.length ===
-        0
-    ) {
-
-        attachmentBar.classList.add(
-            "hidden"
-        );
-
-        attachmentBar.innerHTML =
-            "";
-
-        return;
-    }
-
-    attachmentBar.classList.remove(
-        "hidden"
-    );
-
-    attachmentBar.innerHTML =
-        "";
-
-    selectedAttachments.forEach(
-        (att, idx) => {
-
-            const tag =
-                document.createElement(
-                    "div"
-                );
-
-            tag.className =
-                "flex items-center space-x-1.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-lg shrink-0";
-
-            const icon =
-                document.createElement(
-                    "i"
-                );
-
-            icon.className =
-                "fa-solid fa-file text-indigo-400";
-
-            const nameSpan =
-                document.createElement(
-                    "span"
-                );
-
-            nameSpan.className =
-                "truncate max-w-[100px]";
-
-            nameSpan.textContent =
-                att.name;
-
-            const delBtn =
-                document.createElement(
-                    "button"
-                );
-
-            delBtn.className =
-                "text-slate-400 hover:text-red-400 ml-1";
-
-            delBtn.innerHTML =
-                '<i class="fa-solid fa-xmark"></i>';
-
-            delBtn.addEventListener(
-                "click",
-                () => {
-
-                    selectedAttachments.splice(
-                        idx,
-                        1
-                    );
-
-                    renderAttachmentBar();
-                }
-            );
-
-            tag.appendChild(icon);
-            tag.appendChild(nameSpan);
-            tag.appendChild(delBtn);
-
-            attachmentBar.appendChild(
-                tag
-            );
-        }
-    );
-}
-
-/* =========================================================
-   Voice
-========================================================= */
-
-voiceBtn.addEventListener(
-    "click",
-    () => {
-
-        const SpeechRecognition =
-            window.SpeechRecognition ||
-            window.webkitSpeechRecognition;
-
-        if (!SpeechRecognition) {
-
-            alert(
-                "Speech recognition not supported."
-            );
-
-            return;
-        }
-
-        const recognition =
-            new SpeechRecognition();
-
-        recognition.lang =
-            speechLangs[
-                currentLanguage
-            ] || "en-US";
-
-        recognition.interimResults =
-            true;
-
-        recognition.continuous =
-            false;
-
-        recognition.start();
-
-        voiceBtn.classList.add(
-            "text-indigo-400",
-            "border-indigo-500",
-            "bg-slate-800"
-        );
-
-        recognition.onresult =
-            event => {
-
-                let transcript =
-                    "";
-
-                for (
-                    let i =
-                        event.resultIndex;
-                    i <
-                        event.results.length;
-                    i++
-                ) {
-
-                    transcript +=
-                        event.results[i][0]
-                            .transcript;
-                }
-
-                userInput.value =
-                    transcript;
-            };
-
-        recognition.onerror =
-            () => {
-
-                voiceBtn.classList.remove(
-                    "text-indigo-400",
-                    "border-indigo-500"
-                );
-            };
-
-        recognition.onend =
-            () => {
-
-                voiceBtn.classList.remove(
-                    "text-indigo-400",
-                    "border-indigo-500"
-                );
-            };
-    }
-);
-
-/* =========================================================
-   Send
-========================================================= */
-
-async function handleAction() {
-
-    // =====================================================
-    // Stop
-    // =====================================================
-
-    if (isGenerating) {
-
-        if (activeController) {
-
-            try {
-                activeController.abort();
-            } catch {}
-        }
-
-        isGenerating =
-            false;
-
-        setButtonState(
-            "send"
-        );
-
-        return;
-    }
-
-    // =====================================================
-    // Input
-    // =====================================================
-
-    const text =
-        userInput.value.trim();
-
-    if (
-        !text &&
-        selectedAttachments.length === 0
-    ) {
-        return;
-    }
-
-    // =====================================================
-    // Attachments
-    // =====================================================
-
-    const currentAtts =
-        selectedAttachments.map(
-            att => ({
-                name:
-                    att.name,
-
-                size:
-                    att.size,
-
-                type:
-                    att.type
-            })
-        );
-
-    selectedAttachments =
-        [];
-
+fileBtn.addEventListener("click", ()=> hiddenFileInput.click());
+hiddenFileInput.addEventListener("change", event=>{
+    const files = Array.from(event.target.files || []);
+    files.forEach(file=>{
+        selectedAttachments.push({name:file.name, size:file.size, type:file.type});
+    });
     renderAttachmentBar();
+    hiddenFileInput.value = "";
+});
 
-    userInput.value =
-        "";
+function renderAttachmentBar(){
+    if(selectedAttachments.length === 0){
+        attachmentBar.classList.add("hidden");
+        attachmentBar.innerHTML = "";
+        return;
+    }
+    attachmentBar.classList.remove("hidden");
+    attachmentBar.innerHTML = "";
+    selectedAttachments.forEach((att,index)=>{
+        const tag = document.createElement("div");
+        tag.className = "flex items-center space-x-1.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-lg shrink-0";
+        const icon = document.createElement("i");
+        icon.className = "fa-solid fa-file text-indigo-400";
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "truncate max-w-[100px]";
+        nameSpan.textContent = att.name;
+        const delBtn = document.createElement("button");
+        delBtn.className = "text-slate-400 hover:text-red-400 ml-1";
+        delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        delBtn.addEventListener("click", ()=>{
+            selectedAttachments.splice(index, 1);
+            renderAttachmentBar();
+        });
+        tag.appendChild(icon);
+        tag.appendChild(nameSpan);
+        tag.appendChild(delBtn);
+        attachmentBar.appendChild(tag);
+    });
+}
 
-    const t =
-        i18n[currentLanguage] ||
-        i18n.en;
-
-    // =====================================================
-    // User UI
-    // =====================================================
-
-    appendUI(
-        "user",
-        text ||
-            t.attachment,
-        currentAtts
-    );
-
-    // =====================================================
-    // User Message
-    // =====================================================
-
-    const userMessage = {
-
-        role:
-            "user",
-
-        content:
-            text,
-
-        attachments:
-            currentAtts,
-
-        model:
-            currentModel,
-
-        timestamp:
-            Date.now()
+voiceBtn.addEventListener("click", ()=>{
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRecognition){
+        alert((i18n[currentLanguage] || i18n.en).speechUnsupported);
+        return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = speechLangs[currentLanguage] || "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    recognition.start();
+    voiceBtn.classList.add("text-indigo-400", "border-indigo-500");
+    recognition.onresult = event=>{
+        let transcript = "";
+        for(let i = event.resultIndex; i < event.results.length; i++){
+            transcript += event.results[i][0].transcript;
+        }
+        userInput.value = transcript;
     };
+    recognition.onerror = ()=> voiceBtn.classList.remove("text-indigo-400", "border-indigo-500");
+    recognition.onend = ()=> voiceBtn.classList.remove("text-indigo-400", "border-indigo-500");
+});
 
-    messages.push(
-        userMessage
-    );
+function getGatewayError(status){
+    if(status === 400) return "请求参数无效";
+    if(status === 401) return "AI API Key 无效或已失效";
+    if(status === 403) return "请求被服务器拒绝";
+    if(status === 408) return "AI 请求超时";
+    if(status === 429) return "AI 服务请求过于频繁，请稍后再试";
+    if(status === 500) return "AI 网关内部错误";
+    if(status === 502) return "AI 上游服务返回异常";
+    if(status === 503) return "AI 服务暂时不可用";
+    if(status >= 500) return "AI 网关或上游服务暂时不可用";
+    return `Gateway Error: HTTP ${status}`;
+}
 
+async function handleAction(){
+    if(isGenerating){
+        if(activeController) activeController.abort();
+        return;
+    }
+    const text = userInput.value.trim();
+    if(!text && selectedAttachments.length === 0) return;
+    const currentAtts = selectedAttachments.map(att=>({name:att.name, size:att.size, type:att.type}));
+    selectedAttachments = [];
+    renderAttachmentBar();
+    userInput.value = "";
+    appendUI("user", text || "[Attachment Sent]", currentAtts);
+    const userMessage = {role:"user", content:text, attachments:currentAtts, model:currentModel, timestamp:Date.now()};
+    messages.push(userMessage);
     saveState();
-
-    playSound(
-        "send"
-    );
-
-    // =====================================================
-    // Generation
-    // =====================================================
-
-    isGenerating =
-        true;
-
-    setButtonState(
-        "stop"
-    );
-
-    activeController =
-        new AbortController();
-
-    // =====================================================
-    // Assistant UI
-    // =====================================================
-
-    const assistantUI =
-        createAssistantUI();
-
-    let fullText =
-        "";
-
-    let reasoningText =
-        "";
-
-    let hasReasoning =
-        false;
-
-    let reasoningFinished =
-        false;
-
-    let hasReceivedAnswer =
-        false;
-
-    try {
-
-        // =================================================
-        // Context
-        // =================================================
-
-        const contextMessages =
-            messages
-                .filter(
-                    m =>
-                        m &&
-                        (
-                            m.role ===
-                                "user" ||
-                            m.role ===
-                                "assistant"
-                        ) &&
-                        typeof
-                            m.content ===
-                            "string"
-                )
-                .map(
-                    m => ({
-                        role:
-                            m.role,
-
-                        content:
-                            m.content
-                    })
-                );
-
-        // =================================================
-        // Request
-        // =================================================
-
-        const response =
-            await fetch(
-                "/api/chat",
-                {
-                    method:
-                        "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "text/event-stream"
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            conversationId,
-
-                            model:
-                                currentModel,
-
-                            messages:
-                                contextMessages,
-
-                            attachments:
-                                currentAtts
-                        }),
-
-                    signal:
-                        activeController.signal
-                }
-            );
-
-        // =================================================
-        // HTTP Error
-        // =================================================
-
-        if (!response.ok) {
-
-            let errorMessage =
-                `Gateway Error: HTTP ${response.status}`;
-
-            try {
-
-                const errorData =
-                    await response.json();
-
-                if (
-                    errorData &&
-                    typeof
-                        errorData.error ===
-                        "string"
-                ) {
-
-                    errorMessage =
-                        errorData.error;
-                }
-
-            } catch {}
-
-            if (
-                response.status ===
-                401
-            ) {
-
-                errorMessage =
-                    "AI API Key 无效或已失效";
-            }
-
-            if (
-                response.status ===
-                429
-            ) {
-
-                errorMessage =
-                    "AI 服务请求过于频繁，请稍后再试";
-            }
-
-            if (
-                response.status >=
-                500
-            ) {
-
-                errorMessage =
-                    "AI 网关或上游服务暂时不可用";
-            }
-
-            throw new Error(
-                errorMessage
-            );
+    playSound("send");
+    isGenerating = true;
+    setButtonState("stop");
+    activeController = new AbortController();
+    let thinkingUI = null;
+    let thinkingText = "";
+    let thinkingStarted = false;
+    let thinkingFinished = false;
+    const replyBubble = appendUI("assistant", "");
+    let fullText = "";
+    try{
+        const contextMessages = messages.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string").map(m=>({role:m.role, content:m.content}));
+        const response = await fetch("/api/chat", {
+            method:"POST",
+            headers:{"Content-Type":"application/json","Accept":"text/event-stream"},
+            body:JSON.stringify({conversationId, model:currentModel, messages:contextMessages, attachments:currentAtts, language:currentLanguage}),
+            signal:activeController.signal
+        });
+        if(!response.ok){
+            let errorMessage = getGatewayError(response.status);
+            try{
+                const errorData = await response.json();
+                if(errorData && typeof errorData.error === "string") errorMessage = errorData.error;
+            }catch{}
+            throw new Error(errorMessage);
         }
-
-        // =================================================
-        // Stream
-        // =================================================
-
-        if (!response.body) {
-
-            throw new Error(
-                "服务器没有返回流式数据"
-            );
-        }
-
-        const reader =
-            response.body.getReader();
-
-        const decoder =
-            new TextDecoder(
-                "utf-8"
-            );
-
-        let buffer =
-            "";
-
-        // =================================================
-        // Stream Loop
-        // =================================================
-
-        while (true) {
-
-            const {
-                value,
-                done
-            } =
-                await reader.read();
-
-            if (done) {
-                break;
-            }
-
-            buffer +=
-                decoder.decode(
-                    value,
-                    {
-                        stream:
-                            true
-                    }
-                );
-
-            const events =
-                buffer.split(
-                    /\r?\n\r?\n/
-                );
-
-            buffer =
-                events.pop() ||
-                "";
-
-            for (
-                const event
-                of events
-            ) {
-
-                const lines =
-                    event.split(
-                        /\r?\n/
-                    );
-
-                const dataLines =
-                    lines
-                        .filter(
-                            line =>
-                                line.startsWith(
-                                    "data:"
-                                )
-                        )
-                        .map(
-                            line =>
-                                line
-                                    .slice(5)
-                                    .trim()
-                        );
-
-                if (
-                    dataLines.length ===
-                    0
-                ) {
-                    continue;
-                }
-
-                const data =
-                    dataLines.join(
-                        "\n"
-                    );
-
-                if (!data) {
-                    continue;
-                }
-
+        if(!response.body) throw new Error("服务器没有返回流式数据");
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let buffer = "";
+        while(true){
+            const {value, done} = await reader.read();
+            if(done) break;
+            buffer += decoder.decode(value, {stream:true});
+            const events = buffer.split(/\r?\n\r?\n/);
+            buffer = events.pop() || "";
+            for(const event of events){
+                const lines = event.split(/\r?\n/);
+                const dataLines = lines.filter(line => line.startsWith("data:")).map(line => line.slice(5).trim());
+                if(dataLines.length === 0) continue;
+                const data = dataLines.join("\n");
+                if(!data) continue;
                 let packet;
-
-                try {
-
-                    packet =
-                        JSON.parse(
-                            data
-                        );
-
-                } catch {
-
+                try{ packet = JSON.parse(data); }catch{ continue; }
+                if(packet.type === "thinking"){
+                    if(!thinkingStarted){
+                        thinkingStarted = true;
+                        thinkingUI = createThinkingUI();
+                    }
+                    if(typeof packet.content === "string"){
+                        thinkingText += packet.content;
+                        thinkingUI.content.textContent = thinkingText;
+                        thinkingUI.content.scrollTop = thinkingUI.content.scrollHeight;
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }
                     continue;
                 }
-
-                // =================================================
-                // REASONING
-                // =================================================
-
-                if (
-                    packet.type ===
-                        "reasoning" &&
-                    typeof
-                        packet.content ===
-                        "string"
-                ) {
-
-                    if (
-                        !hasReasoning
-                    ) {
-
-                        hasReasoning =
-                            true;
-
-                        assistantUI
-                            .reasoningBox
-                            .classList.remove(
-                                "hidden"
-                            );
-
-                        playSound(
-                            "thinking"
-                        );
-                    }
-
-                    reasoningText +=
-                        packet.content;
-
-                    assistantUI
-                        .reasoningContent
-                        .textContent =
-                        reasoningText;
-
-                    chatContainer.scrollTop =
-                        chatContainer.scrollHeight;
+                if(packet.type === "thinking_done"){
+                    thinkingFinished = true;
+                    finishThinking(thinkingUI);
+                    continue;
                 }
-
-                // =================================================
-                // FINAL ANSWER
-                // =================================================
-
-                if (
-                    packet.type ===
-                        "delta" &&
-                    typeof
-                        packet.content ===
-                        "string"
-                ) {
-
-                    if (
-                        hasReasoning &&
-                        !reasoningFinished
-                    ) {
-
-                        reasoningFinished =
-                            true;
-
-                        assistantUI
-                            .reasoningTitle
-                            .textContent =
-                            t.thinkingDone;
-
-                        const dots =
-                            assistantUI
-                                .reasoningHeader
-                                .querySelector(
-                                    ".thinking-dot"
-                                );
-
-                        if (dots) {
-
-                            assistantUI
-                                .reasoningHeader
-                                .querySelectorAll(
-                                    ".thinking-dot"
-                                )
-                                .forEach(
-                                    dot =>
-                                        dot.remove()
-                                );
-                        }
+                if(packet.type === "delta" && typeof packet.content === "string"){
+                    if(thinkingStarted && !thinkingFinished){
+                        finishThinking(thinkingUI);
+                        thinkingFinished = true;
                     }
-
-                    hasReceivedAnswer =
-                        true;
-
-                    fullText +=
-                        packet.content;
-
-                    assistantUI
-                        .bubble
-                        .textContent =
-                        fullText;
-
-                    chatContainer.scrollTop =
-                        chatContainer.scrollHeight;
-
-                    if (
-                        fullText.length %
-                            8 ===
-                        0
-                    ) {
-
-                        playSound(
-                            "receive"
-                        );
-                    }
+                    fullText += packet.content;
+                    replyBubble.innerHTML = renderMarkdownSafe(fullText);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                    if(fullText.length % 8 === 0) playSound("receive");
+                    continue;
                 }
-
-                // =================================================
-                // USAGE
-                // =================================================
-
-                if (
-                    packet.type ===
-                        "usage" &&
-                    packet.usage
-                ) {
-
-                    const usage =
-                        packet.usage;
-
-                    if (
-                        typeof
-                            usage.total_tokens ===
-                            "number"
-                    ) {
-
-                        totalTokens =
-                            Number(
-                                totalTokens ||
-                                    0
-                            ) +
-                            usage.total_tokens;
-
-                        tokenCountEl.textContent =
-                            totalTokens.toLocaleString();
-
+                if(packet.type === "usage" && packet.usage){
+                    const usage = packet.usage;
+                    if(typeof usage.total_tokens === "number"){
+                        totalTokens = Number(totalTokens || 0) + usage.total_tokens;
+                        tokenCountEl.textContent = totalTokens.toLocaleString();
                         saveState();
                     }
+                    continue;
                 }
-
-                // =================================================
-                // ERROR
-                // =================================================
-
-                if (
-                    packet.type ===
-                        "error"
-                ) {
-
-                    throw new Error(
-                        packet.error ||
-                        "AI 流式请求失败"
-                    );
+                if(packet.type === "error"){
+                    throw new Error(packet.error || "AI 流式请求失败");
                 }
-
-                // =================================================
-                // DONE
-                // =================================================
-
-                if (
-                    packet.type ===
-                        "done"
-                ) {
+                if(packet.type === "done"){
+                    if(thinkingStarted && !thinkingFinished){
+                        finishThinking(thinkingUI);
+                        thinkingFinished = true;
+                    }
+                    playSound("done");
                     continue;
                 }
             }
         }
-
-        // =====================================================
-        // Decoder Flush
-        // =====================================================
-
-        buffer +=
-            decoder.decode();
-
-        // =====================================================
-        // Empty Response
-        // =====================================================
-
-        if (
-            !fullText.trim() &&
-            !reasoningText.trim()
-        ) {
-
-            throw new Error(
-                "AI 返回了空响应"
-            );
-        }
-
-        // =====================================================
-        // Save Assistant
-        // =====================================================
-
-        messages.push({
-
-            role:
-                "assistant",
-
-            content:
-                fullText,
-
-            model:
-                currentModel,
-
-            timestamp:
-                Date.now()
-        });
-
+        buffer += decoder.decode();
+        if(!fullText.trim()) throw new Error((i18n[currentLanguage] || i18n.en).emptyResponse);
+        messages.push({role:"assistant", content:fullText, model:currentModel, timestamp:Date.now()});
         saveState();
+    }catch(error){
+        if(error && error.name === "AbortError"){
+            if(thinkingUI && !thinkingFinished) finishThinking(thinkingUI);
+            const t = (i18n[currentLanguage] || i18n.en).stopped;
+            if(fullText.trim()){
+                replyBubble.innerHTML = renderMarkdownSafe(fullText + "\n\n[" + t + "]");
+                messages.push({role:"assistant", content:fullText + "\n\n[" + t + "]", model:currentModel, timestamp:Date.now()});
+                saveState();
+            }else{
+                replyBubble.textContent = "[" + t + "]";
+            }
+        }else{
+            console.error("[CQS AI Frontend]", error);
+            const errorText = error?.message || "Gateway Request Failed";
+            replyBubble.textContent = `[CQS AI Gateway Error]\n${errorText}`;
+        }
+    }finally{
+        isGenerating = false;
+        setButtonState("send");
+        activeController = null;
+    }
+}
 
-    } catch (err) {
+function setButtonState(type){
+    if(type === "stop"){
+        actionBtn.className = "w-12 h-12 bg-red-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-red-600/30";
+        actionIcon.className = "fa-solid fa-stop";
+    }else{
+        actionBtn.className = "w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30";
+        actionIcon.className = "fa-solid fa-paper-plane";
+    }
+}
 
-        // =====================================================
-        // Abort
-        // =====================================================
+actionBtn.addEventListener("click", handleAction);
+userInput.addEventListener("keydown", event=>{
+    if(event.key === "Enter" && !event.shiftKey && !isGenerating){
+        event.preventDefault();
+        handleAction();
+    }
+});
 
-        if (
-            err &&
-            err.name ===
-                "AbortError"
-        ) {
-
-            const stoppedText =
+updateUIStrings();
+</script>
+</body>
+</html>
