@@ -1,8 +1,9 @@
 export default async function handler(req, res) {
+    "use strict";
     // =========================================================
     // CQS AI Global
-    // DeepSeek Secure Streaming Gateway
-    // /api/chat.js
+    // Secure DeepSeek Streaming Gateway
+    // File: api/chat.js
     // =========================================================
     if (req.method !== "POST") {
         res.setHeader("Allow", "POST");
@@ -11,12 +12,6 @@ export default async function handler(req, res) {
             error: `Method ${req.method} Not Allowed`
         });
     }
-    // ---------------------------------------------------------
-    // 基础安全响应头
-    // ---------------------------------------------------------
-    res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey || !apiKey.trim()) {
         return res.status(500).json({
@@ -25,44 +20,61 @@ export default async function handler(req, res) {
         });
     }
     // ---------------------------------------------------------
-    // 读取请求
+    // 基础安全 Header
     // ---------------------------------------------------------
+    res.setHeader(
+        "X-Content-Type-Options",
+        "nosniff"
+    );
+    res.setHeader(
+        "X-Frame-Options",
+        "SAMEORIGIN"
+    );
+    res.setHeader(
+        "Referrer-Policy",
+        "strict-origin-when-cross-origin"
+    );
+    let upstreamController = null;
+    let clientClosed = false;
     try {
         const body = req.body || {};
         const messages = body.messages;
         const systemPrompt = body.systemPrompt;
         const conversationId = body.conversationId;
-        // -----------------------------------------------------
-        // messages 基础验证
-        // -----------------------------------------------------
+        // =====================================================
+        // 参数验证
+        // =====================================================
         if (!Array.isArray(messages) || messages.length === 0) {
             return res.status(400).json({
                 success: false,
                 error: "messages 必须是非空数组"
             });
         }
-        // 防止无限增长
         if (messages.length > 50) {
             return res.status(400).json({
                 success: false,
                 error: "对话上下文过长，最多允许 50 条消息"
             });
         }
-        // -----------------------------------------------------
-        // conversationId 只用于识别，不作为系统指令
-        // -----------------------------------------------------
+        // =====================================================
+        // Conversation ID
+        // =====================================================
         let safeConversationId = "";
         if (typeof conversationId === "string") {
-            safeConversationId = conversationId
-                .trim()
-                .substring(0, 100);
+            safeConversationId =
+                conversationId
+                    .trim()
+                    .substring(0, 100);
         }
-        // -----------------------------------------------------
+        // 防止未使用变量被误解
+        void safeConversationId;
+        // =====================================================
         // System Prompt
-        // -----------------------------------------------------
+        // =====================================================
         let cleanSystemPrompt = "";
         if (typeof systemPrompt === "string") {
-            cleanSystemPrompt = systemPrompt.trim();
+            cleanSystemPrompt =
+                systemPrompt.trim();
             if (cleanSystemPrompt.length > 20000) {
                 return res.status(400).json({
                     success: false,
@@ -70,22 +82,20 @@ export default async function handler(req, res) {
                 });
             }
         }
-        // -----------------------------------------------------
-        // 清理消息
-        //
-        // 前端只允许：
-        // user
-        // assistant
-        //
-        // system 不允许由普通 messages 注入。
-        // -----------------------------------------------------
-        const allowedRoles = new Set([
-            "user",
-            "assistant"
-        ]);
+        // =====================================================
+        // 清洗 Messages
+        // =====================================================
+        const allowedRoles =
+            new Set([
+                "user",
+                "assistant"
+            ]);
         const cleanMessages = [];
         for (const message of messages) {
-            if (!message || typeof message !== "object") {
+            if (
+                !message ||
+                typeof message !== "object"
+            ) {
                 continue;
             }
             const role = message.role;
@@ -96,13 +106,15 @@ export default async function handler(req, res) {
             if (typeof content !== "string") {
                 continue;
             }
-            const cleanContent = content.trim();
+            const cleanContent =
+                content.trim();
             if (!cleanContent) {
                 continue;
             }
             cleanMessages.push({
                 role,
-                content: cleanContent.substring(0, 12000)
+                content:
+                    cleanContent.substring(0, 12000)
             });
         }
         if (cleanMessages.length === 0) {
@@ -111,9 +123,9 @@ export default async function handler(req, res) {
                 error: "没有合法的对话内容"
             });
         }
-        // -----------------------------------------------------
-        // 最终发送给 DeepSeek 的消息
-        // -----------------------------------------------------
+        // =====================================================
+        // 最终 Messages
+        // =====================================================
         const finalMessages = [];
         if (cleanSystemPrompt) {
             finalMessages.push({
@@ -121,10 +133,12 @@ export default async function handler(req, res) {
                 content: cleanSystemPrompt
             });
         }
-        finalMessages.push(...cleanMessages);
-        // -----------------------------------------------------
+        finalMessages.push(
+            ...cleanMessages
+        );
+        // =====================================================
         // SSE Headers
-        // -----------------------------------------------------
+        // =====================================================
         res.statusCode = 200;
         res.setHeader(
             "Content-Type",
@@ -138,17 +152,18 @@ export default async function handler(req, res) {
             "Connection",
             "keep-alive"
         );
-        // 某些代理/CDN 不应该缓冲 SSE
         res.setHeader(
             "X-Accel-Buffering",
             "no"
         );
-        // -----------------------------------------------------
-        // SSE 工具
-        // -----------------------------------------------------
-        let closed = false;
-        const sendEvent = (payload) => {
-            if (closed || res.writableEnded) {
+        // =====================================================
+        // SSE Sender
+        // =====================================================
+        const sendEvent = payload => {
+            if (
+                clientClosed ||
+                res.writableEnded
+            ) {
                 return;
             }
             try {
@@ -156,77 +171,80 @@ export default async function handler(req, res) {
                     `data: ${JSON.stringify(payload)}\n\n`
                 );
             } catch (error) {
-                closed = true;
+                clientClosed = true;
             }
         };
-        // -----------------------------------------------------
-        // 客户端断开连接
-        // -----------------------------------------------------
+        // =====================================================
+        // 客户端断开
+        // =====================================================
         req.on("close", () => {
-            closed = true;
+            clientClosed = true;
             if (upstreamController) {
                 try {
                     upstreamController.abort();
                 } catch {}
             }
         });
-        // -----------------------------------------------------
-        // DeepSeek 请求控制器
-        // -----------------------------------------------------
-        const upstreamController = new AbortController();
-        // 120 秒超时
-        const timeout = setTimeout(() => {
-            try {
-                upstreamController.abort();
-            } catch {}
-        }, 120000);
-        // -----------------------------------------------------
-        // 调用 DeepSeek
-        // -----------------------------------------------------
+        // =====================================================
+        // DeepSeek Controller
+        // =====================================================
+        upstreamController =
+            new AbortController();
+        const timeout =
+            setTimeout(() => {
+                try {
+                    upstreamController.abort();
+                } catch {}
+            }, 120000);
+        // =====================================================
+        // DeepSeek API
+        // =====================================================
         let upstreamResponse;
         try {
-            upstreamResponse = await fetch(
-                "https://api.deepseek.com/chat/completions",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${apiKey.trim()}`,
-                        "Accept": "text/event-stream"
-                    },
-                    body: JSON.stringify({
-                        model: "deepseek-chat",
-                        messages: finalMessages,
-                        stream: true,
-                        // 要求 API 返回最终 usage
-                        stream_options: {
-                            include_usage: true
-                        }
-                    }),
-                    signal: upstreamController.signal
-                }
-            );
+            upstreamResponse =
+                await fetch(
+                    "https://api.deepseek.com/chat/completions",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+                            "Authorization":
+                                `Bearer ${apiKey.trim()}`,
+                            "Accept":
+                                "text/event-stream"
+                        },
+                        body: JSON.stringify({
+                            /*
+                             * 这里使用 DeepSeek Reasoner。
+                             *
+                             * 如果你的账户/API环境不支持，
+                             * 可以改成：
+                             *
+                             * deepseek-chat
+                             */
+                            model:
+                                "deepseek-reasoner",
+                            messages:
+                                finalMessages,
+                            stream: true,
+                            stream_options: {
+                                include_usage: true
+                            }
+                        }),
+                        signal:
+                            upstreamController.signal
+                    }
+                );
         } catch (error) {
             clearTimeout(timeout);
-            if (error?.name === "AbortError") {
-                if (!closed) {
-                    sendEvent({
-                        type: "error",
-                        error: "AI 请求超时或已取消"
-                    });
-                    sendEvent({
-                        type: "done"
-                    });
-                    try {
-                        res.end();
-                    } catch {}
-                }
-                return;
-            }
-            if (!closed) {
+            if (!clientClosed) {
                 sendEvent({
                     type: "error",
-                    error: "无法连接 DeepSeek AI 服务"
+                    error:
+                        error?.name === "AbortError"
+                            ? "AI 请求已取消或超时"
+                            : "无法连接 DeepSeek AI 服务"
                 });
                 sendEvent({
                     type: "done"
@@ -237,9 +255,9 @@ export default async function handler(req, res) {
             }
             return;
         }
-        // -----------------------------------------------------
-        // DeepSeek HTTP 错误
-        // -----------------------------------------------------
+        // =====================================================
+        // HTTP Error
+        // =====================================================
         if (!upstreamResponse.ok) {
             clearTimeout(timeout);
             let errorMessage =
@@ -255,12 +273,10 @@ export default async function handler(req, res) {
                             errorData?.error?.message ||
                             errorData?.message ||
                             errorMessage;
-                    } catch {
-                        // 保留默认错误
-                    }
+                    } catch {}
                 }
             } catch {}
-            if (!closed) {
+            if (!clientClosed) {
                 sendEvent({
                     type: "error",
                     error: errorMessage
@@ -274,15 +290,16 @@ export default async function handler(req, res) {
             }
             return;
         }
-        // -----------------------------------------------------
-        // 检查流
-        // -----------------------------------------------------
+        // =====================================================
+        // Stream 检查
+        // =====================================================
         if (!upstreamResponse.body) {
             clearTimeout(timeout);
-            if (!closed) {
+            if (!clientClosed) {
                 sendEvent({
                     type: "error",
-                    error: "DeepSeek 没有返回流式数据"
+                    error:
+                        "DeepSeek 没有返回流式数据"
                 });
                 sendEvent({
                     type: "done"
@@ -293,9 +310,9 @@ export default async function handler(req, res) {
             }
             return;
         }
-        // -----------------------------------------------------
-        // 读取 DeepSeek SSE
-        // -----------------------------------------------------
+        // =====================================================
+        // 读取 Stream
+        // =====================================================
         const reader =
             upstreamResponse.body.getReader();
         const decoder =
@@ -303,25 +320,34 @@ export default async function handler(req, res) {
         let buffer = "";
         let finished = false;
         try {
-            while (!finished && !closed) {
-                const { value, done } =
-                    await reader.read();
+            while (
+                !finished &&
+                !clientClosed
+            ) {
+                const {
+                    value,
+                    done
+                } = await reader.read();
                 if (done) {
                     break;
                 }
                 if (value) {
-                    buffer += decoder.decode(
-                        value,
-                        { stream: true }
-                    );
+                    buffer +=
+                        decoder.decode(
+                            value,
+                            {
+                                stream: true
+                            }
+                        );
                 }
-                // DeepSeek SSE 使用空行分隔事件
                 const events =
-                    buffer.split(/\r?\n\r?\n/);
+                    buffer.split(
+                        /\r?\n\r?\n/
+                    );
                 buffer =
                     events.pop() || "";
                 for (const event of events) {
-                    if (closed) {
+                    if (clientClosed) {
                         break;
                     }
                     const lines =
@@ -336,7 +362,9 @@ export default async function handler(req, res) {
                                     .slice(5)
                                     .trim()
                             );
-                    if (dataLines.length === 0) {
+                    if (
+                        dataLines.length === 0
+                    ) {
                         continue;
                     }
                     const data =
@@ -344,7 +372,7 @@ export default async function handler(req, res) {
                     if (!data) {
                         continue;
                     }
-                    // DeepSeek 结束标记
+                    // DeepSeek 结束
                     if (data === "[DONE]") {
                         finished = true;
                         break;
@@ -356,63 +384,69 @@ export default async function handler(req, res) {
                     } catch {
                         continue;
                     }
-                    // -------------------------------------------------
-                    // DeepSeek 正常 delta
-                    // -------------------------------------------------
                     const choice =
                         packet?.choices?.[0];
                     const delta =
                         choice?.delta;
-                    // 普通回答内容
+                    // =================================================
+                    // 思考内容
+                    // =================================================
                     if (
                         delta &&
-                        typeof delta.content === "string" &&
-                        delta.content.length > 0
+                        typeof
+                            delta.reasoning_content
+                            === "string" &&
+                        delta.reasoning_content.length
                     ) {
                         sendEvent({
-                            type: "delta",
-                            content: delta.content
-                        });
-                    }
-                    // -------------------------------------------------
-                    // 如果未来模型/API返回 reasoning_content
-                    // -------------------------------------------------
-                    if (
-                        delta &&
-                        typeof delta.reasoning_content === "string" &&
-                        delta.reasoning_content.length > 0
-                    ) {
-                        sendEvent({
-                            type: "reasoning",
+                            type:
+                                "reasoning",
                             content:
                                 delta.reasoning_content
                         });
                     }
-                    // -------------------------------------------------
-                    // usage
-                    // -------------------------------------------------
-                    if (packet?.usage) {
+                    // =================================================
+                    // 最终答案
+                    // =================================================
+                    if (
+                        delta &&
+                        typeof
+                            delta.content
+                            === "string" &&
+                        delta.content.length
+                    ) {
                         sendEvent({
-                            type: "usage",
-                            usage: packet.usage
+                            type:
+                                "delta",
+                            content:
+                                delta.content
                         });
                     }
-                    // -------------------------------------------------
-                    // finish_reason
-                    // -------------------------------------------------
-                    if (
-                        choice &&
-                        choice.finish_reason
-                    ) {
-                        // 不立即结束。
-                        // 等待 [DONE] 或 stream 结束。
+                    // =================================================
+                    // Token Usage
+                    // =================================================
+                    if (packet?.usage) {
+                        sendEvent({
+                            type:
+                                "usage",
+                            usage:
+                                packet.usage
+                        });
                     }
                 }
             }
-            // ---------------------------------------------------------
-            // 处理最后残留 buffer
-            // ---------------------------------------------------------
-            if (!closed && buffer.trim()) {
+            // =====================================================
+            // Flush Decoder
+            // =====================================================
+            buffer +=
+                decoder.decode();
+            // =====================================================
+            // 最后一个残留 SSE
+            // =====================================================
+            if (
+                !clientClosed &&
+                buffer.trim()
+            ) {
                 const lines =
                     buffer.split(/\r?\n/);
                 const dataLines =
@@ -421,9 +455,11 @@ export default async function handler(req, res) {
                             line.startsWith("data:")
                         )
                         .map(line =>
-                            line.slice(5).trim()
+                            line
+                                .slice(5)
+                                .trim()
                         );
-                if (dataLines.length > 0) {
+                if (dataLines.length) {
                     const data =
                         dataLines.join("\n");
                     if (data !== "[DONE]") {
@@ -436,40 +472,49 @@ export default async function handler(req, res) {
                                 choice?.delta;
                             if (
                                 delta &&
-                                typeof delta.content === "string"
+                                typeof
+                                    delta.reasoning_content
+                                    === "string"
                             ) {
                                 sendEvent({
-                                    type: "delta",
-                                    content:
-                                        delta.content
-                                });
-                            }
-                            if (
-                                delta &&
-                                typeof delta.reasoning_content === "string"
-                            ) {
-                                sendEvent({
-                                    type: "reasoning",
+                                    type:
+                                        "reasoning",
                                     content:
                                         delta.reasoning_content
                                 });
                             }
+                            if (
+                                delta &&
+                                typeof
+                                    delta.content
+                                    === "string"
+                            ) {
+                                sendEvent({
+                                    type:
+                                        "delta",
+                                    content:
+                                        delta.content
+                                });
+                            }
                             if (packet?.usage) {
                                 sendEvent({
-                                    type: "usage",
-                                    usage: packet.usage
+                                    type:
+                                        "usage",
+                                    usage:
+                                        packet.usage
                                 });
                             }
                         } catch {}
                     }
                 }
             }
-            // ---------------------------------------------------------
-            // 正常结束
-            // ---------------------------------------------------------
-            if (!closed) {
+            // =====================================================
+            // Done
+            // =====================================================
+            if (!clientClosed) {
                 sendEvent({
-                    type: "done"
+                    type:
+                        "done"
                 });
             }
         } catch (error) {
@@ -477,16 +522,18 @@ export default async function handler(req, res) {
                 "[CQS AI Stream Error]",
                 error
             );
-            if (!closed) {
+            if (!clientClosed) {
                 sendEvent({
-                    type: "error",
+                    type:
+                        "error",
                     error:
                         error?.name === "AbortError"
                             ? "AI 请求已取消"
                             : "AI 流式传输发生错误"
                 });
                 sendEvent({
-                    type: "done"
+                    type:
+                        "done"
                 });
             }
         } finally {
@@ -494,7 +541,7 @@ export default async function handler(req, res) {
             try {
                 reader.releaseLock();
             } catch {}
-            if (!closed) {
+            if (!clientClosed) {
                 try {
                     res.end();
                 } catch {}
@@ -505,19 +552,20 @@ export default async function handler(req, res) {
             "[CQS AI Gateway Error]",
             error
         );
-        // 如果 SSE 已经开始，
-        // 不能再返回普通 JSON。
         if (res.headersSent) {
             try {
                 res.write(
                     `data: ${JSON.stringify({
-                        type: "error",
-                        error: "服务器内部错误"
+                        type:
+                            "error",
+                        error:
+                            "服务器内部错误"
                     })}\n\n`
                 );
                 res.write(
                     `data: ${JSON.stringify({
-                        type: "done"
+                        type:
+                            "done"
                     })}\n\n`
                 );
                 res.end();
@@ -526,7 +574,8 @@ export default async function handler(req, res) {
         }
         return res.status(500).json({
             success: false,
-            error: "服务器内部错误"
+            error:
+                "服务器内部错误"
         });
     }
 }
