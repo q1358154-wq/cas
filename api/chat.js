@@ -1,163 +1,604 @@
+// =========================================================
+// CQS AI GLOBAL
+// Multi-Provider Secure Streaming Gateway
+// /api/chat.js
+//
+// Providers:
+// 1. DeepSeek  - 当前真实使用
+// 2. Still     - 预留 / 可配置
+// 3. Agent     - 预留 / 可配置
+//
+// Environment Variables:
+//
+// DEEPSEEK_API_KEY
+//
+// STILL_API_URL
+// STILL_API_KEY
+// STILL_MODEL
+//
+// AGENT_API_URL
+// AGENT_API_KEY
+// AGENT_MODEL
+//
+// =========================================================
+
 export default async function handler(req, res) {
+
     // =========================================================
-    // CQS AI Global
-    // DeepSeek V4 Secure Streaming Gateway
-    // /api/chat.js
+    // METHOD
     // =========================================================
 
     if (req.method !== "POST") {
-        res.setHeader("Allow", "POST");
+
+        res.setHeader(
+            "Allow",
+            "POST"
+        );
+
         return res.status(405).json({
             success: false,
-            error: `Method ${req.method} Not Allowed`
+            error:
+                `Method ${req.method} Not Allowed`
         });
+
     }
 
-    // ---------------------------------------------------------
-    // Security Headers
-    // ---------------------------------------------------------
 
-    res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
+    // =========================================================
+    // SECURITY HEADERS
+    // =========================================================
+
+    res.setHeader(
+        "X-Content-Type-Options",
+        "nosniff"
+    );
+
+    res.setHeader(
+        "X-Frame-Options",
+        "SAMEORIGIN"
+    );
+
     res.setHeader(
         "Referrer-Policy",
         "strict-origin-when-cross-origin"
     );
 
-    const apiKey = process.env.DEEPSEEK_API_KEY;
 
-    if (!apiKey || !apiKey.trim()) {
-        return res.status(500).json({
-            success: false,
-            error: "服务器未配置 DEEPSEEK_API_KEY"
-        });
-    }
-
-    // ---------------------------------------------------------
-    // Main
-    // ---------------------------------------------------------
+    // =========================================================
+    // REQUEST BODY
+    // =========================================================
 
     try {
-        const body = req.body || {};
 
-        const messages = body.messages;
-        const systemPrompt = body.systemPrompt;
-        const conversationId = body.conversationId;
+        const body =
+            req.body || {};
 
-        // -----------------------------------------------------
-        // Validate messages
-        // -----------------------------------------------------
 
-        if (!Array.isArray(messages) || messages.length === 0) {
+        // =====================================================
+        // PROVIDER
+        //
+        // 默认 DeepSeek
+        //
+        // 前端未来发送：
+        //
+        // provider: "deepseek"
+        // provider: "still"
+        // provider: "agent"
+        // =====================================================
+
+        const provider =
+            typeof body.provider === "string"
+                ? body.provider
+                    .trim()
+                    .toLowerCase()
+                : "deepseek";
+
+
+        const allowedProviders = new Set([
+            "deepseek",
+            "still",
+            "agent"
+        ]);
+
+
+        if (
+            !allowedProviders.has(
+                provider
+            )
+        ) {
+
             return res.status(400).json({
+
                 success: false,
-                error: "messages 必须是非空数组"
+
+                error:
+                    `不支持的 Provider: ${provider}`
+
             });
+
         }
 
-        if (messages.length > 50) {
+
+        // =====================================================
+        // INPUT
+        // =====================================================
+
+        const messages =
+            body.messages;
+
+        const systemPrompt =
+            body.systemPrompt;
+
+        const conversationId =
+            body.conversationId;
+
+
+        // =====================================================
+        // VALIDATE MESSAGES
+        // =====================================================
+
+        if (
+            !Array.isArray(messages) ||
+            messages.length === 0
+        ) {
+
             return res.status(400).json({
+
                 success: false,
-                error: "对话上下文过长，最多允许 50 条消息"
+
+                error:
+                    "messages 必须是非空数组"
+
             });
+
         }
 
-        // -----------------------------------------------------
-        // Conversation ID
-        // -----------------------------------------------------
+
+        if (
+            messages.length > 50
+        ) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                error:
+                    "对话上下文过长，最多允许 50 条消息"
+
+            });
+
+        }
+
+
+        // =====================================================
+        // CONVERSATION ID
+        // =====================================================
 
         let safeConversationId = "";
 
-        if (typeof conversationId === "string") {
-            safeConversationId = conversationId
-                .trim()
-                .substring(0, 100);
+        if (
+            typeof conversationId === "string"
+        ) {
+
+            safeConversationId =
+                conversationId
+                    .trim()
+                    .substring(
+                        0,
+                        100
+                    );
+
         }
 
-        // 防止变量未使用导致部分运行环境警告
+        // 防止部分运行环境产生未使用变量警告
         void safeConversationId;
 
-        // -----------------------------------------------------
-        // System Prompt
-        // -----------------------------------------------------
+
+        // =====================================================
+        // SYSTEM PROMPT
+        // =====================================================
 
         let cleanSystemPrompt = "";
 
-        if (typeof systemPrompt === "string") {
-            cleanSystemPrompt = systemPrompt.trim();
+        if (
+            typeof systemPrompt === "string"
+        ) {
 
-            if (cleanSystemPrompt.length > 20000) {
+            cleanSystemPrompt =
+                systemPrompt.trim();
+
+            if (
+                cleanSystemPrompt.length >
+                20000
+            ) {
+
                 return res.status(400).json({
+
                     success: false,
-                    error: "System Prompt 过长，最大允许 20000 个字符"
+
+                    error:
+                        "System Prompt 过长，最大允许 20000 个字符"
+
                 });
+
             }
+
         }
 
-        // -----------------------------------------------------
-        // Clean Messages
-        // -----------------------------------------------------
 
-        const allowedRoles = new Set([
-            "user",
-            "assistant"
-        ]);
+        // =====================================================
+        // CLEAN MESSAGES
+        // =====================================================
+
+        const allowedRoles =
+            new Set([
+                "user",
+                "assistant"
+            ]);
 
         const cleanMessages = [];
 
-        for (const message of messages) {
-            if (!message || typeof message !== "object") {
+
+        for (
+            const message
+            of messages
+        ) {
+
+            if (
+                !message ||
+                typeof message !== "object"
+            ) {
                 continue;
             }
 
-            const role = message.role;
-            const content = message.content;
 
-            if (!allowedRoles.has(role)) {
+            const role =
+                message.role;
+
+            const content =
+                message.content;
+
+
+            if (
+                !allowedRoles.has(
+                    role
+                )
+            ) {
                 continue;
             }
 
-            if (typeof content !== "string") {
+
+            if (
+                typeof content !== "string"
+            ) {
                 continue;
             }
 
-            const cleanContent = content.trim();
+
+            const cleanContent =
+                content.trim();
+
 
             if (!cleanContent) {
                 continue;
             }
 
+
             cleanMessages.push({
+
                 role,
-                content: cleanContent.substring(0, 12000)
+
+                content:
+                    cleanContent.substring(
+                        0,
+                        12000
+                    )
+
             });
+
         }
 
-        if (cleanMessages.length === 0) {
+
+        if (
+            cleanMessages.length === 0
+        ) {
+
             return res.status(400).json({
+
                 success: false,
-                error: "没有合法的对话内容"
+
+                error:
+                    "没有合法的对话内容"
+
             });
+
         }
 
-        // -----------------------------------------------------
-        // Final Messages
-        // -----------------------------------------------------
+
+        // =====================================================
+        // FINAL MESSAGES
+        // =====================================================
 
         const finalMessages = [];
 
-        if (cleanSystemPrompt) {
+
+        if (
+            cleanSystemPrompt
+        ) {
+
             finalMessages.push({
+
                 role: "system",
-                content: cleanSystemPrompt
+
+                content:
+                    cleanSystemPrompt
+
             });
+
         }
 
-        finalMessages.push(...cleanMessages);
 
-        // -----------------------------------------------------
-        // SSE Headers
-        // -----------------------------------------------------
+        finalMessages.push(
+            ...cleanMessages
+        );
+
+
+        // =====================================================
+        // PROVIDER CONFIGURATION
+        // =====================================================
+
+        let providerConfig;
+
+
+        // =====================================================
+        // DEEPSEEK
+        // =====================================================
+
+        if (
+            provider === "deepseek"
+        ) {
+
+            const apiKey =
+                process.env.DEEPSEEK_API_KEY;
+
+
+            if (
+                !apiKey ||
+                !apiKey.trim()
+            ) {
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    error:
+                        "服务器未配置 DEEPSEEK_API_KEY"
+
+                });
+
+            }
+
+
+            providerConfig = {
+
+                name: "DeepSeek",
+
+                url:
+                    "https://api.deepseek.com/chat/completions",
+
+                apiKey:
+                    apiKey.trim(),
+
+                model:
+                    "deepseek-v4-flash",
+
+                thinking:
+                    true,
+
+                reasoningEffort:
+                    "high"
+
+            };
+
+        }
+
+
+        // =====================================================
+        // STILL
+        //
+        // 未来只需要在 Vercel 配置：
+        //
+        // STILL_API_URL
+        // STILL_API_KEY
+        // STILL_MODEL
+        //
+        // 当前没有配置时不会假装调用。
+        // =====================================================
+
+        if (
+            provider === "still"
+        ) {
+
+            const apiUrl =
+                process.env.STILL_API_URL;
+
+            const apiKey =
+                process.env.STILL_API_KEY;
+
+            const model =
+                process.env.STILL_MODEL ||
+                "default";
+
+
+            if (
+                !apiUrl ||
+                !apiUrl.trim()
+            ) {
+
+                return res.status(503).json({
+
+                    success: false,
+
+                    provider: "still",
+
+                    error:
+                        "Still Provider 尚未配置 STILL_API_URL"
+
+                });
+
+            }
+
+
+            if (
+                !apiKey ||
+                !apiKey.trim()
+            ) {
+
+                return res.status(503).json({
+
+                    success: false,
+
+                    provider: "still",
+
+                    error:
+                        "Still Provider 尚未配置 STILL_API_KEY"
+
+                });
+
+            }
+
+
+            providerConfig = {
+
+                name: "Still",
+
+                url:
+                    apiUrl.trim(),
+
+                apiKey:
+                    apiKey.trim(),
+
+                model,
+
+                thinking:
+                    false,
+
+                reasoningEffort:
+                    null
+
+            };
+
+        }
+
+
+        // =====================================================
+        // AGENT
+        //
+        // 未来只需要在 Vercel 配置：
+        //
+        // AGENT_API_URL
+        // AGENT_API_KEY
+        // AGENT_MODEL
+        //
+        // =====================================================
+
+        if (
+            provider === "agent"
+        ) {
+
+            const apiUrl =
+                process.env.AGENT_API_URL;
+
+            const apiKey =
+                process.env.AGENT_API_KEY;
+
+            const model =
+                process.env.AGENT_MODEL ||
+                "default";
+
+
+            if (
+                !apiUrl ||
+                !apiUrl.trim()
+            ) {
+
+                return res.status(503).json({
+
+                    success: false,
+
+                    provider: "agent",
+
+                    error:
+                        "Agent Provider 尚未配置 AGENT_API_URL"
+
+                });
+
+            }
+
+
+            if (
+                !apiKey ||
+                !apiKey.trim()
+            ) {
+
+                return res.status(503).json({
+
+                    success: false,
+
+                    provider: "agent",
+
+                    error:
+                        "Agent Provider 尚未配置 AGENT_API_KEY"
+
+                });
+
+            }
+
+
+            providerConfig = {
+
+                name: "Agent",
+
+                url:
+                    apiUrl.trim(),
+
+                apiKey:
+                    apiKey.trim(),
+
+                model,
+
+                thinking:
+                    false,
+
+                reasoningEffort:
+                    null
+
+            };
+
+        }
+
+
+        // =====================================================
+        // SAFETY CHECK
+        // =====================================================
+
+        if (!providerConfig) {
+
+            return res.status(500).json({
+
+                success: false,
+
+                error:
+                    "Provider 配置初始化失败"
+
+            });
+
+        }
+
+
+        // =====================================================
+        // SSE HEADERS
+        // =====================================================
 
         res.statusCode = 200;
 
@@ -181,525 +622,888 @@ export default async function handler(req, res) {
             "no"
         );
 
-        // -----------------------------------------------------
-        // SSE State
-        // -----------------------------------------------------
+
+        // =====================================================
+        // SSE STATE
+        // =====================================================
 
         let closed = false;
 
-        // 先创建 Controller
-        // 再注册 req.close，避免变量时序问题
+        let finished = false;
+
+
         const upstreamController =
             new AbortController();
 
-        const sendEvent = (payload) => {
-            if (closed || res.writableEnded) {
+
+        // =====================================================
+        // SEND SSE EVENT
+        // =====================================================
+
+        const sendEvent = (
+            payload
+        ) => {
+
+            if (
+                closed ||
+                res.writableEnded
+            ) {
                 return;
             }
 
+
             try {
+
                 res.write(
-                    `data: ${JSON.stringify(payload)}\n\n`
+                    `data: ${JSON.stringify(
+                        payload
+                    )}\n\n`
                 );
+
             } catch {
+
                 closed = true;
+
             }
+
         };
 
-        // -----------------------------------------------------
-        // Client Disconnect
-        // -----------------------------------------------------
 
-        req.on("close", () => {
-            closed = true;
+        // =====================================================
+        // CLIENT DISCONNECT
+        // =====================================================
 
-            try {
-                upstreamController.abort();
-            } catch {}
-        });
+        req.on(
+            "close",
+            () => {
 
-        // -----------------------------------------------------
-        // Timeout
-        // -----------------------------------------------------
+                closed = true;
 
-        const timeout = setTimeout(() => {
-            try {
-                upstreamController.abort();
-            } catch {}
-        }, 120000);
+                try {
 
-        // -----------------------------------------------------
-        // DeepSeek V4
+                    upstreamController.abort();
+
+                } catch {}
+
+            }
+        );
+
+
+        // =====================================================
+        // TIMEOUT
+        // =====================================================
+
+        const timeout =
+            setTimeout(
+                () => {
+
+                    try {
+
+                        upstreamController.abort();
+
+                    } catch {}
+
+                },
+                120000
+            );
+
+
+        // =====================================================
+        // BUILD UPSTREAM REQUEST
+        // =====================================================
+
+        const upstreamBody = {
+
+            model:
+                providerConfig.model,
+
+            messages:
+                finalMessages,
+
+            stream:
+                true
+
+        };
+
+
+        // =====================================================
+        // DEEPSEEK THINKING
         //
-        // deepseek-v4-flash:
-        // - 更快
-        // - 更便宜
-        // - 支持 Thinking
+        // 只有 DeepSeek 使用当前 Thinking 参数。
         //
-        // deepseek-v4-pro:
-        // - 更强
-        // - 成本更高
-        //
-        // 这里默认使用 Flash
-        // -----------------------------------------------------
+        // Still / Agent 暂时不强行添加 DeepSeek 专属参数。
+        // =====================================================
 
-        const model = "deepseek-v4-flash";
+        if (
+            provider === "deepseek"
+        ) {
+
+            upstreamBody.thinking = {
+
+                type: "enabled"
+
+            };
+
+
+            upstreamBody.reasoning_effort =
+                "high";
+
+
+            upstreamBody.stream_options = {
+
+                include_usage:
+                    true
+
+            };
+
+        }
+
+
+        // =====================================================
+        // PROVIDER REQUEST
+        // =====================================================
 
         let upstreamResponse;
 
+
         try {
-            upstreamResponse = await fetch(
-                "https://api.deepseek.com/chat/completions",
-                {
-                    method: "POST",
 
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization":
-                            `Bearer ${apiKey.trim()}`,
-                        "Accept":
-                            "text/event-stream"
-                    },
+            upstreamResponse =
+                await fetch(
+                    providerConfig.url,
+                    {
 
-                    body: JSON.stringify({
-                        model,
+                        method:
+                            "POST",
 
-                        messages: finalMessages,
+                        headers: {
 
-                        // =================================================
-                        // 开启 DeepSeek V4 Thinking
-                        // =================================================
+                            "Content-Type":
+                                "application/json",
 
-                        thinking: {
-                            type: "enabled"
+                            "Authorization":
+                                `Bearer ${
+                                    providerConfig.apiKey
+                                }`,
+
+                            "Accept":
+                                "text/event-stream"
+
                         },
 
-                        // 思考强度
-                        reasoning_effort: "high",
+                        body:
+                            JSON.stringify(
+                                upstreamBody
+                            ),
 
-                        // =================================================
-                        // Streaming
-                        // =================================================
+                        signal:
+                            upstreamController
+                                .signal
 
-                        stream: true,
+                    }
+                );
 
-                        // =================================================
-                        // 最终返回 usage
-                        // =================================================
-
-                        stream_options: {
-                            include_usage: true
-                        }
-                    }),
-
-                    signal: upstreamController.signal
-                }
-            );
         } catch (error) {
-            clearTimeout(timeout);
 
-            if (error?.name === "AbortError") {
+            clearTimeout(
+                timeout
+            );
+
+
+            if (
+                error?.name ===
+                "AbortError"
+            ) {
+
                 if (!closed) {
-                    sendEvent({
-                        type: "error",
-                        error: "AI 请求超时或已取消"
-                    });
 
                     sendEvent({
-                        type: "done"
+
+                        type:
+                            "error",
+
+                        error:
+                            "AI 请求超时或已取消"
+
                     });
+
+
+                    sendEvent({
+
+                        type:
+                            "done"
+
+                    });
+
 
                     try {
+
                         res.end();
+
                     } catch {}
+
                 }
 
                 return;
+
             }
 
+
             console.error(
-                "[CQS DeepSeek Connection Error]",
+                `[CQS ${providerConfig.name} Connection Error]`,
                 error
             );
 
+
             if (!closed) {
-                sendEvent({
-                    type: "error",
-                    error: "无法连接 DeepSeek AI 服务"
-                });
 
                 sendEvent({
-                    type: "done"
+
+                    type:
+                        "error",
+
+                    error:
+                        `无法连接 ${providerConfig.name} AI 服务`
+
                 });
+
+
+                sendEvent({
+
+                    type:
+                        "done"
+
+                });
+
 
                 try {
+
                     res.end();
+
                 } catch {}
+
             }
 
             return;
+
         }
 
-        // ---------------------------------------------------------
-        // DeepSeek HTTP Error
-        // ---------------------------------------------------------
 
-        if (!upstreamResponse.ok) {
-            clearTimeout(timeout);
+        // =====================================================
+        // PROVIDER HTTP ERROR
+        // =====================================================
+
+        if (
+            !upstreamResponse.ok
+        ) {
+
+            clearTimeout(
+                timeout
+            );
+
 
             let errorMessage =
-                `DeepSeek API 请求失败 (${upstreamResponse.status})`;
+                `${providerConfig.name} API 请求失败 (${upstreamResponse.status})`;
+
 
             try {
+
                 const errorText =
                     await upstreamResponse.text();
 
-                if (errorText) {
+
+                if (
+                    errorText
+                ) {
+
                     try {
+
                         const errorData =
-                            JSON.parse(errorText);
+                            JSON.parse(
+                                errorText
+                            );
+
 
                         errorMessage =
                             errorData?.error?.message ||
+                            errorData?.error ||
                             errorData?.message ||
                             errorMessage;
 
                     } catch {
+
                         // 保留默认错误
+
                     }
+
                 }
+
             } catch {}
 
+
             console.error(
-                "[CQS DeepSeek HTTP Error]",
+
+                `[CQS ${providerConfig.name} HTTP Error]`,
+
                 upstreamResponse.status,
+
                 errorMessage
+
             );
 
+
             if (!closed) {
-                sendEvent({
-                    type: "error",
-                    error: errorMessage
-                });
 
                 sendEvent({
-                    type: "done"
+
+                    type:
+                        "error",
+
+                    error:
+                        errorMessage
+
                 });
+
+
+                sendEvent({
+
+                    type:
+                        "done"
+
+                });
+
 
                 try {
+
                     res.end();
+
                 } catch {}
+
             }
 
             return;
+
         }
 
-        // ---------------------------------------------------------
-        // Check Stream
-        // ---------------------------------------------------------
 
-        if (!upstreamResponse.body) {
-            clearTimeout(timeout);
+        // =====================================================
+        // CHECK STREAM
+        // =====================================================
+
+        if (
+            !upstreamResponse.body
+        ) {
+
+            clearTimeout(
+                timeout
+            );
+
 
             if (!closed) {
-                sendEvent({
-                    type: "error",
-                    error: "DeepSeek 没有返回流式数据"
-                });
 
                 sendEvent({
-                    type: "done"
+
+                    type:
+                        "error",
+
+                    error:
+                        `${providerConfig.name} 没有返回流式数据`
+
                 });
+
+
+                sendEvent({
+
+                    type:
+                        "done"
+
+                });
+
 
                 try {
+
                     res.end();
+
                 } catch {}
+
             }
 
             return;
+
         }
 
-        // ---------------------------------------------------------
-        // Read DeepSeek SSE
-        // ---------------------------------------------------------
+
+        // =====================================================
+        // READ PROVIDER SSE
+        // =====================================================
 
         const reader =
-            upstreamResponse.body.getReader();
+            upstreamResponse.body
+                .getReader();
+
 
         const decoder =
-            new TextDecoder("utf-8");
+            new TextDecoder(
+                "utf-8"
+            );
+
 
         let buffer = "";
-        let finished = false;
+
+
+        // =====================================================
+        // PROCESS SSE EVENT
+        // =====================================================
+
+        const processProviderEvent = (
+            event
+        ) => {
+
+            if (
+                closed
+            ) {
+                return;
+            }
+
+
+            const lines =
+                event.split(
+                    /\r?\n/
+                );
+
+
+            const dataLines =
+                lines
+                    .filter(
+                        line =>
+                            line.startsWith(
+                                "data:"
+                            )
+                    )
+                    .map(
+                        line =>
+                            line
+                                .slice(5)
+                                .trim()
+                    );
+
+
+            if (
+                dataLines.length === 0
+            ) {
+
+                return;
+
+            }
+
+
+            const data =
+                dataLines.join(
+                    "\n"
+                );
+
+
+            if (
+                !data
+            ) {
+
+                return;
+
+            }
+
+
+            // =================================================
+            // [DONE]
+            // =================================================
+
+            if (
+                data === "[DONE]"
+            ) {
+
+                finished = true;
+
+                return;
+
+            }
+
+
+            let packet;
+
+
+            try {
+
+                packet =
+                    JSON.parse(
+                        data
+                    );
+
+            } catch {
+
+                return;
+
+            }
+
+
+            // =================================================
+            // OPENAI-COMPATIBLE FORMAT
+            //
+            // DeepSeek / Still / Agent 如果返回：
+            //
+            // choices[0].delta.content
+            //
+            // 就可以直接进入这里。
+            // =================================================
+
+            const choice =
+                packet?.choices?.[0];
+
+
+            const delta =
+                choice?.delta;
+
+
+            // =================================================
+            // THINKING / REASONING
+            //
+            // DeepSeek:
+            // delta.reasoning_content
+            //
+            // =================================================
+
+            if (
+                delta &&
+                typeof
+                    delta.reasoning_content ===
+                    "string" &&
+                delta.reasoning_content.length >
+                    0
+            ) {
+
+                sendEvent({
+
+                    type:
+                        "reasoning",
+
+                    content:
+                        delta.reasoning_content
+
+                });
+
+            }
+
+
+            // =================================================
+            // SOME PROVIDERS MAY USE:
+            //
+            // delta.reasoning
+            // =================================================
+
+            else if (
+                delta &&
+                typeof
+                    delta.reasoning ===
+                    "string" &&
+                delta.reasoning.length >
+                    0
+            ) {
+
+                sendEvent({
+
+                    type:
+                        "reasoning",
+
+                    content:
+                        delta.reasoning
+
+                });
+
+            }
+
+
+            // =================================================
+            // FINAL ANSWER
+            // =================================================
+
+            if (
+                delta &&
+                typeof
+                    delta.content ===
+                    "string" &&
+                delta.content.length >
+                    0
+            ) {
+
+                sendEvent({
+
+                    type:
+                        "delta",
+
+                    content:
+                        delta.content
+
+                });
+
+            }
+
+
+            // =================================================
+            // USAGE
+            // =================================================
+
+            if (
+                packet?.usage
+            ) {
+
+                sendEvent({
+
+                    type:
+                        "usage",
+
+                    usage:
+                        packet.usage
+
+                });
+
+            }
+
+
+            // =================================================
+            // PROVIDER ERROR INSIDE SSE
+            // =================================================
+
+            if (
+                packet?.error
+            ) {
+
+                const message =
+                    typeof packet.error ===
+                    "string"
+                        ? packet.error
+                        : packet.error?.message ||
+                          `${providerConfig.name} Provider Error`;
+
+
+                sendEvent({
+
+                    type:
+                        "error",
+
+                    error:
+                        message
+
+                });
+
+            }
+
+        };
+
+
+        // =====================================================
+        // READ LOOP
+        // =====================================================
 
         try {
-            while (!finished && !closed) {
+
+            while (
+                !finished &&
+                !closed
+            ) {
 
                 const {
                     value,
                     done
-                } = await reader.read();
+                } =
+                    await reader.read();
 
-                if (done) {
+
+                if (
+                    done
+                ) {
+
                     break;
+
                 }
 
-                if (value) {
-                    buffer += decoder.decode(
-                        value,
-                        {
-                            stream: true
-                        }
-                    );
+
+                if (
+                    value
+                ) {
+
+                    buffer +=
+                        decoder.decode(
+                            value,
+                            {
+                                stream:
+                                    true
+                            }
+                        );
+
                 }
 
-                // -----------------------------------------------------
-                // SSE events separated by blank line
-                // -----------------------------------------------------
+
+                // =================================================
+                // SSE EVENTS
+                // =================================================
 
                 const events =
-                    buffer.split(/\r?\n\r?\n/);
+                    buffer.split(
+                        /\r?\n\r?\n/
+                    );
+
 
                 buffer =
-                    events.pop() || "";
+                    events.pop() ||
+                    "";
 
-                for (const event of events) {
 
-                    if (closed) {
+                for (
+                    const event
+                    of events
+                ) {
+
+                    if (
+                        closed
+                    ) {
                         break;
                     }
 
-                    const lines =
-                        event.split(/\r?\n/);
 
-                    const dataLines =
-                        lines
-                            .filter(line =>
-                                line.startsWith("data:")
-                            )
-                            .map(line =>
-                                line
-                                    .slice(5)
-                                    .trim()
-                            );
+                    processProviderEvent(
+                        event
+                    );
 
-                    if (dataLines.length === 0) {
-                        continue;
-                    }
-
-                    const data =
-                        dataLines.join("\n");
-
-                    if (!data) {
-                        continue;
-                    }
-
-                    // -------------------------------------------------
-                    // DeepSeek [DONE]
-                    // -------------------------------------------------
-
-                    if (data === "[DONE]") {
-                        finished = true;
-                        break;
-                    }
-
-                    let packet;
-
-                    try {
-                        packet =
-                            JSON.parse(data);
-                    } catch {
-                        continue;
-                    }
-
-                    const choice =
-                        packet?.choices?.[0];
-
-                    const delta =
-                        choice?.delta;
-
-                    // =================================================
-                    // THINKING / REASONING
-                    // =================================================
-
-                    if (
-                        delta &&
-                        typeof delta.reasoning_content === "string" &&
-                        delta.reasoning_content.length > 0
-                    ) {
-                        sendEvent({
-                            type: "reasoning",
-                            content:
-                                delta.reasoning_content
-                        });
-                    }
-
-                    // =================================================
-                    // FINAL ANSWER
-                    // =================================================
-
-                    if (
-                        delta &&
-                        typeof delta.content === "string" &&
-                        delta.content.length > 0
-                    ) {
-                        sendEvent({
-                            type: "delta",
-                            content:
-                                delta.content
-                        });
-                    }
-
-                    // =================================================
-                    // Usage
-                    // =================================================
-
-                    if (packet?.usage) {
-                        sendEvent({
-                            type: "usage",
-                            usage: packet.usage
-                        });
-                    }
                 }
+
             }
 
-            // ---------------------------------------------------------
-            // Flush remaining UTF-8 bytes
-            // ---------------------------------------------------------
 
-            buffer += decoder.decode();
+            // =====================================================
+            // FLUSH UTF-8
+            // =====================================================
 
-            // ---------------------------------------------------------
-            // Process remaining SSE event
-            // ---------------------------------------------------------
+            buffer +=
+                decoder.decode();
 
-            if (!closed && buffer.trim()) {
+
+            // =====================================================
+            // PROCESS REMAINING EVENT
+            // =====================================================
+
+            if (
+                !closed &&
+                buffer.trim()
+            ) {
 
                 const events =
-                    buffer.split(/\r?\n\r?\n/);
+                    buffer.split(
+                        /\r?\n\r?\n/
+                    );
 
-                for (const event of events) {
 
-                    const lines =
-                        event.split(/\r?\n/);
+                for (
+                    const event
+                    of events
+                ) {
 
-                    const dataLines =
-                        lines
-                            .filter(line =>
-                                line.startsWith("data:")
-                            )
-                            .map(line =>
-                                line
-                                    .slice(5)
-                                    .trim()
-                            );
-
-                    if (dataLines.length === 0) {
-                        continue;
+                    if (
+                        closed
+                    ) {
+                        break;
                     }
 
-                    const data =
-                        dataLines.join("\n");
 
-                    if (!data || data === "[DONE]") {
-                        continue;
-                    }
+                    processProviderEvent(
+                        event
+                    );
 
-                    try {
-                        const packet =
-                            JSON.parse(data);
-
-                        const choice =
-                            packet?.choices?.[0];
-
-                        const delta =
-                            choice?.delta;
-
-                        // reasoning
-                        if (
-                            delta &&
-                            typeof delta.reasoning_content === "string" &&
-                            delta.reasoning_content.length > 0
-                        ) {
-                            sendEvent({
-                                type: "reasoning",
-                                content:
-                                    delta.reasoning_content
-                            });
-                        }
-
-                        // answer
-                        if (
-                            delta &&
-                            typeof delta.content === "string" &&
-                            delta.content.length > 0
-                        ) {
-                            sendEvent({
-                                type: "delta",
-                                content:
-                                    delta.content
-                            });
-                        }
-
-                        // usage
-                        if (packet?.usage) {
-                            sendEvent({
-                                type: "usage",
-                                usage: packet.usage
-                            });
-                        }
-
-                    } catch {
-                        // 忽略无法解析的残留数据
-                    }
                 }
+
             }
 
-            // ---------------------------------------------------------
-            // Normal Finish
-            // ---------------------------------------------------------
 
-            if (!closed) {
+            // =====================================================
+            // NORMAL FINISH
+            // =====================================================
+
+            if (
+                !closed
+            ) {
+
                 sendEvent({
-                    type: "done"
+
+                    type:
+                        "done"
+
                 });
+
             }
 
         } catch (error) {
 
             console.error(
-                "[CQS AI Stream Error]",
+
+                `[CQS ${providerConfig.name} Stream Error]`,
+
                 error
+
             );
 
-            if (!closed) {
+
+            if (
+                !closed
+            ) {
 
                 sendEvent({
-                    type: "error",
+
+                    type:
+                        "error",
+
                     error:
-                        error?.name === "AbortError"
+                        error?.name ===
+                        "AbortError"
+
                             ? "AI 请求已取消"
-                            : "AI 流式传输发生错误"
+
+                            : `${providerConfig.name} AI 流式传输发生错误`
+
                 });
 
+
                 sendEvent({
-                    type: "done"
+
+                    type:
+                        "done"
+
                 });
+
             }
 
         } finally {
 
-            clearTimeout(timeout);
+            clearTimeout(
+                timeout
+            );
+
 
             try {
+
                 reader.releaseLock();
+
             } catch {}
 
-            if (!closed) {
+
+            if (
+                !closed
+            ) {
+
                 try {
+
                     res.end();
+
                 } catch {}
+
             }
+
         }
 
     } catch (error) {
@@ -709,41 +1513,67 @@ export default async function handler(req, res) {
             error
         );
 
-        // ---------------------------------------------------------
-        // SSE already started
-        // ---------------------------------------------------------
 
-        if (res.headersSent) {
+        // =====================================================
+        // SSE ALREADY STARTED
+        // =====================================================
+
+        if (
+            res.headersSent
+        ) {
 
             try {
 
                 res.write(
+
                     `data: ${JSON.stringify({
-                        type: "error",
-                        error: "服务器内部错误"
+
+                        type:
+                            "error",
+
+                        error:
+                            "服务器内部错误"
+
                     })}\n\n`
+
                 );
 
+
                 res.write(
+
                     `data: ${JSON.stringify({
-                        type: "done"
+
+                        type:
+                            "done"
+
                     })}\n\n`
+
                 );
+
 
                 res.end();
 
             } catch {}
 
+
             return;
+
         }
 
-        // ---------------------------------------------------------
-        // Normal JSON error
-        // ---------------------------------------------------------
+
+        // =====================================================
+        // NORMAL JSON ERROR
+        // =====================================================
 
         return res.status(500).json({
+
             success: false,
-            error: "服务器内部错误"
+
+            error:
+                "服务器内部错误"
+
         });
+
     }
+
 }
