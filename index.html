@@ -6,912 +6,1463 @@
 <meta name="theme-color" content="#020617">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>CQS AI Global v1.1</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<title>CQS AI Global</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+<!-- Font Awesome -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
+<!-- Marked -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<!-- Highlight.js -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
+>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
 
 <style>
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-    scrollbar-width:none;
+:root {
+    --bg: #020617;
+    --bg2: #080d18;
+    --panel: #0b1220;
+    --panel2: #0f172a;
+    --border: #1e293b;
+    --muted: #64748b;
+    --text: #f8fafc;
+    --indigo: #6366f1;
 }
-*::-webkit-scrollbar{
-    width:0;
-    height:0;
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
-body{
-    width:100%;
-    height:100%;
-    margin:0;
-    padding:0;
-    overflow:hidden;
-    background:#020617;
-    overscroll-behavior:none;
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
 }
 
-body{
-    min-height:100vh;
-    min-height:100dvh;
-    color:#f8fafc;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;
+body {
+    color: var(--text);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+    overflow: hidden;
 }
 
 button,
-input,
-select{
-    font:inherit;
+textarea,
+input {
+    font: inherit;
 }
 
-button{
-    touch-action:manipulation;
+button {
+    cursor: pointer;
 }
 
-.message-enter{
-    animation:messageEnter .22s ease-out;
+textarea {
+    outline: none;
 }
 
-@keyframes messageEnter{
-    from{
-        opacity:0;
-        transform:translateY(8px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
 }
 
 /* =========================================================
-   INTRO
-   ========================================================= */
+   APP
+========================================================= */
 
-#cqs-intro{
-    position:fixed;
-    inset:0;
-    z-index:99999;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    background:
-        radial-gradient(circle at 50% 45%,rgba(59,130,246,.18),transparent 26%),
-        radial-gradient(circle at 50% 55%,rgba(99,102,241,.08),transparent 40%),
-        #020617;
-    transition:opacity .8s ease,visibility .8s ease;
-}
-
-#cqs-intro.intro-hidden{
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-}
-
-.intro-hex{
-    position:relative;
-    width:110px;
-    height:110px;
-    clip-path:polygon(
-        25% 6.7%,
-        75% 6.7%,
-        100% 50%,
-        75% 93.3%,
-        25% 93.3%,
-        0 50%
-    );
-    background:
-        conic-gradient(
-            from 0deg,
-            #ff004c,
-            #ff8a00,
-            #ffe600,
-            #20ff70,
-            #00d9ff,
-            #695cff,
-            #ff28d7,
-            #ff004c
-        );
-    animation:coreRotate 5s linear infinite;
-    filter:drop-shadow(0 0 14px rgba(0,217,255,.35));
-    margin-bottom:24px;
-}
-
-.intro-hex::after{
-    content:"";
-    position:absolute;
-    inset:5px;
-    clip-path:inherit;
-    background:#020617;
-}
-
-@keyframes coreRotate{
-    from{
-        transform:rotate(0deg);
-    }
-    to{
-        transform:rotate(360deg);
-    }
+#app {
+    width: 100%;
+    height: 100dvh;
+    min-height: 100svh;
+    display: flex;
+    overflow: hidden;
+    background: var(--bg);
 }
 
 /* =========================================================
    SIDEBAR
-   ========================================================= */
+========================================================= */
 
-#sidebar-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.55);
-    backdrop-filter:blur(3px);
-    z-index:80;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .25s ease;
+#sidebar {
+    width: 280px;
+    min-width: 280px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #070b14;
+    border-right: 1px solid var(--border);
+    z-index: 100;
+    transition: transform .25s ease;
 }
 
-#sidebar-overlay.open{
-    opacity:1;
-    pointer-events:auto;
+.sidebar-header {
+    height: 64px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border);
 }
 
-#sidebar{
-    position:fixed;
-    top:0;
-    left:0;
-    bottom:0;
-    width:min(320px,86vw);
-    z-index:90;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(15,23,42,.98),
-            rgba(2,6,23,.99)
-        );
-    border-right:1px solid #1e293b;
-    transform:translateX(-105%);
-    transition:transform .28s cubic-bezier(.22,.8,.24,1);
-    display:flex;
-    flex-direction:column;
-    box-shadow:20px 0 60px rgba(0,0,0,.35);
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
 }
 
-#sidebar.open{
-    transform:translateX(0);
+.brand-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    font-weight: 800;
+    box-shadow: 0 8px 25px rgba(99, 102, 241, .25);
 }
 
-.sidebar-top{
-    flex-shrink:0;
-    padding:
-        calc(env(safe-area-inset-top) + 14px)
-        14px
-        12px;
-    border-bottom:1px solid #1e293b;
+.brand-title {
+    font-size: 14px;
+    font-weight: 650;
+    letter-spacing: .2px;
 }
 
-.sidebar-brand{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:14px;
+.brand-version {
+    margin-top: 2px;
+    color: #475569;
+    font-size: 9px;
 }
 
-.sidebar-brand-title{
-    font-size:15px;
-    font-weight:700;
-    letter-spacing:.04em;
+.new-chat-wrap {
+    padding: 13px;
 }
 
-.sidebar-brand-sub{
-    color:#64748b;
-    font-size:10px;
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-    margin-top:2px;
+.new-chat {
+    width: 100%;
+    height: 44px;
+    border: 0;
+    border-radius: 12px;
+    color: white;
+    background: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: .18s;
 }
 
-.sidebar-close{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    background:#0f172a;
-    border:1px solid #1e293b;
-    color:#94a3b8;
+.new-chat:hover {
+    background: #6366f1;
 }
 
-.new-chat-btn{
-    width:100%;
-    height:44px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:0 13px;
-    color:white;
-    background:#4f46e5;
-    border:1px solid rgba(129,140,248,.35);
-    box-shadow:0 8px 24px rgba(79,70,229,.22);
-    transition:.2s;
+.new-chat:active {
+    transform: scale(.985);
 }
 
-.new-chat-btn:active{
-    transform:scale(.98);
+.sidebar-section-title {
+    padding: 8px 12px 5px;
+    color: #475569;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
 }
 
-.mode-list{
-    padding:12px 10px 8px;
-    border-bottom:1px solid #1e293b;
+.mode-list {
+    padding: 0 10px;
 }
 
-.mode-item{
-    width:100%;
-    height:42px;
-    display:flex;
-    align-items:center;
-    gap:11px;
-    padding:0 11px;
-    border-radius:10px;
-    color:#94a3b8;
-    font-size:13px;
-    text-align:left;
-    transition:.18s;
+.mode-btn {
+    width: 100%;
+    height: 38px;
+    margin-bottom: 3px;
+    padding: 0 11px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    text-align: left;
+    transition: .18s;
 }
 
-.mode-item:hover{
-    background:#0f172a;
-    color:#e2e8f0;
+.mode-btn:hover {
+    background: #111827;
+    color: #e2e8f0;
 }
 
-.mode-item.active{
-    background:rgba(79,70,229,.14);
-    color:#c7d2fe;
-    border:1px solid rgba(99,102,241,.18);
+.mode-btn.active {
+    color: #a5b4fc;
+    background: #111827;
 }
 
-.mode-icon{
-    width:20px;
-    text-align:center;
+.mode-btn i {
+    width: 17px;
+    text-align: center;
 }
 
-.history-header{
-    padding:13px 13px 7px;
-    color:#64748b;
-    font-size:10px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:.12em;
+.history-area {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 5px 10px 10px;
 }
 
-#history-list{
-    flex:1;
-    overflow-y:auto;
-    padding:0 8px 20px;
+.history-item {
+    position: relative;
+    width: 100%;
+    min-height: 39px;
+    padding: 0 8px;
+    margin-bottom: 3px;
+    border-radius: 9px;
+    border: 0;
+    background: transparent;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+    transition: .15s;
 }
 
-.history-empty{
-    padding:22px 14px;
-    text-align:center;
-    color:#475569;
-    font-size:12px;
-    line-height:1.6;
+.history-item:hover {
+    background: #111827;
+    color: #e2e8f0;
 }
 
-.history-group-title{
-    color:#475569;
-    font-size:10px;
-    padding:10px 7px 5px;
+.history-item.active {
+    background: #172033;
+    color: #f8fafc;
 }
 
-.history-item{
-    width:100%;
-    min-height:46px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:7px 8px;
-    margin-bottom:3px;
-    border-radius:10px;
-    color:#94a3b8;
-    text-align:left;
-    transition:.18s;
+.history-item-title {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 11px;
 }
 
-.history-item:hover{
-    background:#0f172a;
+.history-delete {
+    width: 25px;
+    height: 25px;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 7px;
+    color: #64748b;
+    background: transparent;
+    opacity: 0;
 }
 
-.history-item.active{
-    background:#111c34;
-    color:#e2e8f0;
+.history-item:hover .history-delete {
+    opacity: 1;
 }
 
-.history-item-main{
-    min-width:0;
-    flex:1;
+.history-delete:hover {
+    color: #f87171;
+    background: #1f2937;
 }
 
-.history-item-title{
-    overflow:hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis;
-    font-size:12px;
+.sidebar-tools {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    padding: 8px 10px;
 }
 
-.history-item-time{
-    color:#475569;
-    font-size:9px;
-    margin-top:2px;
+.tool-btn {
+    width: 100%;
+    min-height: 45px;
+    padding: 6px 8px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-align: left;
+    transition: .18s;
 }
 
-.history-delete{
-    opacity:0;
-    width:28px;
-    height:28px;
-    flex-shrink:0;
-    border-radius:8px;
-    color:#64748b;
+.tool-btn:hover {
+    background: #111827;
+    color: #e2e8f0;
 }
 
-.history-item:hover .history-delete,
-.history-item.active .history-delete{
-    opacity:1;
+.tool-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #111827;
+    border: 1px solid #1e293b;
+    color: #818cf8;
+    font-size: 11px;
 }
 
-.history-delete:hover{
-    color:#f87171;
-    background:#1e293b;
+.tool-content {
+    min-width: 0;
+    flex: 1;
 }
 
-.sidebar-bottom{
-    flex-shrink:0;
-    padding:
-        10px
-        12px
-        calc(env(safe-area-inset-bottom) + 12px);
-    border-top:1px solid #1e293b;
-    color:#475569;
-    font-size:10px;
-    text-align:center;
+.tool-title {
+    font-size: 11px;
+    color: #cbd5e1;
+}
+
+.tool-status {
+    margin-top: 2px;
+    font-size: 8px;
+    color: #475569;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-user {
+    height: 55px;
+    flex-shrink: 0;
+    padding: 0 13px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #172033;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.user-name {
+    color: #cbd5e1;
+    font-size: 10px;
+}
+
+.settings-btn {
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 8px;
+    color: #64748b;
+    background: transparent;
+}
+
+.settings-btn:hover {
+    background: #111827;
+    color: white;
 }
 
 /* =========================================================
    MAIN
-   ========================================================= */
+========================================================= */
 
-#app-shell{
-    width:100%;
-    height:100vh;
-    height:100dvh;
-    display:flex;
-    flex-direction:column;
-    background:#020617;
+#main {
+    min-width: 0;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
 }
 
-#chat-container{
-    scroll-behavior:smooth;
+.topbar {
+    height: 58px;
+    flex-shrink: 0;
+    padding: 0 17px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(30, 41, 59, .8);
+    background: rgba(2, 6, 23, .88);
+    backdrop-filter: blur(16px);
+    z-index: 20;
 }
 
-#chat-container.keyboard-active{
-    scroll-padding-bottom:20px;
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 11px;
 }
 
-/* =========================================================
-   THINKING
-   ========================================================= */
-
-.thinking-box{
-    border:1px solid rgba(99,102,241,.18);
-    background:rgba(15,23,42,.72);
-    border-radius:16px;
-    overflow:hidden;
+.mobile-menu-btn {
+    display: none;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 8px;
+    color: #94a3b8;
+    background: transparent;
 }
 
-.thinking-header{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:10px 12px;
-    cursor:pointer;
-    user-select:none;
+.mobile-menu-btn:hover {
+    background: #111827;
+    color: white;
 }
 
-.thinking-pulse{
-    width:7px;
-    height:7px;
-    border-radius:50%;
-    background:#818cf8;
-    box-shadow:0 0 0 0 rgba(129,140,248,.6);
-    animation:thinkingPulse 1.5s infinite;
-    flex-shrink:0;
+.model-name {
+    color: #e2e8f0;
+    font-size: 12px;
+    font-weight: 600;
 }
 
-@keyframes thinkingPulse{
-    0%{
-        box-shadow:0 0 0 0 rgba(129,140,248,.6);
-    }
-    70%{
-        box-shadow:0 0 0 7px rgba(129,140,248,0);
-    }
-    100%{
-        box-shadow:0 0 0 0 rgba(129,140,248,0);
-    }
+.online-badge {
+    padding: 3px 8px;
+    border-radius: 999px;
+    color: #818cf8;
+    background: rgba(99, 102, 241, .08);
+    border: 1px solid rgba(99, 102, 241, .2);
+    font-size: 9px;
 }
 
-.thinking-content{
-    max-height:260px;
-    overflow-y:auto;
-    padding:0 12px 12px;
-    color:#94a3b8;
-    font-size:12px;
-    line-height:1.7;
-    white-space:pre-wrap;
-    word-break:break-word;
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 7px;
 }
 
-.thinking-box.collapsed .thinking-content{
-    display:none;
+.top-btn {
+    height: 31px;
+    padding: 0 10px;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    color: #94a3b8;
+    background: transparent;
+    font-size: 10px;
 }
 
-.thinking-box.finished .thinking-pulse{
-    animation:none;
-    background:#475569;
-    box-shadow:none;
-}
-
-.thinking-box.finished .thinking-status{
-    color:#64748b;
+.top-btn:hover {
+    color: white;
+    border-color: #334155;
+    background: #0f172a;
 }
 
 /* =========================================================
-   AI CONTENT
-   ========================================================= */
+   CHAT
+========================================================= */
 
-.ai-content{
-    white-space:normal !important;
+#chat-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 26px 17px;
+    scroll-behavior: smooth;
 }
 
-.ai-content h1,
-.ai-content h2,
-.ai-content h3{
-    margin:12px 0 8px;
-    font-weight:700;
-    color:#f8fafc;
+.chat-inner {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-.ai-content h1{font-size:1.25rem;}
-.ai-content h2{font-size:1.1rem;}
-.ai-content h3{font-size:1rem;}
-
-.ai-content p{
-    margin:7px 0;
+.welcome {
+    min-height: calc(100% - 20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
-.ai-content ul,
-.ai-content ol{
-    margin:7px 0;
-    padding-left:22px;
+.welcome-inner {
+    width: 100%;
+    max-width: 460px;
 }
 
-.ai-content li{
-    margin:4px 0;
+.welcome-logo {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 18px;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a5b4fc;
+    background: rgba(99, 102, 241, .08);
+    border: 1px solid rgba(99, 102, 241, .18);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
+    animation: welcomePulse 2.8s ease-in-out infinite;
 }
 
-.ai-content code{
-    background:rgba(15,23,42,.9);
-    border:1px solid rgba(51,65,85,.8);
-    border-radius:5px;
-    padding:1px 5px;
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-    font-size:.9em;
-}
-
-.ai-content pre{
-    background:#020617;
-    border:1px solid #1e293b;
-    border-radius:10px;
-    padding:12px;
-    overflow-x:auto;
-    margin:10px 0;
-}
-
-.ai-content pre code{
-    border:0;
-    padding:0;
-    background:transparent;
-}
-
-.ai-content blockquote{
-    border-left:3px solid #4f46e5;
-    padding-left:12px;
-    margin:10px 0;
-    color:#94a3b8;
-}
-
-/* =========================================================
-   MODE EMPTY / STILL / AGENT
-   ========================================================= */
-
-.mode-landing{
-    width:100%;
-    min-height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:30px 10px;
-}
-
-.mode-card{
-    width:min(460px,100%);
-    text-align:center;
-}
-
-.mode-orb{
-    width:88px;
-    height:88px;
-    border-radius:28px;
-    margin:0 auto 20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:
-        radial-gradient(
-            circle at 35% 30%,
-            rgba(129,140,248,.9),
-            rgba(79,70,229,.35) 45%,
-            rgba(2,6,23,.2) 70%
-        );
-    border:1px solid rgba(129,140,248,.3);
-    box-shadow:
-        0 0 40px rgba(79,70,229,.16),
-        inset 0 0 30px rgba(99,102,241,.1);
-}
-
-.mode-card h2{
-    font-size:22px;
-    font-weight:700;
-    margin-bottom:8px;
-}
-
-.mode-card p{
-    color:#64748b;
-    font-size:13px;
-    line-height:1.7;
-}
-
-.mode-action{
-    margin-top:20px;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:10px 16px;
-    border-radius:10px;
-    background:#4f46e5;
-    color:white;
-    font-size:12px;
-    border:1px solid rgba(129,140,248,.3);
-}
-
-/* =========================================================
-   PRIVACY
-   ========================================================= */
-
-#privacy-banner{
-    backdrop-filter:blur(14px);
-}
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media (min-width:768px){
-    #sidebar{
-        width:320px;
+@keyframes welcomePulse {
+    0%,100% {
+        transform: translateY(0);
+        box-shadow: 0 20px 60px rgba(0,0,0,.2);
     }
-
-    #sidebar-overlay{
-        display:none;
-    }
-
-    #sidebar{
-        position:fixed;
+    50% {
+        transform: translateY(-4px);
+        box-shadow: 0 25px 70px rgba(99,102,241,.12);
     }
 }
 
-@media (max-width:480px){
-    .bubble-max{
-        max-width:86%;
+.welcome-title {
+    color: #f8fafc;
+    font-size: 19px;
+    font-weight: 650;
+}
+
+.welcome-desc {
+    margin-top: 7px;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.quick-actions {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.quick-action {
+    padding: 11px;
+    border: 1px solid #1e293b;
+    border-radius: 11px;
+    color: #94a3b8;
+    background: #080d18;
+    font-size: 10px;
+    text-align: left;
+    transition: .18s;
+}
+
+.quick-action:hover {
+    border-color: #334155;
+    color: #e2e8f0;
+    background: #0f172a;
+}
+
+.message-row {
+    width: 100%;
+    display: flex;
+    margin-bottom: 21px;
+}
+
+.message-row.user {
+    justify-content: flex-end;
+}
+
+.message-row.assistant {
+    justify-content: flex-start;
+}
+
+.message {
+    max-width: min(82%, 760px);
+}
+
+.message-role {
+    margin-bottom: 5px;
+    color: #475569;
+    font-size: 9px;
+}
+
+.message-row.user .message-role {
+    text-align: right;
+}
+
+.message-bubble {
+    padding: 12px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.message-row.user .message-bubble {
+    color: white;
+    background: #4f46e5;
+    border-bottom-right-radius: 5px;
+}
+
+.message-row.assistant .message-bubble {
+    color: #dbe4f0;
+    background: #0b1220;
+    border: 1px solid #1e293b;
+    border-bottom-left-radius: 5px;
+}
+
+.message-attachment {
+    margin-top: 7px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    color: #94a3b8;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    font-size: 10px;
+}
+
+.typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 20px;
+}
+
+.typing span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #64748b;
+    animation: typing 1s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.typing span:nth-child(3) {
+    animation-delay: .3s;
+}
+
+@keyframes typing {
+    0%,80%,100% {
+        opacity: .25;
+        transform: translateY(0);
+    }
+    40% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+}
+
+/* Markdown */
+
+.markdown-body p {
+    margin: 0 0 10px;
+}
+
+.markdown-body p:last-child {
+    margin-bottom: 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+    margin: 7px 0 10px;
+    padding-left: 22px;
+}
+
+.markdown-body li {
+    margin: 3px 0;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+    margin: 13px 0 7px;
+    color: #f8fafc;
+}
+
+.markdown-body h1 {
+    font-size: 18px;
+}
+
+.markdown-body h2 {
+    font-size: 16px;
+}
+
+.markdown-body h3 {
+    font-size: 14px;
+}
+
+.markdown-body blockquote {
+    margin: 10px 0;
+    padding-left: 12px;
+    border-left: 3px solid #6366f1;
+    color: #94a3b8;
+}
+
+.markdown-body pre {
+    margin: 10px 0;
+    padding: 12px;
+    overflow-x: auto;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    background: #020617 !important;
+}
+
+.markdown-body code {
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+    font-size: .88em;
+}
+
+.markdown-body :not(pre) > code {
+    padding: 2px 5px;
+    border-radius: 5px;
+    background: #1e293b;
+    color: #c4b5fd;
+}
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.input-area {
+    flex-shrink: 0;
+    padding: 10px 17px 14px;
+    background: rgba(2, 6, 23, .96);
+    border-top: 1px solid rgba(30, 41, 59, .7);
+}
+
+.input-inner {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.chat-form {
+    position: relative;
+    border: 1px solid #1e293b;
+    border-radius: 17px;
+    background: #0b1220;
+    box-shadow: 0 10px 35px rgba(0,0,0,.16);
+    transition: .18s;
+}
+
+.chat-form:focus-within {
+    border-color: rgba(99, 102, 241, .55);
+}
+
+#user-input {
+    width: 100%;
+    min-height: 50px;
+    max-height: 150px;
+    resize: none;
+    padding: 14px 15px 49px;
+    border: 0;
+    background: transparent;
+    color: #f8fafc;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+#user-input::placeholder {
+    color: #475569;
+}
+
+.input-toolbar {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input-left,
+.input-right {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.input-btn {
+    width: 31px;
+    height: 31px;
+    border: 0;
+    border-radius: 8px;
+    color: #64748b;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+}
+
+.input-btn:hover,
+.input-btn.active {
+    color: #cbd5e1;
+    background: #172033;
+}
+
+.send-btn {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 10px;
+    color: white;
+    background: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(79,70,229,.25);
+}
+
+.send-btn:hover {
+    background: #6366f1;
+}
+
+.send-btn:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.input-note {
+    padding-top: 6px;
+    text-align: center;
+    color: #334155;
+    font-size: 8px;
+}
+
+/* =========================================================
+   FILE PREVIEW
+========================================================= */
+
+#attachment-preview {
+    display: none;
+    margin-bottom: 7px;
+}
+
+.attachment-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 100%;
+    padding: 7px 9px;
+    border: 1px solid #1e293b;
+    border-radius: 9px;
+    color: #94a3b8;
+    background: #0b1220;
+    font-size: 10px;
+}
+
+.attachment-chip span {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.attachment-remove {
+    border: 0;
+    color: #64748b;
+    background: transparent;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+#sidebar-backdrop {
+    display: none;
+}
+
+@media (max-width: 1023px) {
+    #sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        transform: translateX(-100%);
+        box-shadow: 20px 0 50px rgba(0,0,0,.35);
+    }
+
+    #sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    #sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        display: none;
+        background: rgba(0,0,0,.6);
+        backdrop-filter: blur(3px);
+        z-index: 90;
+    }
+
+    #sidebar-backdrop.visible {
+        display: block;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .message {
+        max-width: 91%;
+    }
+
+    .topbar {
+        height: 55px;
+    }
+
+    .input-area {
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar-right .lang-btn {
+        display: none;
+    }
+
+    .model-name {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(0,0,0,.68);
+    backdrop-filter: blur(8px);
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 500px;
+    max-height: min(760px, 90dvh);
+    overflow: hidden;
+    border: 1px solid #1e293b;
+    border-radius: 18px;
+    background: #0b1220;
+    box-shadow: 0 30px 100px rgba(0,0,0,.5);
+}
+
+.modal-header {
+    height: 58px;
+    padding: 0 17px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #1e293b;
+}
+
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.modal-close {
+    width: 31px;
+    height: 31px;
+    border: 0;
+    border-radius: 8px;
+    color: #64748b;
+    background: transparent;
+}
+
+.modal-close:hover {
+    color: white;
+    background: #172033;
+}
+
+.modal-body {
+    padding: 17px;
+    overflow-y: auto;
+}
+
+.modal-description {
+    margin-bottom: 15px;
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.modal-btn {
+    width: 100%;
+    min-height: 45px;
+    margin-bottom: 8px;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    color: #cbd5e1;
+    background: #0f172a;
+    font-size: 11px;
+    font-weight: 550;
+}
+
+.modal-btn:hover {
+    background: #172033;
+    border-color: #334155;
+}
+
+.modal-btn.primary {
+    color: white;
+    border-color: transparent;
+    background: #4f46e5;
+}
+
+.modal-btn.primary:hover {
+    background: #6366f1;
+}
+
+.modal-result {
+    display: none;
+    margin-top: 10px;
+    padding: 11px;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    color: #94a3b8;
+    background: #020617;
+    font-size: 10px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.modal-result.show {
+    display: block;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+#toast-container {
+    position: fixed;
+    left: 50%;
+    bottom: 85px;
+    z-index: 1000;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.toast {
+    padding: 9px 13px;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: #e2e8f0;
+    background: #0f172a;
+    box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    font-size: 10px;
+    animation: toastIn .2s ease-out;
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
+   WELCOME ANIMATION
+========================================================= */
+
+#boot-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #020617;
+    pointer-events: none;
+    animation: bootOut .8s ease 2.1s forwards;
+}
+
+.boot-text {
+    color: #e2e8f0;
+    font-size: clamp(23px, 7vw, 42px);
+    font-weight: 700;
+    letter-spacing: .08em;
+}
+
+.boot-text span {
+    opacity: 0;
+    animation: letterIn .25s ease forwards;
+}
+
+@keyframes letterIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bootOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
     }
 }
 </style>
 </head>
 
-<body class="bg-slate-950 text-slate-100">
+<body>
 
-<!-- =======================================================
-     INTRO
-======================================================= -->
+<!-- =========================================================
+     BOOT
+========================================================= -->
 
-<div id="cqs-intro">
-    <div class="intro-hex"></div>
-    <div
-        id="intro-typing-text"
-        class="text-sm font-mono tracking-widest text-indigo-400 h-6">
-    </div>
+<div id="boot-screen">
+    <div id="boot-text" class="boot-text"></div>
 </div>
 
-<!-- =======================================================
-     SIDEBAR OVERLAY
-======================================================= -->
+<div id="app">
 
-<div id="sidebar-overlay"></div>
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
 
-<!-- =======================================================
-     SIDEBAR
-======================================================= -->
+    <aside id="sidebar">
 
-<aside id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <div class="brand-logo">C</div>
 
-    <div class="sidebar-top">
-
-        <div class="sidebar-brand">
-
-            <div>
-                <div class="sidebar-brand-title">
-                    CQS AI Global
-                </div>
-
-                <div class="sidebar-brand-sub">
-                    INTELLIGENT CONVERSATION SYSTEM
+                <div>
+                    <div class="brand-title">CQS AI Global</div>
+                    <div class="brand-version">Advanced AI Workspace</div>
                 </div>
             </div>
 
             <button
-                id="sidebar-close"
-                class="sidebar-close"
-                type="button">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-        </div>
-
-        <button
-            id="new-chat-btn"
-            class="new-chat-btn"
-            type="button">
-
-            <i class="fa-solid fa-plus"></i>
-
-            <span id="new-chat-text">
-                新建对话
-            </span>
-
-        </button>
-
-    </div>
-
-    <!-- MODE -->
-
-    <div class="mode-list">
-
-        <button
-            class="mode-item active"
-            data-mode="chat"
-            type="button">
-
-            <span class="mode-icon">
-                <i class="fa-regular fa-message"></i>
-            </span>
-
-            <span>Chat</span>
-
-        </button>
-
-        <button
-            class="mode-item"
-            data-mode="still"
-            type="button">
-
-            <span class="mode-icon">
-                <i class="fa-solid fa-circle-dot"></i>
-            </span>
-
-            <span>STILL</span>
-
-        </button>
-
-        <button
-            class="mode-item"
-            data-mode="agent"
-            type="button">
-
-            <span class="mode-icon">
-                <i class="fa-solid fa-robot"></i>
-            </span>
-
-            <span>Agent</span>
-
-        </button>
-
-    </div>
-
-    <!-- HISTORY -->
-
-    <div class="history-header">
-        History
-    </div>
-
-    <div id="history-list"></div>
-
-    <div class="sidebar-bottom">
-        CQS AI Global v1.1
-    </div>
-
-</aside>
-
-<!-- =======================================================
-     PRIVACY
-======================================================= -->
-
-<div
-    id="privacy-banner"
-    class="fixed bottom-0 inset-x-0 z-50 bg-slate-900/95 border-t border-slate-800 p-4 backdrop-blur-md hidden">
-
-    <div class="max-w-md mx-auto flex flex-col space-y-3">
-
-        <p
-            id="txt-privacy-desc"
-            class="text-xs text-slate-400 leading-relaxed">
-        </p>
-
-        <div class="flex items-center justify-between">
-
-            <button
-                id="privacy-policy-link"
-                class="text-xs text-indigo-400 underline"
-                type="button">
-                Privacy Policy
-            </button>
-
-            <button
-                id="privacy-accept"
-                class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg font-medium transition"
-                type="button">
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- =======================================================
-     PRIVACY MODAL
-======================================================= -->
-
-<div
-    id="privacy-modal"
-    class="fixed inset-0 z-[100] hidden items-center justify-center p-5 bg-black/60 backdrop-blur-sm">
-
-    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-5">
-
-        <div class="flex items-center justify-between mb-4">
-
-            <h2 class="text-sm font-semibold">
-                Privacy Policy
-            </h2>
-
-            <button
-                id="privacy-modal-close"
-                class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400"
-                type="button">
-
-                <i class="fa-solid fa-xmark"></i>
-
-            </button>
-
-        </div>
-
-        <p class="text-xs text-slate-400 leading-7">
-            CQS AI Global uses the configured secure gateway to process
-            conversations. API keys are not stored in the browser.
-            Local conversation history is stored in this browser unless
-            you clear site data.
-        </p>
-
-    </div>
-
-</div>
-
-<input
-    type="file"
-    id="hidden-file-input"
-    class="hidden"
-    multiple>
-
-<!-- =======================================================
-     APP
-======================================================= -->
-
-<div id="app-shell">
-
-    <!-- HEADER -->
-
-    <header
-        class="shrink-0 px-3 sm:px-4 py-3 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md z-20">
-
-        <div class="flex items-center min-w-0">
-
-            <button
-                id="menu-btn"
+                id="close-sidebar-btn"
+                class="mobile-menu-btn"
                 type="button"
-                class="w-9 h-9 mr-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center shrink-0">
+                aria-label="关闭菜单"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
 
-                <i class="fa-solid fa-bars"></i>
+        <div class="new-chat-wrap">
+            <button id="new-chat-btn" class="new-chat" type="button">
+                <i class="fa-solid fa-plus"></i>
+                <span data-i18n="newChat">新建对话</span>
+            </button>
+        </div>
 
+        <div class="sidebar-section-title" data-i18n="modes">
+            Modes
+        </div>
+
+        <div class="mode-list">
+
+            <button
+                class="mode-btn active"
+                data-mode="chat"
+                type="button"
+            >
+                <i class="fa-solid fa-comments"></i>
+                <span>Chat</span>
             </button>
 
-            <div class="flex items-center space-x-3 min-w-0">
+            <button
+                class="mode-btn"
+                data-mode="still"
+                type="button"
+            >
+                <i class="fa-solid fa-brain"></i>
+                <span>STILL</span>
+            </button>
 
-                <h1
-                    id="txt-title"
-                    class="text-base font-semibold tracking-wide truncate">
-                    CQS AI Global
-                </h1>
+            <button
+                class="mode-btn"
+                data-mode="agent"
+                type="button"
+            >
+                <i class="fa-solid fa-robot"></i>
+                <span>Agent</span>
+            </button>
 
-                <div class="relative shrink-0">
+        </div>
 
-                    <button
-                        id="model-select-btn"
-                        class="flex items-center space-x-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700 transition"
-                        type="button">
+        <div class="history-area">
 
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <div class="sidebar-section-title">
+                <span data-i18n="history">History</span>
+            </div>
 
-                        <span id="current-model-name">
-                            DeepSeek
-                        </span>
+            <div id="history-list"></div>
 
-                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+        </div>
 
-                    </button>
+        <div class="sidebar-tools">
 
-                    <div
-                        id="model-dropdown"
-                        class="absolute left-0 mt-2 w-40 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-1 hidden z-30">
+            <div class="sidebar-section-title">
+                <span data-i18n="tools">Tools</span>
+            </div>
 
-                        <div
-                            class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-200"
-                            data-model="DeepSeek">
+            <button id="notion-btn" class="tool-btn" type="button">
+                <div class="tool-icon">
+                    <i class="fa-solid fa-book"></i>
+                </div>
 
-                            <span>DeepSeek</span>
+                <div class="tool-content">
+                    <div class="tool-title">Notion</div>
+                    <div id="notion-status" class="tool-status">
+                        未连接
+                    </div>
+                </div>
 
-                            <i class="fa-solid fa-check text-indigo-400"></i>
+                <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
+            </button>
 
+            <button id="export-chat-btn" class="tool-btn" type="button">
+                <div class="tool-icon">
+                    <i class="fa-solid fa-file-export"></i>
+                </div>
+
+                <div class="tool-content">
+                    <div class="tool-title" data-i18n="exportChat">
+                        导出对话
+                    </div>
+
+                    <div class="tool-status">
+                        TXT / Markdown / JSON
+                    </div>
+                </div>
+
+                <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
+            </button>
+
+            <button id="share-chat-btn" class="tool-btn" type="button">
+                <div class="tool-icon">
+                    <i class="fa-solid fa-share-nodes"></i>
+                </div>
+
+                <div class="tool-content">
+                    <div class="tool-title" data-i18n="shareChat">
+                        分享对话
+                    </div>
+
+                    <div class="tool-status">
+                        当前对话
+                    </div>
+                </div>
+
+                <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
+            </button>
+
+        </div>
+
+        <div class="sidebar-user">
+
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="user-name">
+                    Global User
+                </div>
+            </div>
+
+            <button
+                id="settings-btn"
+                class="settings-btn"
+                type="button"
+                aria-label="设置"
+            >
+                <i class="fa-solid fa-gear"></i>
+            </button>
+
+        </div>
+
+    </aside>
+
+    <div id="sidebar-backdrop"></div>
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main id="main">
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    id="open-sidebar-btn"
+                    class="mobile-menu-btn"
+                    type="button"
+                    aria-label="打开菜单"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div>
+                    <div id="model-name" class="model-name">
+                        DeepSeek-R1
+                    </div>
+                </div>
+
+                <div id="online-badge" class="online-badge">
+                    Online
+                </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <button
+                    id="clear-current-btn"
+                    class="top-btn"
+                    type="button"
+                >
+                    <i class="fa-solid fa-broom"></i>
+                </button>
+
+                <button
+                    id="lang-btn"
+                    class="top-btn lang-btn"
+                    type="button"
+                >
+                    EN / 简
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- =================================================
+             CHAT CONTAINER
+        ================================================== -->
+
+        <div id="chat-container">
+
+            <div class="chat-inner">
+
+                <div id="welcome-screen" class="welcome">
+
+                    <div class="welcome-inner">
+
+                        <div class="welcome-logo">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+
+                        <div class="welcome-title" data-i18n="welcomeTitle">
+                            有什么我可以帮您的？
                         </div>
 
                         <div
-                            class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400"
-                            data-model="GPT-4o">
-
-                            <span>GPT-4o</span>
-
+                            class="welcome-desc"
+                            data-i18n="welcomeDesc"
+                        >
+                            基于 CQS AI Global 架构，为您提供安全、强大的智能对话体验。
                         </div>
 
-                        <div
-                            class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400"
-                            data-model="Claude 3.5">
+                        <div class="quick-actions">
 
-                            <span>Claude 3.5</span>
+                            <button
+                                class="quick-action"
+                                data-prompt="帮我分析一下这个问题，并给出清晰的解决方案。"
+                                type="button"
+                            >
+                                <i class="fa-solid fa-lightbulb mr-2"></i>
+                                分析问题
+                            </button>
 
-                        </div>
+                            <button
+                                class="quick-action"
+                                data-prompt="帮我制定一个详细、可执行的计划。"
+                                type="button"
+                            >
+                                <i class="fa-solid fa-list-check mr-2"></i>
+                                制定计划
+                            </button>
 
-                        <div
-                            class="model-option px-3 py-2 text-xs hover:bg-slate-800 cursor-pointer flex items-center justify-between text-slate-400"
-                            data-model="Gemini Pro">
+                            <button
+                                class="quick-action"
+                                data-prompt="请帮我检查并优化下面的代码。"
+                                type="button"
+                            >
+                                <i class="fa-solid fa-code mr-2"></i>
+                                优化代码
+                            </button>
 
-                            <span>Gemini Pro</span>
+                            <button
+                                class="quick-action"
+                                data-prompt="请用简单清楚的方式解释这个概念。"
+                                type="button"
+                            >
+                                <i class="fa-solid fa-graduation-cap mr-2"></i>
+                                解释概念
+                            </button>
 
                         </div>
 
@@ -919,600 +1470,817 @@ button{
 
                 </div>
 
-            </div>
-
-        </div>
-
-        <div class="flex items-center space-x-1.5 shrink-0">
-
-            <button
-                id="sound-toggle-btn"
-                class="text-slate-400 hover:text-slate-200 text-xs w-8 h-8 rounded-md border border-slate-800 bg-slate-900 transition"
-                type="button">
-
-                <i
-                    class="fa-solid fa-volume-high"
-                    id="sound-icon">
-                </i>
-
-            </button>
-
-            <select
-                id="lang-select"
-                class="bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded-md border border-slate-700 focus:outline-none">
-
-                <option value="zh">中文</option>
-                <option value="en">English</option>
-                <option value="ja">日本語</option>
-                <option value="ko">한국어</option>
-                <option value="fr">Français</option>
-                <option value="de">Deutsch</option>
-                <option value="es">Español</option>
-                <option value="ar">العربية</option>
-
-            </select>
-
-            <div
-                class="hidden sm:block text-[11px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-full font-mono">
-
-                <span id="token-count">
-                    0
-                </span>
-
-                tokens
+                <div id="messages"></div>
 
             </div>
 
         </div>
 
-    </header>
+        <!-- =================================================
+             INPUT
+        ================================================== -->
 
-    <!-- CHAT -->
+        <div class="input-area">
 
-    <main
-        id="chat-container"
-        class="flex-1 relative overflow-y-auto p-4 space-y-4"
-        style="padding-bottom:120px;">
+            <div class="input-inner">
+
+                <div id="attachment-preview">
+                    <div class="attachment-chip">
+                        <i class="fa-solid fa-paperclip"></i>
+                        <span id="attachment-name"></span>
+
+                        <button
+                            id="remove-attachment-btn"
+                            class="attachment-remove"
+                            type="button"
+                        >
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <form id="chat-form" class="chat-form">
+
+                    <textarea
+                        id="user-input"
+                        rows="1"
+                        autocomplete="off"
+                        spellcheck="false"
+                        placeholder="给 CQS AI 发送消息..."
+                    ></textarea>
+
+                    <div class="input-toolbar">
+
+                        <div class="input-left">
+
+                            <button
+                                id="attach-btn"
+                                class="input-btn"
+                                type="button"
+                                title="上传文件"
+                            >
+                                <i class="fa-solid fa-paperclip"></i>
+                            </button>
+
+                            <button
+                                id="mic-btn"
+                                class="input-btn"
+                                type="button"
+                                title="语音输入"
+                            >
+                                <i class="fa-solid fa-microphone"></i>
+                            </button>
+
+                            <input
+                                id="file-input"
+                                type="file"
+                                hidden
+                                multiple
+                            >
+
+                        </div>
+
+                        <div class="input-right">
+
+                            <button
+                                id="send-btn"
+                                class="send-btn"
+                                type="submit"
+                                title="发送"
+                            >
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+                <div class="input-note">
+                    CQS AI Global can make mistakes. Verify important information.
+                </div>
+
+            </div>
+
+        </div>
+
     </main>
 
-    <!-- ATTACHMENT -->
+</div>
 
-    <div
-        id="attachment-bar"
-        class="hidden shrink-0 px-4 py-2 bg-slate-900/90 border-t border-slate-800 flex items-center space-x-2 overflow-x-auto z-20">
+<!-- =========================================================
+     NOTION MODAL
+========================================================= -->
+
+<div id="notion-modal" class="modal">
+
+    <div class="modal-card">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                <i class="fa-solid fa-book"></i>
+                <span>Notion</span>
+            </div>
+
+            <button
+                id="notion-close-btn"
+                class="modal-close"
+                type="button"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="modal-description">
+                连接 Notion 后，可以将 CQS AI 对话保存到 Notion，
+                并通过后端 API 读取你的 Notion 页面。
+            </div>
+
+            <button
+                id="notion-connect-btn"
+                class="modal-btn primary"
+                type="button"
+            >
+                <i class="fa-solid fa-plug mr-2"></i>
+                连接 Notion
+            </button>
+
+            <button
+                id="notion-save-btn"
+                class="modal-btn"
+                type="button"
+            >
+                <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+                保存当前对话到 Notion
+            </button>
+
+            <button
+                id="notion-pages-btn"
+                class="modal-btn"
+                type="button"
+            >
+                <i class="fa-solid fa-file-lines mr-2"></i>
+                读取 Notion 页面
+            </button>
+
+            <div id="notion-result" class="modal-result"></div>
+
+        </div>
+
     </div>
 
-    <!-- INPUT -->
+</div>
 
-    <nav
-        class="shrink-0 p-3 pb-[calc(env(safe-area-inset-bottom)+12px)] bg-slate-900/95 border-t border-slate-800 z-20 flex items-center space-x-2">
+<!-- =========================================================
+     EXPORT MODAL
+========================================================= -->
 
-        <button
-            id="file-btn"
-            type="button"
-            class="w-12 h-12 bg-slate-800 text-slate-300 hover:text-white rounded-xl flex items-center justify-center shrink-0 border border-slate-700 active:scale-95 transition">
+<div id="export-modal" class="modal">
 
-            <i class="fa-solid fa-paperclip"></i>
+    <div class="modal-card">
 
-        </button>
+        <div class="modal-header">
 
-        <button
-            id="voice-btn"
-            type="button"
-            class="w-12 h-12 bg-slate-800 text-slate-300 hover:text-white rounded-xl flex items-center justify-center shrink-0 border border-slate-700 active:scale-95 transition">
+            <div class="modal-title">
+                <i class="fa-solid fa-file-export"></i>
+                <span data-i18n="exportChat">导出对话</span>
+            </div>
 
-            <i class="fa-solid fa-microphone"></i>
+            <button
+                id="export-close-btn"
+                class="modal-close"
+                type="button"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
 
-        </button>
+        </div>
 
-        <input
-            type="text"
-            id="user-input"
-            autocomplete="off"
-            class="flex-1 min-w-0 bg-slate-800 text-slate-100 placeholder-slate-500 text-base rounded-xl px-4 py-3 border border-slate-700 focus:border-indigo-500 focus:outline-none"
-            placeholder="输入消息...">
+        <div class="modal-body">
 
-        <button
-            id="action-btn"
-            type="button"
-            class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30">
+            <div class="modal-description">
+                选择当前对话的导出格式。
+            </div>
 
-            <i
-                class="fa-solid fa-paper-plane"
-                id="action-icon">
-            </i>
+            <button
+                class="modal-btn"
+                data-export-format="txt"
+                type="button"
+            >
+                <i class="fa-solid fa-file-lines mr-2"></i>
+                TXT
+            </button>
 
-        </button>
+            <button
+                class="modal-btn"
+                data-export-format="md"
+                type="button"
+            >
+                <i class="fa-brands fa-markdown mr-2"></i>
+                Markdown
+            </button>
 
-    </nav>
+            <button
+                class="modal-btn"
+                data-export-format="json"
+                type="button"
+            >
+                <i class="fa-solid fa-brackets-curly mr-2"></i>
+                JSON
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
+
+<!-- =========================================================
+     SETTINGS MODAL
+========================================================= -->
+
+<div id="settings-modal" class="modal">
+
+    <div class="modal-card">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </div>
+
+            <button
+                id="settings-close-btn"
+                class="modal-close"
+                type="button"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="modal-description">
+                CQS AI Global 本地工作区设置。
+            </div>
+
+            <button
+                id="clear-history-btn"
+                class="modal-btn"
+                type="button"
+            >
+                <i class="fa-solid fa-trash mr-2"></i>
+                清空全部历史记录
+            </button>
+
+            <button
+                id="reset-settings-btn"
+                class="modal-btn"
+                type="button"
+            >
+                <i class="fa-solid fa-rotate-left mr-2"></i>
+                重置本地设置
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="toast-container"></div>
 
 <script>
 "use strict";
 
 /* =========================================================
-   BASIC HELPERS
+   CONFIG
 ========================================================= */
 
-const $ = id => document.getElementById(id);
+const CONFIG = {
+    chatEndpoint: "/api/chat",
 
-const chatContainer = $("chat-container");
-const userInput = $("user-input");
-const actionBtn = $("action-btn");
-const actionIcon = $("action-icon");
-const tokenCountEl = $("token-count");
+    notionConnectEndpoint: "/api/notion/connect",
+    notionSaveEndpoint: "/api/notion/save",
+    notionPagesEndpoint: "/api/notion/pages",
 
-const cqsIntro = $("cqs-intro");
-const introTypingText = $("intro-typing-text");
+    storageKey: "cqs_ai_global_state_v2",
 
-const langSelect = $("lang-select");
+    defaultModel: "DeepSeek-R1",
 
-const modelSelectBtn = $("model-select-btn");
-const modelDropdown = $("model-dropdown");
+    maxHistory: 100
+};
 
-const privacyBanner = $("privacy-banner");
-const privacyAccept = $("privacy-accept");
-const privacyPolicyLink = $("privacy-policy-link");
+/* =========================================================
+   DOM
+========================================================= */
 
-const privacyModal = $("privacy-modal");
-const privacyModalClose = $("privacy-modal-close");
+const $ = (id) => document.getElementById(id);
 
-const voiceBtn = $("voice-btn");
-const fileBtn = $("file-btn");
-const hiddenFileInput = $("hidden-file-input");
-const attachmentBar = $("attachment-bar");
-
-const soundToggleBtn = $("sound-toggle-btn");
-const soundIcon = $("sound-icon");
-
-const menuBtn = $("menu-btn");
 const sidebar = $("sidebar");
-const sidebarOverlay = $("sidebar-overlay");
-const sidebarClose = $("sidebar-close");
+const sidebarBackdrop = $("sidebar-backdrop");
+
+const openSidebarBtn = $("open-sidebar-btn");
+const closeSidebarBtn = $("close-sidebar-btn");
+
+const newChatBtn = $("new-chat-btn");
 
 const historyList = $("history-list");
-const newChatBtn = $("new-chat-btn");
+
+const chatContainer = $("chat-container");
+const messagesEl = $("messages");
+const welcomeScreen = $("welcome-screen");
+
+const chatForm = $("chat-form");
+const userInput = $("user-input");
+const sendBtn = $("send-btn");
+
+const attachBtn = $("attach-btn");
+const micBtn = $("mic-btn");
+const fileInput = $("file-input");
+
+const attachmentPreview = $("attachment-preview");
+const attachmentName = $("attachment-name");
+const removeAttachmentBtn = $("remove-attachment-btn");
+
+const modelNameEl = $("model-name");
+
+const notionBtn = $("notion-btn");
+const notionStatus = $("notion-status");
+
+const notionModal = $("notion-modal");
+const notionCloseBtn = $("notion-close-btn");
+const notionConnectBtn = $("notion-connect-btn");
+const notionSaveBtn = $("notion-save-btn");
+const notionPagesBtn = $("notion-pages-btn");
+const notionResult = $("notion-result");
+
+const exportChatBtn = $("export-chat-btn");
+const exportModal = $("export-modal");
+const exportCloseBtn = $("export-close-btn");
+
+const shareChatBtn = $("share-chat-btn");
+
+const settingsBtn = $("settings-btn");
+const settingsModal = $("settings-modal");
+const settingsCloseBtn = $("settings-close-btn");
+
+const clearHistoryBtn = $("clear-history-btn");
+const resetSettingsBtn = $("reset-settings-btn");
+
+const clearCurrentBtn = $("clear-current-btn");
+
+const langBtn = $("lang-btn");
+
+const bootText = $("boot-text");
+
+const toastContainer = $("toast-container");
 
 /* =========================================================
    STATE
 ========================================================= */
 
-let currentLanguage =
-    localStorage.getItem("cqs_lang") || "zh";
+let state = {
+    language: "zh",
 
-let currentModel =
-    localStorage.getItem("cqs_model") || "DeepSeek";
+    model: CONFIG.defaultModel,
 
-let soundEnabled =
-    localStorage.getItem("cqs_sound") !== "false";
+    mode: "chat",
 
-let currentMode =
-    localStorage.getItem("cqs_mode") || "chat";
+    currentConversationId: null,
 
-let currentConversationId =
-    localStorage.getItem("cqs_current_conversation") || "";
+    conversations: {},
 
-let totalTokens =
-    parseInt(
-        localStorage.getItem("cqs_tokens") || "0",
-        10
-    ) || 0;
+    notion: {
+        connected: false
+    }
+};
 
-let selectedAttachments = [];
-
-let activeController = null;
+let pendingAttachment = null;
 
 let isGenerating = false;
 
-let conversations = {};
+let recognition = null;
 
 /* =========================================================
-   LOAD CONVERSATIONS
+   BOOT
 ========================================================= */
 
-function loadConversations(){
+function runBootAnimation() {
 
-    try{
+    const text = "CQS AI";
 
-        const raw =
-            localStorage.getItem("cqs_conversations");
+    bootText.innerHTML = "";
 
-        if(raw){
+    [...text].forEach((char, index) => {
 
-            const parsed = JSON.parse(raw);
+        const span = document.createElement("span");
 
-            if(
-                parsed &&
-                typeof parsed === "object" &&
-                !Array.isArray(parsed)
-            ){
+        span.textContent = char === " " ? "\u00A0" : char;
 
-                conversations = parsed;
+        span.style.animationDelay = `${index * 120}ms`;
 
-            }
-
-        }
-
-    }catch(error){
-
-        console.warn(
-            "[CQS AI] Failed to load conversations",
-            error
-        );
-
-        conversations = {};
-
-    }
-
+        bootText.appendChild(span);
+    });
 }
 
 /* =========================================================
-   SAVE CONVERSATIONS
+   LOCAL STORAGE
 ========================================================= */
 
-function saveConversations(){
+function saveState() {
 
-    try{
-
-        localStorage.setItem(
-            "cqs_conversations",
-            JSON.stringify(conversations)
-        );
+    try {
 
         localStorage.setItem(
-            "cqs_current_conversation",
-            currentConversationId
+            CONFIG.storageKey,
+            JSON.stringify(state)
         );
 
-    }catch(error){
+    } catch (error) {
 
         console.warn(
-            "[CQS AI] Failed to save conversations",
+            "[CQS AI] Failed to save state:",
             error
         );
-
     }
-
 }
 
-/* =========================================================
-   LEGACY MIGRATION
-========================================================= */
+function loadState() {
 
-function migrateLegacyMessages(){
+    try {
 
-    const oldRaw =
-        localStorage.getItem("cqs_messages");
+        const raw = localStorage.getItem(
+            CONFIG.storageKey
+        );
 
-    if(!oldRaw) return;
-
-    try{
-
-        const oldMessages =
-            JSON.parse(oldRaw);
-
-        if(
-            !Array.isArray(oldMessages) ||
-            oldMessages.length === 0
-        ){
-
+        if (!raw) {
             return;
-
         }
 
-        if(Object.keys(conversations).length > 0){
+        const parsed = JSON.parse(raw);
 
+        if (!parsed || typeof parsed !== "object") {
             return;
-
         }
 
-        const id =
-            localStorage.getItem("cqs_conv_id") ||
-            "cqs_" + Date.now();
+        state = {
+            ...state,
+            ...parsed,
 
-        const firstUser =
-            oldMessages.find(
-                message =>
-                    message &&
-                    message.role === "user" &&
-                    typeof message.content === "string" &&
-                    message.content.trim()
-            );
+            notion: {
+                ...state.notion,
+                ...(parsed.notion || {})
+            },
 
-        const title =
-            firstUser
-                ? firstUser.content.trim().slice(0,42)
-                : "CQS AI 对话";
-
-        conversations[id] = {
-
-            id,
-
-            title,
-
-            model:
-                localStorage.getItem("cqs_model") ||
-                "DeepSeek",
-
-            createdAt:Date.now(),
-
-            updatedAt:Date.now(),
-
-            messages:oldMessages.filter(
-                message =>
-                    message &&
-                    (
-                        message.role === "user" ||
-                        message.role === "assistant"
-                    )
-            )
-
+            conversations:
+                parsed.conversations || {}
         };
 
-        currentConversationId = id;
-
-        saveConversations();
-
-    }catch(error){
+    } catch (error) {
 
         console.warn(
-            "[CQS AI] Legacy migration failed",
+            "[CQS AI] Failed to load state:",
             error
         );
-
     }
-
 }
 
 /* =========================================================
-   CREATE CONVERSATION
+   UTILS
 ========================================================= */
 
-function createConversation(){
+function escapeHtml(value) {
 
-    const id =
-        "cqs_" +
+    const div = document.createElement("div");
+
+    div.textContent = value == null ? "" : String(value);
+
+    return div.innerHTML;
+}
+
+function showToast(message) {
+
+    const toast = document.createElement("div");
+
+    toast.className = "toast";
+
+    toast.textContent = message;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.remove();
+
+    }, 2400);
+}
+
+function getCurrentConversation() {
+
+    if (!state.currentConversationId) {
+        return null;
+    }
+
+    return state.conversations[
+        state.currentConversationId
+    ] || null;
+}
+
+function createId(prefix = "id") {
+
+    return (
+        prefix +
+        "_" +
         Date.now() +
         "_" +
         Math.random()
             .toString(36)
-            .slice(2,8);
+            .slice(2, 8)
+    );
+}
 
-    conversations[id] = {
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+const translations = {
+
+    zh: {
+        newChat: "新建对话",
+        modes: "Modes",
+        history: "History",
+        tools: "Tools",
+        exportChat: "导出对话",
+        shareChat: "分享对话",
+        welcomeTitle: "有什么我可以帮您的？",
+        welcomeDesc:
+            "基于 CQS AI Global 架构，为您提供安全、强大的智能对话体验。",
+        placeholder: "给 CQS AI 发送消息..."
+    },
+
+    en: {
+        newChat: "New Chat",
+        modes: "Modes",
+        history: "History",
+        tools: "Tools",
+        exportChat: "Export Chat",
+        shareChat: "Share Chat",
+        welcomeTitle: "How can I help you?",
+        welcomeDesc:
+            "Powered by the CQS AI Global architecture.",
+        placeholder: "Message CQS AI..."
+    }
+
+};
+
+function applyLanguage() {
+
+    const lang = state.language;
+
+    document
+        .querySelectorAll("[data-i18n]")
+        .forEach(el => {
+
+            const key = el.dataset.i18n;
+
+            if (
+                translations[lang] &&
+                translations[lang][key]
+            ) {
+
+                el.textContent =
+                    translations[lang][key];
+            }
+        });
+
+    userInput.placeholder =
+        translations[lang].placeholder;
+}
+
+function toggleLanguage() {
+
+    state.language =
+        state.language === "zh"
+            ? "en"
+            : "zh";
+
+    saveState();
+
+    applyLanguage();
+
+    renderAll();
+}
+
+/* =========================================================
+   MODE
+========================================================= */
+
+function setMode(mode) {
+
+    const allowed = [
+        "chat",
+        "still",
+        "agent"
+    ];
+
+    if (!allowed.includes(mode)) {
+        return;
+    }
+
+    state.mode = mode;
+
+    document
+        .querySelectorAll(".mode-btn")
+        .forEach(btn => {
+
+            btn.classList.toggle(
+                "active",
+                btn.dataset.mode === mode
+            );
+        });
+
+    saveState();
+
+    updateModelDisplay();
+}
+
+function updateModelDisplay() {
+
+    const modeName = {
+        chat: "Chat",
+        still: "STILL",
+        agent: "Agent"
+    }[state.mode];
+
+    modelNameEl.textContent =
+        `${state.model} · ${modeName}`;
+}
+
+/* =========================================================
+   CONVERSATIONS
+========================================================= */
+
+function createConversation() {
+
+    const id = createId("chat");
+
+    state.conversations[id] = {
 
         id,
 
         title:
-            currentLanguage === "zh"
+            state.language === "zh"
                 ? "新对话"
                 : "New Chat",
 
-        model:currentModel,
+        createdAt: Date.now(),
 
-        createdAt:Date.now(),
+        updatedAt: Date.now(),
 
-        updatedAt:Date.now(),
+        model: state.model,
 
-        messages:[]
+        mode: state.mode,
+
+        messages: []
 
     };
 
-    currentConversationId = id;
+    state.currentConversationId = id;
 
-    saveConversations();
+    trimHistory();
 
-    return conversations[id];
+    saveState();
 
+    renderAll();
+
+    closeMobileSidebar();
 }
 
-/* =========================================================
-   CURRENT CONVERSATION
-========================================================= */
+function ensureConversation() {
 
-function getCurrentConversation(){
+    if (
+        !state.currentConversationId ||
+        !state.conversations[
+            state.currentConversationId
+        ]
+    ) {
 
-    if(
-        currentConversationId &&
-        conversations[currentConversationId]
-    ){
-
-        return conversations[currentConversationId];
-
+        createConversation();
     }
 
-    return createConversation();
-
+    return getCurrentConversation();
 }
 
-/* =========================================================
-   TITLE
-========================================================= */
+function deleteConversation(id) {
 
-function updateConversationTitle(conversation){
+    const conversation =
+        state.conversations[id];
 
-    if(!conversation) return;
-
-    if(
-        conversation.title !== "新对话" &&
-        conversation.title !== "New Chat"
-    ){
-
+    if (!conversation) {
         return;
-
     }
 
-    const firstUser =
-        conversation.messages.find(
-            message =>
-                message &&
-                message.role === "user" &&
-                typeof message.content === "string" &&
-                message.content.trim()
-        );
+    const ok = confirm(
+        state.language === "zh"
+            ? "确定删除这个对话吗？"
+            : "Delete this conversation?"
+    );
 
-    if(firstUser){
+    if (!ok) {
+        return;
+    }
 
-        const value =
-            firstUser.content
-                .replace(/\s+/g," ")
-                .trim();
+    delete state.conversations[id];
 
-        conversation.title =
-            value.slice(
-                0,
-                currentLanguage === "zh" ? 28 : 42
+    if (state.currentConversationId === id) {
+
+        const remaining =
+            Object.values(state.conversations)
+                .sort(
+                    (a, b) =>
+                        b.updatedAt -
+                        a.updatedAt
+                );
+
+        state.currentConversationId =
+            remaining[0]?.id || null;
+    }
+
+    saveState();
+
+    renderAll();
+}
+
+function trimHistory() {
+
+    const entries =
+        Object.values(state.conversations)
+            .sort(
+                (a, b) =>
+                    b.updatedAt -
+                    a.updatedAt
             );
 
+    if (
+        entries.length <=
+        CONFIG.maxHistory
+    ) {
+        return;
     }
 
+    entries
+        .slice(CONFIG.maxHistory)
+        .forEach(conversation => {
+
+            delete state.conversations[
+                conversation.id
+            ];
+        });
 }
 
 /* =========================================================
-   FORMAT TIME
+   HISTORY RENDER
 ========================================================= */
 
-function formatHistoryTime(timestamp){
-
-    if(!timestamp) return "";
-
-    const date = new Date(timestamp);
-
-    const now = new Date();
-
-    const sameDay =
-        date.toDateString() ===
-        now.toDateString();
-
-    if(sameDay){
-
-        return date.toLocaleTimeString(
-            currentLanguage === "zh"
-                ? "zh-CN"
-                : undefined,
-            {
-                hour:"2-digit",
-                minute:"2-digit"
-            }
-        );
-
-    }
-
-    return date.toLocaleDateString(
-        currentLanguage === "zh"
-            ? "zh-CN"
-            : undefined,
-        {
-            month:"numeric",
-            day:"numeric"
-        }
-    );
-
-}
-
-/* =========================================================
-   HISTORY GROUP
-========================================================= */
-
-function historyGroupLabel(timestamp){
-
-    const date = new Date(timestamp);
-
-    const now = new Date();
-
-    const today =
-        date.toDateString() ===
-        now.toDateString();
-
-    if(today){
-
-        return currentLanguage === "zh"
-            ? "今天"
-            : "Today";
-
-    }
-
-    const yesterday =
-        new Date(now);
-
-    yesterday.setDate(
-        yesterday.getDate() - 1
-    );
-
-    if(
-        date.toDateString() ===
-        yesterday.toDateString()
-    ){
-
-        return currentLanguage === "zh"
-            ? "昨天"
-            : "Yesterday";
-
-    }
-
-    return currentLanguage === "zh"
-        ? "更早"
-        : "Older";
-
-}
-
-/* =========================================================
-   RENDER HISTORY
-========================================================= */
-
-function renderHistory(){
+function renderHistory() {
 
     historyList.innerHTML = "";
 
-    const list =
-        Object.values(conversations)
+    const conversations =
+        Object.values(state.conversations)
             .sort(
-                (a,b) =>
-                    (b.updatedAt || 0) -
-                    (a.updatedAt || 0)
+                (a, b) =>
+                    b.updatedAt -
+                    a.updatedAt
             );
 
-    if(list.length === 0){
+    if (conversations.length === 0) {
 
-        historyList.innerHTML = `
-            <div class="history-empty">
-                <i class="fa-regular fa-message text-lg mb-2"></i>
-                <br>
-                ${currentLanguage === "zh"
-                    ? "还没有历史对话"
-                    : "No conversation history yet"}
-            </div>
-        `;
+        const empty =
+            document.createElement("div");
+
+        empty.className =
+            "px-3 py-4 text-[10px] text-slate-600";
+
+        empty.textContent =
+            state.language === "zh"
+                ? "暂无历史对话"
+                : "No conversations yet";
+
+        historyList.appendChild(empty);
 
         return;
-
     }
 
-    let currentGroup = "";
-
-    list.forEach(conversation => {
-
-        const group =
-            historyGroupLabel(
-                conversation.updatedAt ||
-                conversation.createdAt
-            );
-
-        if(group !== currentGroup){
-
-            currentGroup = group;
-
-            const title =
-                document.createElement("div");
-
-            title.className =
-                "history-group-title";
-
-            title.textContent = group;
-
-            historyList.appendChild(title);
-
-        }
+    conversations.forEach(conversation => {
 
         const item =
             document.createElement("div");
@@ -1521,25 +2289,16 @@ function renderHistory(){
             "history-item" +
             (
                 conversation.id ===
-                currentConversationId
+                state.currentConversationId
                     ? " active"
                     : ""
             );
 
         const icon =
-            document.createElement("div");
+            document.createElement("i");
 
         icon.className =
-            "w-6 text-center text-slate-500 shrink-0";
-
-        icon.innerHTML =
-            '<i class="fa-regular fa-message text-[11px]"></i>';
-
-        const main =
-            document.createElement("div");
-
-        main.className =
-            "history-item-main";
+            "fa-regular fa-message text-[10px]";
 
         const title =
             document.createElement("div");
@@ -1550,35 +2309,21 @@ function renderHistory(){
         title.textContent =
             conversation.title ||
             (
-                currentLanguage === "zh"
+                state.language === "zh"
                     ? "新对话"
                     : "New Chat"
             );
 
-        const time =
-            document.createElement("div");
-
-        time.className =
-            "history-item-time";
-
-        time.textContent =
-            formatHistoryTime(
-                conversation.updatedAt
-            );
-
-        main.appendChild(title);
-        main.appendChild(time);
-
         const deleteBtn =
             document.createElement("button");
-
-        deleteBtn.type = "button";
 
         deleteBtn.className =
             "history-delete";
 
+        deleteBtn.type = "button";
+
         deleteBtn.innerHTML =
-            '<i class="fa-solid fa-trash-can text-[10px]"></i>';
+            '<i class="fa-solid fa-trash text-[9px]"></i>';
 
         deleteBtn.addEventListener(
             "click",
@@ -1589,2660 +2334,1820 @@ function renderHistory(){
                 deleteConversation(
                     conversation.id
                 );
-
             }
         );
 
         item.appendChild(icon);
-        item.appendChild(main);
+
+        item.appendChild(title);
+
         item.appendChild(deleteBtn);
 
         item.addEventListener(
             "click",
             () => {
 
-                switchConversation(
-                    conversation.id
-                );
+                state.currentConversationId =
+                    conversation.id;
 
+                saveState();
+
+                renderAll();
+
+                closeMobileSidebar();
             }
         );
 
         historyList.appendChild(item);
-
     });
-
-}
-
-/* =========================================================
-   SWITCH CONVERSATION
-========================================================= */
-
-function switchConversation(id){
-
-    if(!conversations[id]) return;
-
-    if(isGenerating){
-
-        return;
-
-    }
-
-    currentConversationId = id;
-
-    const conversation =
-        conversations[id];
-
-    currentModel =
-        conversation.model ||
-        currentModel;
-
-    localStorage.setItem(
-        "cqs_model",
-        currentModel
-    );
-
-    saveConversations();
-
-    renderConversation();
-
-    renderHistory();
-
-    updateUIStrings();
-
-    closeSidebar();
-
-}
-
-/* =========================================================
-   DELETE CONVERSATION
-========================================================= */
-
-function deleteConversation(id){
-
-    if(!conversations[id]) return;
-
-    const confirmed =
-        window.confirm(
-            currentLanguage === "zh"
-                ? "确定删除这个对话吗？"
-                : "Delete this conversation?"
-        );
-
-    if(!confirmed) return;
-
-    delete conversations[id];
-
-    if(id === currentConversationId){
-
-        const remaining =
-            Object.values(conversations)
-                .sort(
-                    (a,b) =>
-                        (b.updatedAt || 0) -
-                        (a.updatedAt || 0)
-                );
-
-        if(remaining.length > 0){
-
-            currentConversationId =
-                remaining[0].id;
-
-        }else{
-
-            createConversation();
-
-        }
-
-    }
-
-    saveConversations();
-
-    renderHistory();
-
-    renderConversation();
-
-}
-
-/* =========================================================
-   NEW CHAT
-========================================================= */
-
-function newChat(){
-
-    if(isGenerating){
-
-        if(activeController){
-
-            activeController.abort();
-
-        }
-
-        return;
-
-    }
-
-    createConversation();
-
-    currentMode = "chat";
-
-    localStorage.setItem(
-        "cqs_mode",
-        currentMode
-    );
-
-    renderModeButtons();
-
-    renderHistory();
-
-    renderConversation();
-
-    updateUIStrings();
-
-    closeSidebar();
-
-    setTimeout(
-        () => userInput.focus(),
-        120
-    );
-
-}
-
-/* =========================================================
-   MODE
-========================================================= */
-
-function renderModeButtons(){
-
-    document
-        .querySelectorAll(".mode-item")
-        .forEach(button => {
-
-            const mode =
-                button.getAttribute("data-mode");
-
-            button.classList.toggle(
-                "active",
-                mode === currentMode
-            );
-
-        });
-
-}
-
-function setMode(mode){
-
-    if(
-        mode !== "chat" &&
-        mode !== "still" &&
-        mode !== "agent"
-    ){
-
-        return;
-
-    }
-
-    currentMode = mode;
-
-    localStorage.setItem(
-        "cqs_mode",
-        mode
-    );
-
-    renderModeButtons();
-
-    renderModeView();
-
-    closeSidebar();
-
-}
-
-/* =========================================================
-   MODE VIEW
-========================================================= */
-
-function renderModeView(){
-
-    if(currentMode === "chat"){
-
-        renderConversation();
-
-        return;
-
-    }
-
-    chatContainer.innerHTML = "";
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "mode-landing";
-
-    const card =
-        document.createElement("div");
-
-    card.className =
-        "mode-card";
-
-    if(currentMode === "still"){
-
-        card.innerHTML = `
-            <div class="mode-orb">
-                <i class="fa-solid fa-circle-dot text-2xl text-indigo-300"></i>
-            </div>
-
-            <h2>STILL</h2>
-
-            <p>
-                ${currentLanguage === "zh"
-                    ? "沉浸式静默空间。保持当前状态、观察、思考，不打断你的节奏。"
-                    : "An immersive quiet space for staying present, observing and thinking without interruption."}
-            </p>
-
-            <button
-                id="still-return-btn"
-                class="mode-action"
-                type="button">
-
-                <i class="fa-solid fa-message"></i>
-
-                ${currentLanguage === "zh"
-                    ? "返回 Chat"
-                    : "Back to Chat"}
-
-            </button>
-        `;
-
-    }
-
-    if(currentMode === "agent"){
-
-        card.innerHTML = `
-            <div class="mode-orb">
-                <i class="fa-solid fa-robot text-2xl text-indigo-300"></i>
-            </div>
-
-            <h2>Agent</h2>
-
-            <p>
-                ${currentLanguage === "zh"
-                    ? "Agent 工作入口已预留。这里以后可以接入任务规划、工具调用、文件处理和多模型执行链。"
-                    : "The Agent workspace is ready for future task planning, tool use, file processing and multi-model execution."}
-            </p>
-
-            <button
-                id="agent-chat-btn"
-                class="mode-action"
-                type="button">
-
-                <i class="fa-solid fa-play"></i>
-
-                ${currentLanguage === "zh"
-                    ? "开始 Agent 会话"
-                    : "Start Agent Session"}
-
-            </button>
-        `;
-
-    }
-
-    wrapper.appendChild(card);
-
-    chatContainer.appendChild(wrapper);
-
-    const stillBtn =
-        $("still-return-btn");
-
-    if(stillBtn){
-
-        stillBtn.addEventListener(
-            "click",
-            () => setMode("chat")
-        );
-
-    }
-
-    const agentBtn =
-        $("agent-chat-btn");
-
-    if(agentBtn){
-
-        agentBtn.addEventListener(
-            "click",
-            () => {
-
-                setMode("chat");
-
-                setTimeout(
-                    () => userInput.focus(),
-                    100
-                );
-
-            }
-        );
-
-    }
-
-}
-
-/* =========================================================
-   RENDER CURRENT CONVERSATION
-========================================================= */
-
-function renderConversation(){
-
-    if(currentMode !== "chat"){
-
-        renderModeView();
-
-        return;
-
-    }
-
-    chatContainer.innerHTML = "";
-
-    const conversation =
-        getCurrentConversation();
-
-    if(
-        !conversation.messages ||
-        !Array.isArray(conversation.messages)
-    ){
-
-        conversation.messages = [];
-
-    }
-
-    if(conversation.messages.length > 0){
-
-        conversation.messages.forEach(
-            message => {
-
-                if(
-                    message &&
-                    (
-                        message.role === "user" ||
-                        message.role === "assistant"
-                    )
-                ){
-
-                    appendUI(
-                        message.role,
-                        message.content || "",
-                        message.attachments || [],
-                        false
-                    );
-
-                }
-
-            }
-        );
-
-    }else{
-
-        const welcomeText =
-            (
-                i18n[currentLanguage] ||
-                i18n.en
-            ).welcome;
-
-        appendUI(
-            "assistant",
-            welcomeText,
-            [],
-            false
-        );
-
-        conversation.messages.push({
-
-            role:"assistant",
-
-            content:welcomeText,
-
-            model:currentModel,
-
-            timestamp:Date.now(),
-
-            systemGenerated:true
-
-        });
-
-        conversation.updatedAt =
-            Date.now();
-
-        saveConversations();
-
-    }
-
-    scrollToBottom(false);
-
-}
-
-/* =========================================================
-   I18N
-========================================================= */
-
-const i18n = {
-
-    zh:{
-        title:"CQS AI 全球版",
-        inputPlaceholder:"输入消息...",
-        welcome:"欢迎来到 CQS AI Global。网关流式管道已就绪。",
-        privacyDesc:"我们尊重您的隐私。CQS AI Global 安全处理网关数据以保障通信安全。",
-        accept:"接受",
-        thinking:"思考中",
-        thinkingDone:"思考完成",
-        stopped:"生成已停止",
-        gatewayError:"CQS AI 网关错误",
-        speechUnsupported:"当前浏览器不支持语音识别。",
-        emptyResponse:"AI 返回了空响应"
-    },
-
-    en:{
-        title:"CQS AI Global",
-        inputPlaceholder:"Type a message...",
-        welcome:"Welcome to CQS AI Global. Gateway streaming pipeline ready.",
-        privacyDesc:"We respect your privacy. CQS AI Global secures gateway data transmission.",
-        accept:"Accept",
-        thinking:"Thinking",
-        thinkingDone:"Thinking completed",
-        stopped:"Generation stopped",
-        gatewayError:"CQS AI Gateway Error",
-        speechUnsupported:"Speech recognition is not supported.",
-        emptyResponse:"AI returned an empty response"
-    },
-
-    ja:{
-        title:"CQS AI グローバル",
-        inputPlaceholder:"メッセージを入力...",
-        welcome:"CQS AI Globalへようこそ。ストリーミングパイプライン準備完了。",
-        privacyDesc:"プライバシーを尊重します。CQS AI Globalはデータを安全に保護します。",
-        accept:"同意する",
-        thinking:"思考中",
-        thinkingDone:"思考完了",
-        stopped:"生成を停止しました",
-        gatewayError:"CQS AI ゲートウェイエラー",
-        speechUnsupported:"音声認識はサポートされていません。",
-        emptyResponse:"AIから空の応答が返されました"
-    },
-
-    ko:{
-        title:"CQS AI 글로벌",
-        inputPlaceholder:"메시지 입력...",
-        welcome:"CQS AI Global에 오신 것을 환영합니다. 스트리밍 파이프라인 준비 완료.",
-        privacyDesc:"개인정보를 존중합니다. CQS AI Global은 데이터를 안전하게 처리합니다.",
-        accept:"동의",
-        thinking:"생각 중",
-        thinkingDone:"생각 완료",
-        stopped:"생성이 중지되었습니다",
-        gatewayError:"CQS AI 게이트웨이 오류",
-        speechUnsupported:"음성 인식을 지원하지 않습니다.",
-        emptyResponse:"AI가 빈 응답을 반환했습니다"
-    },
-
-    fr:{
-        title:"CQS AI Global",
-        inputPlaceholder:"Tapez un message...",
-        welcome:"Bienvenue sur CQS AI Global. Pipeline de streaming prêt.",
-        privacyDesc:"Nous respectons votre vie privée. Sécurité des données garantie.",
-        accept:"Accepter",
-        thinking:"Réflexion",
-        thinkingDone:"Réflexion terminée",
-        stopped:"Génération arrêtée",
-        gatewayError:"Erreur de passerelle CQS AI",
-        speechUnsupported:"La reconnaissance vocale n'est pas prise en charge.",
-        emptyResponse:"L'IA a renvoyé une réponse vide"
-    },
-
-    de:{
-        title:"CQS AI Global",
-        inputPlaceholder:"Nachricht eingeben...",
-        welcome:"Willkommen bei CQS AI Global. Streaming-Pipeline bereit.",
-        privacyDesc:"Wir respektieren Ihre Privatsphäre. Sichere Datenverarbeitung.",
-        accept:"Akzeptieren",
-        thinking:"Denken",
-        thinkingDone:"Denken abgeschlossen",
-        stopped:"Generierung gestoppt",
-        gatewayError:"CQS AI Gateway-Fehler",
-        speechUnsupported:"Spracherkennung wird nicht unterstützt.",
-        emptyResponse:"Die KI hat eine leere Antwort zurückgegeben"
-    },
-
-    es:{
-        title:"CQS AI Global",
-        inputPlaceholder:"Escribe un mensaje...",
-        welcome:"Bienvenido a CQS AI Global. Canal de streaming listo.",
-        privacyDesc:"Respetamos su privacidad. CQS AI Global protege sus datos de forma segura.",
-        accept:"Aceptar",
-        thinking:"Pensando",
-        thinkingDone:"Pensamiento completado",
-        stopped:"Generación detenida",
-        gatewayError:"Error de puerta de enlace CQS AI",
-        speechUnsupported:"El reconocimiento de voz no es compatible.",
-        emptyResponse:"La IA devolvió una respuesta vacía"
-    },
-
-    ar:{
-        title:"CQS AI العالمي",
-        inputPlaceholder:"اكتب رسالة...",
-        welcome:"مرحباً بك في CQS AI Global. خط بث البيانات جاهز.",
-        privacyDesc:"نحن نحترم خصوصيتك. يتم استخدام البيانات بأمان لتوفير الخدمات.",
-        accept:"قبول",
-        thinking:"جارٍ التفكير",
-        thinkingDone:"اكتمل التفكير",
-        stopped:"تم إيقاف التوليد",
-        gatewayError:"خطأ في بوابة CQS AI",
-        speechUnsupported:"التعرف على الكلام غير مدعوم.",
-        emptyResponse:"أعاد الذكاء الاصطناعي استجابة فارغة"
-    }
-
-};
-
-const speechLangs = {
-
-    zh:"zh-CN",
-    en:"en-US",
-    ja:"ja-JP",
-    ko:"ko-KR",
-    fr:"fr-FR",
-    de:"de-DE",
-    es:"es-ES",
-    ar:"ar-SA"
-
-};
-
-/* =========================================================
-   AUDIO
-========================================================= */
-
-const audioCtx =
-    typeof window !== "undefined" &&
-    (
-        window.AudioContext ||
-        window.webkitAudioContext
-    )
-        ? new (
-            window.AudioContext ||
-            window.webkitAudioContext
-        )()
-        : null;
-
-let lastReceiveSound = 0;
-
-function playSound(type){
-
-    if(!soundEnabled || !audioCtx) return;
-
-    if(audioCtx.state === "suspended"){
-
-        audioCtx
-            .resume()
-            .catch(()=>{});
-
-    }
-
-    const osc =
-        audioCtx.createOscillator();
-
-    const gain =
-        audioCtx.createGain();
-
-    osc.connect(gain);
-
-    gain.connect(
-        audioCtx.destination
-    );
-
-    const now =
-        audioCtx.currentTime;
-
-    if(type === "send"){
-
-        osc.frequency.setValueAtTime(
-            440,
-            now
-        );
-
-        osc.frequency.exponentialRampToValueAtTime(
-            880,
-            now + .1
-        );
-
-        gain.gain.setValueAtTime(
-            .08,
-            now
-        );
-
-        gain.gain.linearRampToValueAtTime(
-            0,
-            now + .1
-        );
-
-        osc.start(now);
-        osc.stop(now + .1);
-
-    }
-
-    if(type === "receive"){
-
-        if(
-            performance.now() -
-            lastReceiveSound <
-            90
-        ){
-
-            return;
-
-        }
-
-        lastReceiveSound =
-            performance.now();
-
-        osc.frequency.setValueAtTime(
-            600,
-            now
-        );
-
-        osc.frequency.exponentialRampToValueAtTime(
-            300,
-            now + .15
-        );
-
-        gain.gain.setValueAtTime(
-            .025,
-            now
-        );
-
-        gain.gain.linearRampToValueAtTime(
-            0,
-            now + .15
-        );
-
-        osc.start(now);
-        osc.stop(now + .15);
-
-    }
-
-    if(type === "done"){
-
-        osc.frequency.setValueAtTime(
-            520,
-            now
-        );
-
-        osc.frequency.exponentialRampToValueAtTime(
-            780,
-            now + .12
-        );
-
-        gain.gain.setValueAtTime(
-            .05,
-            now
-        );
-
-        gain.gain.linearRampToValueAtTime(
-            0,
-            now + .16
-        );
-
-        osc.start(now);
-        osc.stop(now + .16);
-
-    }
-
-}
-
-/* =========================================================
-   UI STRINGS
-========================================================= */
-
-function updateUIStrings(){
-
-    const t =
-        i18n[currentLanguage] ||
-        i18n.en;
-
-    $("txt-title").textContent =
-        t.title;
-
-    userInput.placeholder =
-        t.inputPlaceholder;
-
-    $("txt-privacy-desc").textContent =
-        t.privacyDesc;
-
-    privacyAccept.textContent =
-        t.accept;
-
-    langSelect.value =
-        currentLanguage;
-
-    $("current-model-name").textContent =
-        currentModel;
-
-    tokenCountEl.textContent =
-        Number(
-            totalTokens || 0
-        ).toLocaleString();
-
-    document
-        .querySelectorAll(".model-option")
-        .forEach(opt => {
-
-            const model =
-                opt.getAttribute(
-                    "data-model"
-                );
-
-            if(model === currentModel){
-
-                opt.classList.remove(
-                    "text-slate-400"
-                );
-
-                opt.classList.add(
-                    "text-slate-200"
-                );
-
-                if(
-                    !opt.querySelector("i")
-                ){
-
-                    opt.insertAdjacentHTML(
-                        "beforeend",
-                        '<i class="fa-solid fa-check text-indigo-400"></i>'
-                    );
-
-                }
-
-            }else{
-
-                opt.classList.remove(
-                    "text-slate-200"
-                );
-
-                opt.classList.add(
-                    "text-slate-400"
-                );
-
-                const icon =
-                    opt.querySelector("i");
-
-                if(icon){
-
-                    icon.remove();
-
-                }
-
-            }
-
-        });
-
-    soundIcon.className =
-        soundEnabled
-            ? "fa-solid fa-volume-high text-emerald-400"
-            : "fa-solid fa-volume-xmark text-slate-500";
-
-    $("new-chat-text").textContent =
-        currentLanguage === "zh"
-            ? "新建对话"
-            : "New Chat";
-
-    renderHistory();
-
-}
-
-/* =========================================================
-   SAVE CURRENT STATE
-========================================================= */
-
-function saveState(){
-
-    const conversation =
-        conversations[
-            currentConversationId
-        ];
-
-    if(conversation){
-
-        conversation.updatedAt =
-            Date.now();
-
-        conversation.model =
-            currentModel;
-
-        updateConversationTitle(
-            conversation
-        );
-
-    }
-
-    saveConversations();
-
-    localStorage.setItem(
-        "cqs_tokens",
-        String(totalTokens)
-    );
-
-}
-
-/* =========================================================
-   INTRO
-========================================================= */
-
-async function runIntroAnimation(){
-
-    const text =
-        "CQS AI GLOBAL";
-
-    for(
-        let i = 0;
-        i <= text.length;
-        i++
-    ){
-
-        introTypingText.textContent =
-            text.slice(0,i) +
-            (
-                i < text.length
-                    ? "_"
-                    : ""
-            );
-
-        await new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    60
-                )
-        );
-
-    }
-
-    await new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                400
-            )
-    );
-
-    cqsIntro.classList.add(
-        "intro-hidden"
-    );
-
-}
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHTML(value){
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
 }
 
 /* =========================================================
    MARKDOWN
 ========================================================= */
 
-function renderMarkdownSafe(text){
+function renderMarkdown(content) {
 
-    if(!text) return "";
+    if (
+        typeof marked === "undefined"
+    ) {
+        return escapeHtml(content)
+            .replace(/\n/g, "<br>");
+    }
 
-    let source =
-        escapeHTML(text);
+    try {
 
-    const codeBlocks = [];
-
-    source =
-        source.replace(
-            /```([\s\S]*?)```/g,
-            (_,code)=>{
-
-                const index =
-                    codeBlocks.length;
-
-                codeBlocks.push(
-                    `<pre><code>${code.trim()}</code></pre>`
-                );
-
-                return `@@CODEBLOCK_${index}@@`;
-
+        const html = marked.parse(
+            content || "",
+            {
+                breaks: true,
+                gfm: true
             }
         );
 
-    source =
-        source.replace(
-            /`([^`]+)`/g,
-            "<code>$1</code>"
-        );
+        return html;
 
-    source =
-        source.replace(
-            /^### (.*)$/gm,
-            "<h3>$1</h3>"
-        );
+    } catch {
 
-    source =
-        source.replace(
-            /^## (.*)$/gm,
-            "<h2>$1</h2>"
-        );
+        return escapeHtml(content)
+            .replace(/\n/g, "<br>");
+    }
+}
 
-    source =
-        source.replace(
-            /^# (.*)$/gm,
-            "<h1>$1</h1>"
-        );
+function highlightCode() {
 
-    source =
-        source.replace(
-            /^\> (.*)$/gm,
-            "<blockquote>$1</blockquote>"
-        );
+    if (
+        typeof hljs === "undefined"
+    ) {
+        return;
+    }
 
-    source =
-        source.replace(
-            /^\s*[-*] (.*)$/gm,
-            "<li>$1</li>"
-        );
+    document
+        .querySelectorAll(
+            "#messages pre code"
+        )
+        .forEach(block => {
 
-    source =
-        source.replace(
-            /(<li>.*<\/li>)/gs,
-            "<ul>$1</ul>"
-        );
-
-    source =
-        source.replace(
-            /\*\*(.*?)\*\*/g,
-            "<strong>$1</strong>"
-        );
-
-    source =
-        source.replace(
-            /\*(.*?)\*/g,
-            "<em>$1</em>"
-        );
-
-    source =
-        source.replace(
-            /\n{2,}/g,
-            "</p><p>"
-        );
-
-    source =
-        source.replace(
-            /\n/g,
-            "<br>"
-        );
-
-    source =
-        "<p>" +
-        source +
-        "</p>";
-
-    codeBlocks.forEach(
-        (block,index)=>{
-
-            source =
-                source.replace(
-                    `@@CODEBLOCK_${index}@@`,
+            try {
+                hljs.highlightElement(
                     block
                 );
-
-        }
-    );
-
-    return source;
-
+            } catch {}
+        });
 }
 
 /* =========================================================
-   APPEND MESSAGE
+   MESSAGE RENDER
 ========================================================= */
 
-function appendUI(
-    role,
-    text,
-    attachments = [],
-    scroll = true
-){
+function renderMessages() {
 
-    const isUser =
-        role === "user";
+    messagesEl.innerHTML = "";
 
-    const wrapper =
-        document.createElement("div");
+    const conversation =
+        getCurrentConversation();
 
-    wrapper.className =
-        `flex items-start space-x-3 message-enter ${
-            isUser
-                ? "flex-row-reverse space-x-reverse"
-                : ""
-        }`;
+    if (
+        !conversation ||
+        !conversation.messages ||
+        conversation.messages.length === 0
+    ) {
 
-    const bubbleContainer =
-        document.createElement("div");
+        welcomeScreen.style.display =
+            "flex";
 
-    bubbleContainer.className =
-        "max-w-[82%] flex flex-col space-y-2";
+        return;
+    }
 
-    if(
-        attachments &&
-        attachments.length > 0
-    ){
+    welcomeScreen.style.display =
+        "none";
 
-        const attWrapper =
-            document.createElement("div");
+    conversation.messages.forEach(
+        message => {
 
-        attWrapper.className =
-            `flex flex-wrap gap-1.5 ${
-                isUser
-                    ? "justify-end"
-                    : "justify-start"
-            }`;
+            const row =
+                document.createElement("div");
 
-        attachments.forEach(
-            att => {
-
-                const chip =
-                    document.createElement("span");
-
-                chip.className =
-                    "text-[11px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-1 rounded-md flex items-center space-x-1";
-
-                const icon =
-                    document.createElement("i");
-
-                icon.className =
-                    "fa-solid fa-file-lines text-indigo-400";
-
-                const nameSpan =
-                    document.createElement("span");
-
-                nameSpan.className =
-                    "truncate max-w-[120px]";
-
-                nameSpan.textContent =
-                    att.name ||
-                    "file";
-
-                chip.appendChild(icon);
-                chip.appendChild(nameSpan);
-
-                attWrapper.appendChild(
-                    chip
+            row.className =
+                "message-row " +
+                (
+                    message.role === "user"
+                        ? "user"
+                        : "assistant"
                 );
 
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "message";
+
+            const role =
+                document.createElement("div");
+
+            role.className =
+                "message-role";
+
+            role.textContent =
+                message.role === "user"
+                    ? "You"
+                    : "CQS AI";
+
+            const bubble =
+                document.createElement("div");
+
+            bubble.className =
+                "message-bubble " +
+                (
+                    message.role === "assistant"
+                        ? "markdown-body"
+                        : ""
+                );
+
+            if (
+                message.role === "assistant"
+            ) {
+
+                bubble.innerHTML =
+                    renderMarkdown(
+                        message.content
+                    );
+
+            } else {
+
+                bubble.textContent =
+                    message.content || "";
+            }
+
+            wrapper.appendChild(role);
+
+            wrapper.appendChild(bubble);
+
+            if (message.file) {
+
+                const fileBox =
+                    document.createElement("div");
+
+                fileBox.className =
+                    "message-attachment";
+
+                fileBox.innerHTML =
+                    `<i class="fa-solid fa-paperclip mr-1"></i>${escapeHtml(message.file.name)}`;
+
+                wrapper.appendChild(fileBox);
+            }
+
+            row.appendChild(wrapper);
+
+            messagesEl.appendChild(row);
+        }
+    );
+
+    if (isGenerating) {
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "message-row assistant";
+
+        row.innerHTML = `
+            <div class="message">
+                <div class="message-role">CQS AI</div>
+                <div class="message-bubble">
+                    <div class="typing">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        messagesEl.appendChild(row);
+    }
+
+    highlightCode();
+
+    requestAnimationFrame(() => {
+
+        chatContainer.scrollTop =
+            chatContainer.scrollHeight;
+    });
+}
+
+/* =========================================================
+   RENDER ALL
+========================================================= */
+
+function renderAll() {
+
+    renderHistory();
+
+    renderMessages();
+
+    updateModelDisplay();
+
+    updateNotionStatus();
+
+    applyLanguage();
+}
+
+/* =========================================================
+   API RESPONSE EXTRACTION
+========================================================= */
+
+function extractAssistantText(data) {
+
+    if (!data) {
+        return "";
+    }
+
+    if (typeof data === "string") {
+        return data;
+    }
+
+    if (
+        typeof data.answer === "string"
+    ) {
+        return data.answer;
+    }
+
+    if (
+        typeof data.content === "string"
+    ) {
+        return data.content;
+    }
+
+    if (
+        typeof data.text === "string"
+    ) {
+        return data.text;
+    }
+
+    if (
+        data.message &&
+        typeof data.message.content === "string"
+    ) {
+        return data.message.content;
+    }
+
+    if (
+        Array.isArray(data.choices) &&
+        data.choices[0]
+    ) {
+
+        const choice =
+            data.choices[0];
+
+        if (
+            choice.message &&
+            typeof choice.message.content === "string"
+        ) {
+            return choice.message.content;
+        }
+
+        if (
+            typeof choice.text === "string"
+        ) {
+            return choice.text;
+        }
+    }
+
+    return "";
+}
+
+/* =========================================================
+   CHAT API
+========================================================= */
+
+async function callChatAPI(
+    conversation,
+    userText
+) {
+
+    const messages =
+        conversation.messages
+            .map(message => ({
+                role: message.role,
+                content: message.content
+            }));
+
+    const payload = {
+
+        model: state.model,
+
+        mode: state.mode,
+
+        messages,
+
+        conversationId:
+            conversation.id
+    };
+
+    const response =
+        await fetch(
+            CONFIG.chatEndpoint,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(payload)
             }
         );
 
-        bubbleContainer.appendChild(
-            attWrapper
+    if (!response.ok) {
+
+        const errorText =
+            await response.text()
+                .catch(() => "");
+
+        throw new Error(
+            `HTTP ${response.status} ${errorText}`
         );
-
     }
 
-    const bubble =
-        document.createElement("div");
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
 
-    bubble.className =
-        `${
-            isUser
-                ? "bg-indigo-600 text-white"
-                : "bg-slate-900 border border-slate-800 text-slate-200"
-        } rounded-2xl p-3.5 text-sm shadow-lg break-words`;
+    /*
+       普通 JSON
+    */
 
-    if(isUser){
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
 
-        bubble.textContent =
-            text || "";
+        const data =
+            await response.json();
 
-    }else{
+        const text =
+            extractAssistantText(data);
 
-        bubble.classList.add(
-            "ai-content"
+        if (!text) {
+
+            throw new Error(
+                "后端返回成功，但没有找到 AI 回复内容。"
+            );
+        }
+
+        return text;
+    }
+
+    /*
+       普通文本 / 流式兼容
+    */
+
+    const text =
+        await response.text();
+
+    if (!text) {
+
+        throw new Error(
+            "AI 返回内容为空。"
         );
-
-        bubble.innerHTML =
-            renderMarkdownSafe(
-                text || ""
-            );
-
     }
 
-    bubbleContainer.appendChild(
-        bubble
-    );
-
-    wrapper.appendChild(
-        bubbleContainer
-    );
-
-    chatContainer.appendChild(
-        wrapper
-    );
-
-    if(scroll){
-
-        scrollToBottom();
-
-    }
-
-    return bubble;
-
-}
-
-/* =========================================================
-   THINKING
-========================================================= */
-
-function createThinkingUI(){
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "thinking-box message-enter";
-
-    const header =
-        document.createElement("div");
-
-    header.className =
-        "thinking-header";
-
-    const pulse =
-        document.createElement("span");
-
-    pulse.className =
-        "thinking-pulse";
-
-    const icon =
-        document.createElement("i");
-
-    icon.className =
-        "fa-solid fa-brain text-indigo-400 text-xs";
-
-    const status =
-        document.createElement("span");
-
-    status.className =
-        "thinking-status text-xs text-slate-400";
-
-    status.textContent =
-        (
-            i18n[currentLanguage] ||
-            i18n.en
-        ).thinking;
-
-    const arrow =
-        document.createElement("i");
-
-    arrow.className =
-        "fa-solid fa-chevron-down text-[10px] text-slate-600 ml-auto";
-
-    header.appendChild(pulse);
-    header.appendChild(icon);
-    header.appendChild(status);
-    header.appendChild(arrow);
-
-    const content =
-        document.createElement("div");
-
-    content.className =
-        "thinking-content";
-
-    wrapper.appendChild(header);
-    wrapper.appendChild(content);
-
-    header.addEventListener(
-        "click",
-        () => {
-
-            wrapper.classList.toggle(
-                "collapsed"
-            );
-
-            arrow.className =
-                wrapper.classList.contains(
-                    "collapsed"
-                )
-                    ? "fa-solid fa-chevron-right text-[10px] text-slate-600 ml-auto"
-                    : "fa-solid fa-chevron-down text-[10px] text-slate-600 ml-auto";
-
-        }
-    );
-
-    chatContainer.appendChild(
-        wrapper
-    );
-
-    scrollToBottom();
-
-    return {
-        wrapper,
-        content,
-        status,
-        arrow
-    };
-
-}
-
-function finishThinking(
-    thinkingUI
-){
-
-    if(!thinkingUI) return;
-
-    thinkingUI.wrapper.classList.add(
-        "finished"
-    );
-
-    thinkingUI.status.textContent =
-        (
-            i18n[currentLanguage] ||
-            i18n.en
-        ).thinkingDone;
-
-    thinkingUI.wrapper.classList.add(
-        "collapsed"
-    );
-
-    thinkingUI.arrow.className =
-        "fa-solid fa-chevron-right text-[10px] text-slate-600 ml-auto";
-
-}
-
-/* =========================================================
-   SCROLL
-========================================================= */
-
-function scrollToBottom(
-    smooth = true
-){
-
-    requestAnimationFrame(
-        () => {
-
-            chatContainer.scrollTo({
-
-                top:
-                    chatContainer.scrollHeight,
-
-                behavior:
-                    smooth
-                        ? "smooth"
-                        : "auto"
-
-            });
-
-        }
-    );
-
-}
-
-/* =========================================================
-   ATTACHMENTS
-========================================================= */
-
-function renderAttachmentBar(){
-
-    if(
-        selectedAttachments.length === 0
-    ){
-
-        attachmentBar.classList.add(
-            "hidden"
-        );
-
-        attachmentBar.innerHTML =
-            "";
-
-        return;
-
-    }
-
-    attachmentBar.classList.remove(
-        "hidden"
-    );
-
-    attachmentBar.innerHTML =
-        "";
-
-    selectedAttachments.forEach(
-        (att,index) => {
-
-            const tag =
-                document.createElement("div");
-
-            tag.className =
-                "flex items-center space-x-1.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-lg shrink-0";
-
-            const icon =
-                document.createElement("i");
-
-            icon.className =
-                "fa-solid fa-file text-indigo-400";
-
-            const nameSpan =
-                document.createElement("span");
-
-            nameSpan.className =
-                "truncate max-w-[100px]";
-
-            nameSpan.textContent =
-                att.name;
-
-            const delBtn =
-                document.createElement("button");
-
-            delBtn.type = "button";
-
-            delBtn.className =
-                "text-slate-400 hover:text-red-400 ml-1";
-
-            delBtn.innerHTML =
-                '<i class="fa-solid fa-xmark"></i>';
-
-            delBtn.addEventListener(
-                "click",
-                () => {
-
-                    selectedAttachments.splice(
-                        index,
-                        1
-                    );
-
-                    renderAttachmentBar();
-
-                }
-            );
-
-            tag.appendChild(icon);
-            tag.appendChild(nameSpan);
-            tag.appendChild(delBtn);
-
-            attachmentBar.appendChild(
-                tag
-            );
-
-        }
-    );
-
-}
-
-/* =========================================================
-   GATEWAY ERROR
-========================================================= */
-
-function getGatewayError(status){
-
-    if(status === 400)
-        return "请求参数无效";
-
-    if(status === 401)
-        return "AI API Key 无效或已失效";
-
-    if(status === 403)
-        return "请求被服务器拒绝";
-
-    if(status === 408)
-        return "AI 请求超时";
-
-    if(status === 429)
-        return "AI 服务请求过于频繁，请稍后再试";
-
-    if(status === 500)
-        return "AI 网关内部错误";
-
-    if(status === 502)
-        return "AI 上游服务返回异常";
-
-    if(status === 503)
-        return "AI 服务暂时不可用";
-
-    if(status >= 500)
-        return "AI 网关或上游服务暂时不可用";
-
-    return `Gateway Error: HTTP ${status}`;
-
+    return text;
 }
 
 /* =========================================================
    SEND MESSAGE
 ========================================================= */
 
-async function handleAction(){
+async function sendMessage(text) {
 
-    if(currentMode !== "chat"){
-
-        setMode("chat");
-
+    if (
+        isGenerating ||
+        !text.trim()
+    ) {
         return;
-
     }
 
-    if(isGenerating){
+    const conversation =
+        ensureConversation();
 
-        if(activeController){
+    const cleanText =
+        text.trim();
 
-            activeController.abort();
+    if (
+        conversation.messages.length === 0
+    ) {
 
+        conversation.title =
+            cleanText.length > 30
+                ? cleanText.slice(0, 30) + "..."
+                : cleanText;
+    }
+
+    conversation.messages.push({
+
+        role: "user",
+
+        content: cleanText,
+
+        createdAt: Date.now(),
+
+        file:
+            pendingAttachment
+                ? {
+                    name:
+                        pendingAttachment.name,
+                    type:
+                        pendingAttachment.type,
+                    size:
+                        pendingAttachment.size
+                }
+                : null
+    });
+
+    conversation.updatedAt =
+        Date.now();
+
+    conversation.mode =
+        state.mode;
+
+    conversation.model =
+        state.model;
+
+    const attachment =
+        pendingAttachment;
+
+    pendingAttachment = null;
+
+    clearAttachment();
+
+    saveState();
+
+    userInput.value = "";
+
+    autoResizeTextarea();
+
+    renderAll();
+
+    isGenerating = true;
+
+    renderMessages();
+
+    try {
+
+        const answer =
+            await callChatAPI(
+                conversation,
+                cleanText
+            );
+
+        conversation.messages.push({
+
+            role: "assistant",
+
+            content:
+                answer ||
+                "AI 没有返回内容。",
+
+            createdAt: Date.now()
+        });
+
+        conversation.updatedAt =
+            Date.now();
+
+        saveState();
+
+    } catch (error) {
+
+        console.error(
+            "[CQS AI] Chat API error:",
+            error
+        );
+
+        conversation.messages.push({
+
+            role: "assistant",
+
+            content:
+                `**请求失败**
+
+${error.message}
+
+请检查你的 \`/api/chat\` 后端是否正常运行。`,
+
+            createdAt: Date.now(),
+
+            error: true
+        });
+
+        conversation.updatedAt =
+            Date.now();
+
+        saveState();
+
+    } finally {
+
+        isGenerating = false;
+
+        renderAll();
+    }
+}
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+function autoResizeTextarea() {
+
+    userInput.style.height =
+        "auto";
+
+    const height =
+        Math.min(
+            userInput.scrollHeight,
+            150
+        );
+
+    userInput.style.height =
+        `${height}px`;
+}
+
+/* =========================================================
+   FILE
+========================================================= */
+
+function setAttachment(file) {
+
+    if (!file) {
+        return;
+    }
+
+    pendingAttachment = file;
+
+    attachmentName.textContent =
+        file.name;
+
+    attachmentPreview.style.display =
+        "block";
+
+    showToast(
+        `已选择：${file.name}`
+    );
+}
+
+function clearAttachment() {
+
+    pendingAttachment = null;
+
+    fileInput.value = "";
+
+    attachmentPreview.style.display =
+        "none";
+
+    attachmentName.textContent =
+        "";
+}
+
+/* =========================================================
+   SPEECH
+========================================================= */
+
+function initSpeechRecognition() {
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+
+        recognition = null;
+
+        return;
+    }
+
+    recognition =
+        new SpeechRecognition();
+
+    recognition.lang =
+        state.language === "zh"
+            ? "zh-CN"
+            : "en-US";
+
+    recognition.continuous =
+        false;
+
+    recognition.interimResults =
+        true;
+
+    recognition.onstart = () => {
+
+        micBtn.classList.add("active");
+
+        showToast(
+            state.language === "zh"
+                ? "正在听..."
+                : "Listening..."
+        );
+    };
+
+    recognition.onresult =
+        event => {
+
+            let finalText = "";
+
+            let interimText = "";
+
+            for (
+                let i = event.resultIndex;
+                i < event.results.length;
+                i++
+            ) {
+
+                const result =
+                    event.results[i];
+
+                if (
+                    result.isFinal
+                ) {
+
+                    finalText +=
+                        result[0].transcript;
+
+                } else {
+
+                    interimText +=
+                        result[0].transcript;
+                }
+            }
+
+            if (finalText) {
+
+                userInput.value +=
+                    finalText;
+
+                autoResizeTextarea();
+            }
+
+            if (interimText) {
+
+                micBtn.title =
+                    interimText;
+            }
+        };
+
+    recognition.onerror =
+        event => {
+
+            console.warn(
+                "[CQS AI] Speech recognition:",
+                event.error
+            );
+
+            showToast(
+                state.language === "zh"
+                    ? "语音识别不可用"
+                    : "Speech recognition unavailable"
+            );
+        };
+
+    recognition.onend = () => {
+
+        micBtn.classList.remove(
+            "active"
+        );
+
+        micBtn.title =
+            "语音输入";
+    };
+}
+
+function toggleSpeech() {
+
+    if (!recognition) {
+
+        showToast(
+            state.language === "zh"
+                ? "当前浏览器不支持语音输入"
+                : "Speech input is not supported"
+        );
+
+        return;
+    }
+
+    try {
+
+        if (
+            micBtn.classList.contains(
+                "active"
+            )
+        ) {
+
+            recognition.stop();
+
+        } else {
+
+            recognition.lang =
+                state.language === "zh"
+                    ? "zh-CN"
+                    : "en-US";
+
+            recognition.start();
         }
 
-        return;
+    } catch (error) {
 
+        console.warn(error);
     }
+}
 
-    const text =
-        userInput.value.trim();
+/* =========================================================
+   EXPORT
+========================================================= */
 
-    if(
-        !text &&
-        selectedAttachments.length === 0
-    ){
-
-        return;
-
-    }
+function getConversationForExport() {
 
     const conversation =
         getCurrentConversation();
 
-    const currentAtts =
-        selectedAttachments.map(
-            att => ({
-                name:att.name,
-                size:att.size,
-                type:att.type
-            })
+    if (
+        !conversation ||
+        !conversation.messages.length
+    ) {
+
+        showToast(
+            state.language === "zh"
+                ? "当前没有可导出的对话"
+                : "No conversation to export"
         );
 
-    selectedAttachments = [];
+        return null;
+    }
 
-    renderAttachmentBar();
+    return conversation;
+}
 
-    userInput.value = "";
+function buildTextExport(conversation) {
 
-    appendUI(
-        "user",
-        text ||
-        "[Attachment Sent]",
-        currentAtts
+    let output =
+        "CQS AI Global\n";
+
+    output +=
+        "==============================\n";
+
+    output +=
+        `Title: ${conversation.title}\n`;
+
+    output +=
+        `Model: ${conversation.model}\n`;
+
+    output +=
+        `Mode: ${conversation.mode}\n`;
+
+    output +=
+        `Created: ${new Date(
+            conversation.createdAt
+        ).toLocaleString()}\n`;
+
+    output +=
+        "==============================\n\n";
+
+    conversation.messages.forEach(
+        message => {
+
+            output +=
+                message.role === "user"
+                    ? "USER\n"
+                    : "CQS AI\n";
+
+            output +=
+                `${message.content || ""}\n\n`;
+        }
     );
 
-    const userMessage = {
+    return output;
+}
 
-        role:"user",
+function buildMarkdownExport(
+    conversation
+) {
 
-        content:text,
+    let output =
+        `# ${conversation.title}\n\n`;
 
-        attachments:currentAtts,
+    output +=
+        `- Model: ${conversation.model}\n`;
 
-        model:currentModel,
+    output +=
+        `- Mode: ${conversation.mode}\n`;
 
-        timestamp:Date.now()
+    output +=
+        `- Created: ${new Date(
+            conversation.createdAt
+        ).toLocaleString()}\n\n`;
 
-    };
+    output +=
+        "---\n\n";
 
-    conversation.messages.push(
-        userMessage
+    conversation.messages.forEach(
+        message => {
+
+            output +=
+                message.role === "user"
+                    ? "## User\n\n"
+                    : "## CQS AI\n\n";
+
+            output +=
+                `${message.content || ""}\n\n`;
+        }
     );
 
-    updateConversationTitle(
-        conversation
+    return output;
+}
+
+function downloadFile(
+    content,
+    filename,
+    mime
+) {
+
+    const blob =
+        new Blob(
+            [content],
+            {
+                type:
+                    `${mime};charset=utf-8`
+            }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download = filename;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    setTimeout(
+        () =>
+            URL.revokeObjectURL(url),
+        1000
     );
+}
+
+function exportConversation(format) {
+
+    const conversation =
+        getConversationForExport();
+
+    if (!conversation) {
+        return;
+    }
+
+    const safeTitle =
+        (
+            conversation.title ||
+            "CQS-AI-Conversation"
+        )
+        .replace(
+            /[\\/:*?"<>|]/g,
+            "_"
+        )
+        .slice(0, 60);
+
+    if (format === "txt") {
+
+        downloadFile(
+            buildTextExport(
+                conversation
+            ),
+            `${safeTitle}.txt`,
+            "text/plain"
+        );
+
+    } else if (format === "md") {
+
+        downloadFile(
+            buildMarkdownExport(
+                conversation
+            ),
+            `${safeTitle}.md`,
+            "text/markdown"
+        );
+
+    } else if (format === "json") {
+
+        downloadFile(
+            JSON.stringify(
+                conversation,
+                null,
+                2
+            ),
+            `${safeTitle}.json`,
+            "application/json"
+        );
+    }
+
+    exportModal.classList.remove(
+        "show"
+    );
+
+    showToast(
+        state.language === "zh"
+            ? "导出完成"
+            : "Export completed"
+    );
+}
+
+/* =========================================================
+   SHARE
+========================================================= */
+
+async function shareConversation() {
+
+    const conversation =
+        getConversationForExport();
+
+    if (!conversation) {
+        return;
+    }
+
+    const text =
+        buildTextExport(
+            conversation
+        );
+
+    const title =
+        `CQS AI · ${conversation.title}`;
+
+    if (
+        navigator.share &&
+        typeof navigator.share ===
+            "function"
+    ) {
+
+        try {
+
+            await navigator.share({
+                title,
+                text
+            });
+
+            return;
+
+        } catch (error) {
+
+            if (
+                error &&
+                error.name ===
+                    "AbortError"
+            ) {
+                return;
+            }
+        }
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(
+            text
+        );
+
+        showToast(
+            state.language === "zh"
+                ? "对话已复制"
+                : "Conversation copied"
+        );
+
+    } catch {
+
+        const textarea =
+            document.createElement(
+                "textarea"
+            );
+
+        textarea.value = text;
+
+        textarea.style.position =
+            "fixed";
+
+        textarea.style.opacity =
+            "0";
+
+        document.body.appendChild(
+            textarea
+        );
+
+        textarea.select();
+
+        try {
+
+            document.execCommand(
+                "copy"
+            );
+
+            showToast(
+                state.language === "zh"
+                    ? "对话已复制"
+                    : "Conversation copied"
+            );
+
+        } catch {
+
+            alert(text);
+        }
+
+        textarea.remove();
+    }
+}
+
+/* =========================================================
+   NOTION
+========================================================= */
+
+function updateNotionStatus() {
+
+    if (state.notion.connected) {
+
+        notionStatus.textContent =
+            state.language === "zh"
+                ? "已连接"
+                : "Connected";
+
+        notionStatus.style.color =
+            "#34d399";
+
+    } else {
+
+        notionStatus.textContent =
+            state.language === "zh"
+                ? "未连接"
+                : "Not connected";
+
+        notionStatus.style.color =
+            "";
+    }
+}
+
+function openNotionModal() {
+
+    notionModal.classList.add(
+        "show"
+    );
+
+    updateNotionStatus();
+}
+
+function closeNotionModal() {
+
+    notionModal.classList.remove(
+        "show"
+    );
+}
+
+async function connectNotion() {
+
+    try {
+
+        /*
+         * 真正的 Notion OAuth 应由后端
+         * /api/notion/connect 处理。
+         *
+         * 如果后端返回 redirectUrl，
+         * 前端跳转到真正的授权页面。
+         */
+
+        const response =
+            await fetch(
+                CONFIG.notionConnectEndpoint,
+                {
+                    method: "GET"
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
+
+        const data =
+            await response.json();
+
+        if (data.redirectUrl) {
+
+            window.location.href =
+                data.redirectUrl;
+
+            return;
+        }
+
+        if (
+            data.connected === true
+        ) {
+
+            state.notion.connected =
+                true;
+
+            saveState();
+
+            updateNotionStatus();
+
+            showNotionResult(
+                "Notion 已连接。"
+            );
+
+            return;
+        }
+
+        showNotionResult(
+            JSON.stringify(
+                data,
+                null,
+                2
+            )
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        showNotionResult(
+            "Notion 尚未配置后端连接。\n\n" +
+            "请确认 /api/notion/connect 已部署。"
+        );
+    }
+}
+
+function showNotionResult(text) {
+
+    notionResult.textContent =
+        text;
+
+    notionResult.classList.add(
+        "show"
+    );
+}
+
+async function saveCurrentToNotion() {
+
+    const conversation =
+        getConversationForExport();
+
+    if (!conversation) {
+        return;
+    }
+
+    if (!state.notion.connected) {
+
+        showNotionResult(
+            "请先连接 Notion。"
+        );
+
+        return;
+    }
+
+    showNotionResult(
+        "正在保存当前对话..."
+    );
+
+    try {
+
+        const response =
+            await fetch(
+                CONFIG.notionSaveEndpoint,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            conversation
+                        })
+                }
+            );
+
+        const data =
+            await response.json()
+                .catch(
+                    () => ({})
+                );
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                `HTTP ${response.status}`
+            );
+        }
+
+        showNotionResult(
+            data.message ||
+            "对话已发送到 Notion。"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        showNotionResult(
+            `保存失败：${error.message}`
+        );
+    }
+}
+
+async function loadNotionPages() {
+
+    if (!state.notion.connected) {
+
+        showNotionResult(
+            "请先连接 Notion。"
+        );
+
+        return;
+    }
+
+    showNotionResult(
+        "正在读取 Notion 页面..."
+    );
+
+    try {
+
+        const response =
+            await fetch(
+                CONFIG.notionPagesEndpoint
+            );
+
+        const data =
+            await response.json()
+                .catch(
+                    () => ({})
+                );
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                `HTTP ${response.status}`
+            );
+        }
+
+        if (
+            Array.isArray(
+                data.pages
+            )
+        ) {
+
+            showNotionResult(
+                data.pages
+                    .map(
+                        page =>
+                            `• ${page.title || page.id}`
+                    )
+                    .join("\n")
+            );
+
+        } else {
+
+            showNotionResult(
+                JSON.stringify(
+                    data,
+                    null,
+                    2
+                )
+            );
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        showNotionResult(
+            `读取失败：${error.message}`
+        );
+    }
+}
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+function openMobileSidebar() {
+
+    sidebar.classList.add(
+        "mobile-open"
+    );
+
+    sidebarBackdrop.classList.add(
+        "visible"
+    );
+}
+
+function closeMobileSidebar() {
+
+    sidebar.classList.remove(
+        "mobile-open"
+    );
+
+    sidebarBackdrop.classList.remove(
+        "visible"
+    );
+}
+
+/* =========================================================
+   CLEAR
+========================================================= */
+
+function clearCurrentConversation() {
+
+    const conversation =
+        getCurrentConversation();
+
+    if (!conversation) {
+        return;
+    }
+
+    if (
+        conversation.messages.length ===
+        0
+    ) {
+
+        showToast(
+            "当前对话已经为空"
+        );
+
+        return;
+    }
+
+    const ok = confirm(
+        state.language === "zh"
+            ? "确定清空当前对话吗？"
+            : "Clear current conversation?"
+    );
+
+    if (!ok) {
+        return;
+    }
+
+    conversation.messages = [];
 
     conversation.updatedAt =
         Date.now();
 
     saveState();
 
-    renderHistory();
-
-    playSound("send");
-
-    isGenerating = true;
-
-    setButtonState("stop");
-
-    activeController =
-        new AbortController();
-
-    let thinkingUI = null;
-
-    let thinkingText = "";
-
-    let thinkingStarted = false;
-
-    let thinkingFinished = false;
-
-    const replyBubble =
-        appendUI(
-            "assistant",
-            ""
-        );
-
-    let fullText = "";
-
-    try{
-
-        const contextMessages =
-            conversation.messages
-                .filter(
-                    message =>
-                        message &&
-                        (
-                            message.role === "user" ||
-                            message.role === "assistant"
-                        ) &&
-                        typeof message.content === "string"
-                )
-                .map(
-                    message => ({
-                        role:
-                            message.role,
-
-                        content:
-                            message.content
-                    })
-                );
-
-        /*
-         * 保持你已经跑通的 /api/chat
-         * 不改变后端协议。
-         */
-
-        const response =
-            await fetch(
-                "/api/chat",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "text/event-stream"
-                    },
-
-                    body:JSON.stringify({
-
-                        conversationId:
-                            currentConversationId,
-
-                        model:
-                            currentModel,
-
-                        messages:
-                            contextMessages,
-
-                        attachments:
-                            currentAtts,
-
-                        language:
-                            currentLanguage
-
-                    }),
-
-                    signal:
-                        activeController.signal
-
-                }
-            );
-
-        if(!response.ok){
-
-            let errorMessage =
-                getGatewayError(
-                    response.status
-                );
-
-            try{
-
-                const errorData =
-                    await response.json();
-
-                if(
-                    errorData &&
-                    typeof errorData.error ===
-                    "string"
-                ){
-
-                    errorMessage =
-                        errorData.error;
-
-                }
-
-            }catch{}
-
-            throw new Error(
-                errorMessage
-            );
-
-        }
-
-        if(!response.body){
-
-            throw new Error(
-                "服务器没有返回流式数据"
-            );
-
-        }
-
-        const reader =
-            response.body.getReader();
-
-        const decoder =
-            new TextDecoder(
-                "utf-8"
-            );
-
-        let buffer = "";
-
-        while(true){
-
-            const {
-                value,
-                done
-            } =
-                await reader.read();
-
-            if(done) break;
-
-            buffer +=
-                decoder.decode(
-                    value,
-                    {
-                        stream:true
-                    }
-                );
-
-            const events =
-                buffer.split(
-                    /\r?\n\r?\n/
-                );
-
-            buffer =
-                events.pop() || "";
-
-            for(
-                const event of events
-            ){
-
-                const lines =
-                    event.split(
-                        /\r?\n/
-                    );
-
-                const dataLines =
-                    lines
-                        .filter(
-                            line =>
-                                line.startsWith(
-                                    "data:"
-                                )
-                        )
-                        .map(
-                            line =>
-                                line
-                                    .slice(5)
-                                    .trim()
-                        );
-
-                if(
-                    dataLines.length === 0
-                ){
-
-                    continue;
-
-                }
-
-                const data =
-                    dataLines.join(
-                        "\n"
-                    );
-
-                if(!data) continue;
-
-                let packet;
-
-                try{
-
-                    packet =
-                        JSON.parse(
-                            data
-                        );
-
-                }catch{
-
-                    continue;
-
-                }
-
-                /*
-                 * 兼容：
-                 * thinking
-                 * reasoning
-                 */
-
-                if(
-                    packet.type ===
-                        "thinking" ||
-                    packet.type ===
-                        "reasoning"
-                ){
-
-                    if(!thinkingStarted){
-
-                        thinkingStarted =
-                            true;
-
-                        thinkingUI =
-                            createThinkingUI();
-
-                    }
-
-                    if(
-                        typeof packet.content ===
-                        "string"
-                    ){
-
-                        thinkingText +=
-                            packet.content;
-
-                        thinkingUI.content.textContent =
-                            thinkingText;
-
-                        thinkingUI.content.scrollTop =
-                            thinkingUI.content.scrollHeight;
-
-                        scrollToBottom();
-
-                    }
-
-                    continue;
-
-                }
-
-                if(
-                    packet.type ===
-                    "thinking_done"
-                ){
-
-                    thinkingFinished =
-                        true;
-
-                    finishThinking(
-                        thinkingUI
-                    );
-
-                    continue;
-
-                }
-
-                if(
-                    packet.type ===
-                        "delta" &&
-                    typeof packet.content ===
-                        "string"
-                ){
-
-                    if(
-                        thinkingStarted &&
-                        !thinkingFinished
-                    ){
-
-                        finishThinking(
-                            thinkingUI
-                        );
-
-                        thinkingFinished =
-                            true;
-
-                    }
-
-                    fullText +=
-                        packet.content;
-
-                    replyBubble.innerHTML =
-                        renderMarkdownSafe(
-                            fullText
-                        );
-
-                    scrollToBottom();
-
-                    playSound(
-                        "receive"
-                    );
-
-                    continue;
-
-                }
-
-                if(
-                    packet.type ===
-                        "usage" &&
-                    packet.usage
-                ){
-
-                    const usage =
-                        packet.usage;
-
-                    if(
-                        typeof usage.total_tokens ===
-                        "number"
-                    ){
-
-                        totalTokens =
-                            Number(
-                                totalTokens || 0
-                            ) +
-                            usage.total_tokens;
-
-                        tokenCountEl.textContent =
-                            totalTokens.toLocaleString();
-
-                        localStorage.setItem(
-                            "cqs_tokens",
-                            String(totalTokens)
-                        );
-
-                    }
-
-                    continue;
-
-                }
-
-                if(
-                    packet.type ===
-                    "error"
-                ){
-
-                    throw new Error(
-                        packet.error ||
-                        "AI 流式请求失败"
-                    );
-
-                }
-
-                if(
-                    packet.type ===
-                    "done"
-                ){
-
-                    if(
-                        thinkingStarted &&
-                        !thinkingFinished
-                    ){
-
-                        finishThinking(
-                            thinkingUI
-                        );
-
-                        thinkingFinished =
-                            true;
-
-                    }
-
-                    playSound("done");
-
-                    continue;
-
-                }
-
-            }
-
-        }
-
-        if(!fullText.trim()){
-
-            throw new Error(
-                (
-                    i18n[currentLanguage] ||
-                    i18n.en
-                ).emptyResponse
-            );
-
-        }
-
-        conversation.messages.push({
-
-            role:"assistant",
-
-            content:fullText,
-
-            model:currentModel,
-
-            timestamp:Date.now()
-
-        });
-
-        conversation.updatedAt =
-            Date.now();
-
-        updateConversationTitle(
-            conversation
-        );
-
-        saveState();
-
-        renderHistory();
-
-    }catch(error){
-
-        if(
-            error &&
-            error.name ===
-            "AbortError"
-        ){
-
-            if(
-                thinkingUI &&
-                !thinkingFinished
-            ){
-
-                finishThinking(
-                    thinkingUI
-                );
-
-            }
-
-            const t =
-                (
-                    i18n[currentLanguage] ||
-                    i18n.en
-                ).stopped;
-
-            if(fullText.trim()){
-
-                replyBubble.innerHTML =
-                    renderMarkdownSafe(
-                        fullText +
-                        "\n\n[" +
-                        t +
-                        "]"
-                    );
-
-                conversation.messages.push({
-
-                    role:"assistant",
-
-                    content:
-                        fullText +
-                        "\n\n[" +
-                        t +
-                        "]",
-
-                    model:currentModel,
-
-                    timestamp:Date.now()
-
-                });
-
-            }else{
-
-                replyBubble.textContent =
-                    "[" +
-                    t +
-                    "]";
-
-            }
-
-            saveState();
-
-            renderHistory();
-
-        }else{
-
-            console.error(
-                "[CQS AI Frontend]",
-                error
-            );
-
-            const errorText =
-                error?.message ||
-                "Gateway Request Failed";
-
-            replyBubble.textContent =
-                `[CQS AI Gateway Error]\n${errorText}`;
-
-        }
-
-    }finally{
-
-        isGenerating =
-            false;
-
-        setButtonState(
-            "send"
-        );
-
-        activeController =
-            null;
-
-    }
-
+    renderAll();
 }
 
 /* =========================================================
-   BUTTON STATE
+   EVENTS
 ========================================================= */
 
-function setButtonState(type){
-
-    if(type === "stop"){
-
-        actionBtn.className =
-            "w-12 h-12 bg-red-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-red-600/30";
-
-        actionIcon.className =
-            "fa-solid fa-stop";
-
-    }else{
-
-        actionBtn.className =
-            "w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 active:scale-95 transition shadow-lg shadow-indigo-600/30";
-
-        actionIcon.className =
-            "fa-solid fa-paper-plane";
-
-    }
-
-}
-
-/* =========================================================
-   VOICE
-========================================================= */
-
-voiceBtn.addEventListener(
+openSidebarBtn.addEventListener(
     "click",
-    () => {
-
-        const SpeechRecognition =
-            window.SpeechRecognition ||
-            window.webkitSpeechRecognition;
-
-        if(!SpeechRecognition){
-
-            alert(
-                (
-                    i18n[currentLanguage] ||
-                    i18n.en
-                ).speechUnsupported
-            );
-
-            return;
-
-        }
-
-        const recognition =
-            new SpeechRecognition();
-
-        recognition.lang =
-            speechLangs[
-                currentLanguage
-            ] ||
-            "en-US";
-
-        recognition.interimResults =
-            true;
-
-        recognition.continuous =
-            false;
-
-        try{
-
-            recognition.start();
-
-        }catch{
-
-            return;
-
-        }
-
-        voiceBtn.classList.add(
-            "text-indigo-400",
-            "border-indigo-500"
-        );
-
-        recognition.onresult =
-            event => {
-
-                let transcript =
-                    "";
-
-                for(
-                    let i =
-                        event.resultIndex;
-                    i <
-                        event.results.length;
-                    i++
-                ){
-
-                    transcript +=
-                        event.results[i][0]
-                            .transcript;
-
-                }
-
-                userInput.value =
-                    transcript;
-
-            };
-
-        recognition.onerror =
-            () => {
-
-                voiceBtn.classList.remove(
-                    "text-indigo-400",
-                    "border-indigo-500"
-                );
-
-            };
-
-        recognition.onend =
-            () => {
-
-                voiceBtn.classList.remove(
-                    "text-indigo-400",
-                    "border-indigo-500"
-                );
-
-            };
-
-    }
+    openMobileSidebar
 );
 
-/* =========================================================
-   FILE
-========================================================= */
-
-fileBtn.addEventListener(
+closeSidebarBtn.addEventListener(
     "click",
-    () =>
-        hiddenFileInput.click()
+    closeMobileSidebar
 );
 
-hiddenFileInput.addEventListener(
-    "change",
-    event => {
-
-        const files =
-            Array.from(
-                event.target.files || []
-            );
-
-        files.forEach(
-            file => {
-
-                selectedAttachments.push({
-
-                    name:file.name,
-
-                    size:file.size,
-
-                    type:file.type
-
-                });
-
-            }
-        );
-
-        renderAttachmentBar();
-
-        hiddenFileInput.value =
-            "";
-
-    }
-);
-
-/* =========================================================
-   LANGUAGE
-========================================================= */
-
-langSelect.addEventListener(
-    "change",
-    event => {
-
-        currentLanguage =
-            event.target.value;
-
-        localStorage.setItem(
-            "cqs_lang",
-            currentLanguage
-        );
-
-        updateUIStrings();
-
-        if(currentMode === "chat"){
-
-            /*
-             * 不自动翻译历史 AI 内容。
-             * 只更新 UI。
-             */
-
-        }else{
-
-            renderModeView();
-
-        }
-
-    }
-);
-
-/* =========================================================
-   SOUND
-========================================================= */
-
-soundToggleBtn.addEventListener(
+sidebarBackdrop.addEventListener(
     "click",
-    () => {
-
-        soundEnabled =
-            !soundEnabled;
-
-        localStorage.setItem(
-            "cqs_sound",
-            String(soundEnabled)
-        );
-
-        updateUIStrings();
-
-        if(soundEnabled){
-
-            playSound("done");
-
-        }
-
-    }
+    closeMobileSidebar
 );
-
-/* =========================================================
-   MODEL
-========================================================= */
-
-modelSelectBtn.addEventListener(
-    "click",
-    event => {
-
-        event.stopPropagation();
-
-        modelDropdown.classList.toggle(
-            "hidden"
-        );
-
-    }
-);
-
-document.addEventListener(
-    "click",
-    event => {
-
-        if(
-            !modelSelectBtn.contains(
-                event.target
-            ) &&
-            !modelDropdown.contains(
-                event.target
-            )
-        ){
-
-            modelDropdown.classList.add(
-                "hidden"
-            );
-
-        }
-
-    }
-);
-
-document
-    .querySelectorAll(".model-option")
-    .forEach(
-        option => {
-
-            option.addEventListener(
-                "click",
-                () => {
-
-                    currentModel =
-                        option.getAttribute(
-                            "data-model"
-                        );
-
-                    localStorage.setItem(
-                        "cqs_model",
-                        currentModel
-                    );
-
-                    const conversation =
-                        getCurrentConversation();
-
-                    conversation.model =
-                        currentModel;
-
-                    conversation.updatedAt =
-                        Date.now();
-
-                    saveState();
-
-                    updateUIStrings();
-
-                    modelDropdown.classList.add(
-                        "hidden"
-                    );
-
-                    renderHistory();
-
-                }
-            );
-
-        }
-    );
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
-
-function openSidebar(){
-
-    sidebar.classList.add(
-        "open"
-    );
-
-    sidebarOverlay.classList.add(
-        "open"
-    );
-
-}
-
-function closeSidebar(){
-
-    sidebar.classList.remove(
-        "open"
-    );
-
-    sidebarOverlay.classList.remove(
-        "open"
-    );
-
-}
-
-menuBtn.addEventListener(
-    "click",
-    openSidebar
-);
-
-sidebarClose.addEventListener(
-    "click",
-    closeSidebar
-);
-
-sidebarOverlay.addEventListener(
-    "click",
-    closeSidebar
-);
-
-/* =========================================================
-   NEW CHAT
-========================================================= */
 
 newChatBtn.addEventListener(
     "click",
-    newChat
+    createConversation
 );
-
-/* =========================================================
-   MODE BUTTONS
-========================================================= */
 
 document
-    .querySelectorAll(".mode-item")
-    .forEach(
-        button => {
+    .querySelectorAll(".mode-btn")
+    .forEach(btn => {
 
-            button.addEventListener(
-                "click",
-                () => {
+        btn.addEventListener(
+            "click",
+            () => {
 
-                    setMode(
-                        button.getAttribute(
-                            "data-mode"
-                        )
-                    );
+                setMode(
+                    btn.dataset.mode
+                );
 
-                }
-            );
-
-        }
-    );
-
-/* =========================================================
-   PRIVACY
-========================================================= */
-
-privacyAccept.addEventListener(
-    "click",
-    () => {
-
-        localStorage.setItem(
-            "cqs_privacy",
-            "true"
+                closeMobileSidebar();
+            }
         );
+    });
 
-        privacyBanner.classList.add(
-            "hidden"
+chatForm.addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+        sendMessage(
+            userInput.value
         );
-
     }
 );
 
-privacyPolicyLink.addEventListener(
-    "click",
-    () => {
-
-        privacyModal.classList.remove(
-            "hidden"
-        );
-
-        privacyModal.classList.add(
-            "flex"
-        );
-
-    }
-);
-
-privacyModalClose.addEventListener(
-    "click",
-    () => {
-
-        privacyModal.classList.add(
-            "hidden"
-        );
-
-        privacyModal.classList.remove(
-            "flex"
-        );
-
-    }
-);
-
-/* =========================================================
-   KEYBOARD
-========================================================= */
-
-actionBtn.addEventListener(
-    "click",
-    handleAction
+userInput.addEventListener(
+    "input",
+    autoResizeTextarea
 );
 
 userInput.addEventListener(
     "keydown",
     event => {
 
-        if(
+        if (
             event.key === "Enter" &&
-            !event.shiftKey &&
-            !isGenerating
-        ){
+            !event.shiftKey
+        ) {
 
             event.preventDefault();
 
-            handleAction();
+            chatForm.requestSubmit();
+        }
+    }
+);
 
+attachBtn.addEventListener(
+    "click",
+    () => {
+
+        fileInput.click();
+    }
+);
+
+fileInput.addEventListener(
+    "change",
+    event => {
+
+        const file =
+            event.target.files?.[0];
+
+        if (file) {
+            setAttachment(file);
+        }
+    }
+);
+
+removeAttachmentBtn.addEventListener(
+    "click",
+    clearAttachment
+);
+
+micBtn.addEventListener(
+    "click",
+    toggleSpeech
+);
+
+shareChatBtn.addEventListener(
+    "click",
+    shareConversation
+);
+
+exportChatBtn.addEventListener(
+    "click",
+    () => {
+
+        exportModal.classList.add(
+            "show"
+        );
+    }
+);
+
+exportCloseBtn.addEventListener(
+    "click",
+    () => {
+
+        exportModal.classList.remove(
+            "show"
+        );
+    }
+);
+
+document
+    .querySelectorAll(
+        "[data-export-format]"
+    )
+    .forEach(btn => {
+
+        btn.addEventListener(
+            "click",
+            () => {
+
+                exportConversation(
+                    btn.dataset.exportFormat
+                );
+            }
+        );
+    });
+
+notionBtn.addEventListener(
+    "click",
+    openNotionModal
+);
+
+notionCloseBtn.addEventListener(
+    "click",
+    closeNotionModal
+);
+
+notionConnectBtn.addEventListener(
+    "click",
+    connectNotion
+);
+
+notionSaveBtn.addEventListener(
+    "click",
+    saveCurrentToNotion
+);
+
+notionPagesBtn.addEventListener(
+    "click",
+    loadNotionPages
+);
+
+settingsBtn.addEventListener(
+    "click",
+    () => {
+
+        settingsModal.classList.add(
+            "show"
+        );
+    }
+);
+
+settingsCloseBtn.addEventListener(
+    "click",
+    () => {
+
+        settingsModal.classList.remove(
+            "show"
+        );
+    }
+);
+
+clearCurrentBtn.addEventListener(
+    "click",
+    clearCurrentConversation
+);
+
+langBtn.addEventListener(
+    "click",
+    toggleLanguage
+);
+
+clearHistoryBtn.addEventListener(
+    "click",
+    () => {
+
+        const ok = confirm(
+            "确定删除全部历史记录吗？"
+        );
+
+        if (!ok) {
+            return;
         }
 
+        state.conversations = {};
+
+        state.currentConversationId =
+            null;
+
+        saveState();
+
+        settingsModal.classList.remove(
+            "show"
+        );
+
+        renderAll();
+
+        showToast(
+            "历史记录已清空"
+        );
+    }
+);
+
+resetSettingsBtn.addEventListener(
+    "click",
+    () => {
+
+        const ok = confirm(
+            "确定重置本地设置吗？"
+        );
+
+        if (!ok) {
+            return;
+        }
+
+        state.language = "zh";
+
+        state.model =
+            CONFIG.defaultModel;
+
+        state.mode = "chat";
+
+        state.notion.connected =
+            false;
+
+        saveState();
+
+        settingsModal.classList.remove(
+            "show"
+        );
+
+        renderAll();
+
+        showToast(
+            "设置已重置"
+        );
     }
 );
 
 /* =========================================================
-   VISUAL VIEWPORT
-   Mobile keyboard stability
+   QUICK PROMPTS
 ========================================================= */
 
-if(window.visualViewport){
+document
+    .querySelectorAll(
+        ".quick-action"
+    )
+    .forEach(btn => {
 
-    const updateViewport =
-        () => {
+        btn.addEventListener(
+            "click",
+            () => {
 
-            const viewport =
-                window.visualViewport;
+                const prompt =
+                    btn.dataset.prompt ||
+                    "";
 
-            if(!viewport) return;
+                userInput.value =
+                    prompt;
 
-            const keyboardHeight =
-                Math.max(
-                    0,
-                    window.innerHeight -
-                    viewport.height -
-                    viewport.offsetTop
-                );
+                autoResizeTextarea();
 
-            document.documentElement.style.setProperty(
-                "--keyboard-height",
-                keyboardHeight + "px"
-            );
-
-            if(
-                keyboardHeight > 120
-            ){
-
-                chatContainer.classList.add(
-                    "keyboard-active"
-                );
-
-                setTimeout(
-                    () =>
-                        scrollToBottom(
-                            false
-                        ),
-                    80
-                );
-
-            }else{
-
-                chatContainer.classList.remove(
-                    "keyboard-active"
-                );
-
+                userInput.focus();
             }
+        );
+    });
 
-        };
+/* =========================================================
+   MODAL BACKDROP
+========================================================= */
 
-    window.visualViewport.addEventListener(
-        "resize",
-        updateViewport
+[
+    notionModal,
+    exportModal,
+    settingsModal
+].forEach(modal => {
+
+    modal.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target === modal
+            ) {
+
+                modal.classList.remove(
+                    "show"
+                );
+            }
+        }
     );
+});
 
-    window.visualViewport.addEventListener(
-        "scroll",
-        updateViewport
-    );
+/* =========================================================
+   ESC
+========================================================= */
 
-}
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key !== "Escape"
+        ) {
+            return;
+        }
+
+        notionModal.classList.remove(
+            "show"
+        );
+
+        exportModal.classList.remove(
+            "show"
+        );
+
+        settingsModal.classList.remove(
+            "show"
+        );
+
+        closeMobileSidebar();
+    }
+);
 
 /* =========================================================
    INITIALIZATION
 ========================================================= */
 
-loadConversations();
+function initialize() {
 
-migrateLegacyMessages();
+    loadState();
 
-if(
-    !currentConversationId ||
-    !conversations[currentConversationId]
-){
+    if (
+        !state.currentConversationId ||
+        !state.conversations[
+            state.currentConversationId
+        ]
+    ) {
 
-    createConversation();
+        const conversations =
+            Object.values(
+                state.conversations
+            );
 
-}
+        if (conversations.length) {
 
-const currentConversation =
-    getCurrentConversation();
+            conversations.sort(
+                (a, b) =>
+                    b.updatedAt -
+                    a.updatedAt
+            );
 
-if(
-    currentConversation.model
-){
+            state.currentConversationId =
+                conversations[0].id;
 
-    currentModel =
-        currentConversation.model;
+        } else {
 
-}
+            createConversation();
 
-localStorage.setItem(
-    "cqs_model",
-    currentModel
-);
+            return;
+        }
+    }
 
-renderModeButtons();
+    runBootAnimation();
 
-updateUIStrings();
-
-renderHistory();
-
-renderModeView();
-
-if(
-    !localStorage.getItem(
-        "cqs_privacy"
-    )
-){
-
-    privacyBanner.classList.remove(
-        "hidden"
+    setMode(
+        state.mode || "chat"
     );
 
+    applyLanguage();
+
+    updateNotionStatus();
+
+    initSpeechRecognition();
+
+    renderAll();
+
+    autoResizeTextarea();
+
+    saveState();
 }
 
-runIntroAnimation();
-
+initialize();
 </script>
 
 </body>
