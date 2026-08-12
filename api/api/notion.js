@@ -9,10 +9,7 @@
 // 3. 保存 conversationId
 // 4. 保存用户消息
 // 5. 保存 AI 回复
-//
-// 环境变量：
-// NOTION_TOKEN
-// NOTION_PARENT_PAGE_ID
+// 6. 返回真实 Notion Page ID / URL
 // =========================================================
 
 export default async function handler(req, res) {
@@ -66,7 +63,7 @@ export default async function handler(req, res) {
             ? process.env.NOTION_TOKEN.trim()
             : "";
 
-    const parentPageId =
+    let parentPageId =
         typeof process.env.NOTION_PARENT_PAGE_ID === "string"
             ? process.env.NOTION_PARENT_PAGE_ID.trim()
             : "";
@@ -89,6 +86,151 @@ export default async function handler(req, res) {
             success: false,
             error:
                 "服务器未配置 NOTION_PARENT_PAGE_ID"
+        });
+
+    }
+
+
+    // ---------------------------------------------------------
+    // Normalize Notion Page ID
+    //
+    // Notion 页面 ID 可能来自：
+    //
+    // 1. 32 位无横杠 ID
+    // 2. UUID 格式 ID
+    // 3. Notion URL
+    // ---------------------------------------------------------
+
+    try {
+
+        if (
+            parentPageId.startsWith(
+                "http://"
+            ) ||
+            parentPageId.startsWith(
+                "https://"
+            )
+        ) {
+
+            const url =
+                new URL(
+                    parentPageId
+                );
+
+            const path =
+                url.pathname;
+
+            const match =
+                path.match(
+                    /([0-9a-f]{32})$/i
+                );
+
+            if (match) {
+
+                parentPageId =
+                    match[1];
+
+            } else {
+
+                const uuidMatch =
+                    path.match(
+                        /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i
+                    );
+
+                if (uuidMatch) {
+
+                    parentPageId =
+                        uuidMatch[1];
+
+                }
+
+            }
+
+        }
+
+
+        // Remove everything except hexadecimal
+        // characters and existing UUID hyphens.
+
+        parentPageId =
+            parentPageId
+                .replace(
+                    /[^0-9a-f-]/gi,
+                    ""
+                );
+
+
+        // Convert 32-character ID
+        // into UUID format.
+
+        const compactId =
+            parentPageId.replace(
+                /-/g,
+                ""
+            );
+
+
+        if (
+            /^[0-9a-f]{32}$/i.test(
+                compactId
+            )
+        ) {
+
+            parentPageId =
+                compactId.replace(
+                    /^(.{8})(.{4})(.{4})(.{4})(.{12})$/,
+                    "$1-$2-$3-$4-$5"
+                );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "[CQS Notion ID Parse Error]",
+            error
+        );
+
+        return res.status(400).json({
+
+            success: false,
+
+            error:
+                "NOTION_PARENT_PAGE_ID 格式无效",
+
+            detail:
+                error?.message ||
+                "Invalid Page ID"
+
+        });
+
+    }
+
+
+    // ---------------------------------------------------------
+    // Final Page ID Validation
+    // ---------------------------------------------------------
+
+    if (
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+            parentPageId
+        )
+    ) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            error:
+                "NOTION_PARENT_PAGE_ID 格式无效",
+
+            received:
+                parentPageId,
+
+            hint:
+                "请填写 Notion 页面 ID，而不是 Integration Token。"
+
         });
 
     }
@@ -144,9 +286,12 @@ export default async function handler(req, res) {
         ) {
 
             return res.status(400).json({
+
                 success: false,
+
                 error:
                     "没有可保存的对话内容"
+
             });
 
         }
@@ -167,7 +312,9 @@ export default async function handler(req, res) {
                 !message ||
                 typeof message !== "object"
             ) {
+
                 continue;
+
             }
 
 
@@ -182,14 +329,18 @@ export default async function handler(req, res) {
                 role !== "user" &&
                 role !== "assistant"
             ) {
+
                 continue;
+
             }
 
 
             if (
                 typeof content !== "string"
             ) {
+
                 continue;
+
             }
 
 
@@ -200,7 +351,9 @@ export default async function handler(req, res) {
             if (
                 !cleanContent
             ) {
+
                 continue;
+
             }
 
 
@@ -224,9 +377,12 @@ export default async function handler(req, res) {
         ) {
 
             return res.status(400).json({
+
                 success: false,
+
                 error:
                     "没有合法的对话内容"
+
             });
 
         }
@@ -302,7 +458,7 @@ export default async function handler(req, res) {
                     : "CQS AI";
 
 
-            // Role
+            // Role heading
 
             children.push({
 
@@ -334,7 +490,7 @@ export default async function handler(req, res) {
             });
 
 
-            // Content
+            // Message content
 
             children.push({
 
@@ -369,7 +525,7 @@ export default async function handler(req, res) {
 
 
         // -----------------------------------------------------
-        // Limit Notion blocks
+        // Notion API allows max 100 children per request
         // -----------------------------------------------------
 
         const limitedChildren =
@@ -432,12 +588,20 @@ export default async function handler(req, res) {
         console.log(
             "[CQS Notion] Creating page",
             {
+
                 parentPageId,
+
+                parentPageIdLength:
+                    parentPageId.length,
+
                 title,
+
                 messageCount:
                     cleanMessages.length,
+
                 blockCount:
                     limitedChildren.length
+
             }
         );
 
@@ -476,7 +640,7 @@ export default async function handler(req, res) {
 
 
         // -----------------------------------------------------
-        // Read Notion Response
+        // Read Response
         // -----------------------------------------------------
 
         const responseText =
@@ -484,6 +648,7 @@ export default async function handler(req, res) {
 
 
         let data = null;
+
 
         try {
 
@@ -502,7 +667,7 @@ export default async function handler(req, res) {
 
 
         // -----------------------------------------------------
-        // Notion Error
+        // Notion API Error
         // -----------------------------------------------------
 
         if (
