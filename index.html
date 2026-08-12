@@ -6693,7 +6693,7 @@ window.addEventListener(
 
 </script><script>
 (function() {
-    // --- 功能一：快捷键复制最后一条消息 (Ctrl + Shift + C) ---
+    // --- 1. 快捷键复制最后一条消息 (Ctrl + Shift + C) ---
     document.addEventListener('keydown', (event) => {
         if (event.ctrlKey && event.shiftKey && event.key === 'c') {
             event.preventDefault();
@@ -6710,22 +6710,23 @@ window.addEventListener(
         }
     });
 
-    // --- 功能二：左上角悬浮切换主题按钮 ---
+    // --- 2. 顶部正中间的悬浮主题切换按钮 ---
     const btn = document.createElement('button');
     btn.innerHTML = '🌓 主题';
     Object.assign(btn.style, {
         position: 'fixed',
         top: '12px',
-        left: '60px',
+        left: '50%',
+        transform: 'translateX(-50%)', // 居中核心代码
         zIndex: '99999',
-        padding: '4px 8px',
+        padding: '4px 10px',
         borderRadius: '6px',
         border: '1px solid rgba(255, 255, 255, 0.2)',
-        backgroundColor: 'rgba(30, 41, 59, 0.8)',
+        backgroundColor: 'rgba(30, 41, 59, 0.9)',
         color: '#ffffff',
         cursor: 'pointer',
         fontSize: '12px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)'
     });
     
     let isDark = true;
@@ -6738,6 +6739,7 @@ window.addEventListener(
     document.body.appendChild(btn);
 })();
 </script>
+
 
 </body>
 </html>
