@@ -5815,11 +5815,44 @@ async function saveToNotion() {
 
         }
 
-                toast(
-    state.language === "zh"
-        ? "对话已保存到 Notion"
-        : "Saved to Notion"
-);
+                if (data.url) {
+
+    try {
+
+        await navigator.clipboard.writeText(
+            data.url
+        );
+
+        toast(
+            state.language === "zh"
+                ? "已保存到 Notion，页面地址已复制"
+                : "Saved to Notion. Page link copied."
+        );
+
+    } catch {
+
+        toast(
+            state.language === "zh"
+                ? "已保存到 Notion"
+                : "Saved to Notion"
+        );
+
+        console.log(
+            "[CQS Notion Page URL]",
+            data.url
+        );
+
+    }
+
+} else {
+
+    toast(
+        state.language === "zh"
+            ? "已保存到 Notion，但未返回页面地址"
+            : "Saved to Notion, but no page URL was returned"
+    );
+
+}
 
 if (data.url) {
 
