@@ -6691,6 +6691,65 @@ window.addEventListener(
 
 })();
 
-</script>
+</script>/** 
+ * CQS AI 综合增强模块
+ * 1. 快捷键复制：Ctrl + Shift + C 
+ * 2. 快捷键切换主题：Ctrl + Shift + D
+ */
+(function() {
+    // --- 模块一：快捷键复制最后一条消息 ---
+    document.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.shiftKey && event.key === 'c') {
+            event.preventDefault();
+            if (typeof state !== 'undefined' && state.messages && state.messages.length > 0) {
+                const lastMessage = state.messages[state.messages.length - 1];
+                if (lastMessage && lastMessage.content) {
+                    navigator.clipboard.writeText(lastMessage.content).then(() => {
+                        console.log('快捷复制成功：最后一条消息已复制');
+                        // 如果您原代码有提示函数，可自行解开下面注释
+                        // if (typeof toast === 'function') toast("最后一条消息已复制");
+                    }).catch(err => {
+                        console.error('快捷复制失败: ', err);
+                    });
+                }
+            }
+        }
+    });
+
+    // --- 模块二：主题一键切换（暗色/亮色） ---
+    const themes = {
+        dark: { bg: '#020617', text: '#ffffff' },
+        light: { bg: '#ffffff', text: '#0f172a' }
+    };
+
+    // 暴露全局方法，方便您以后如果想加个“按钮”点击也能切换主题
+    window.toggleTheme = function() {
+        const currentTheme = localStorage.getItem('cqs_ai_theme') || 'dark';
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(nextTheme);
+        localStorage.setItem('cqs_ai_theme', nextTheme);
+    };
+
+    function applyTheme(themeName) {
+        const t = themes[themeName];
+        // 如果您的项目是用 class 控制主题（例如 body.dark-mode），请改成对应的 class 切换
+        // 这里直接控制背景与文字颜色，兼容性最高
+        document.body.style.backgroundColor = t.bg;
+        document.body.style.color = t.text;
+    }
+
+    // 页面加载时自动应用保存的主题
+    const savedTheme = localStorage.getItem('cqs_ai_theme') || 'dark';
+    applyTheme(savedTheme);
+
+    // 绑定快捷键切换主题：Ctrl + Shift + D
+    document.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.shiftKey && event.key === 'd') {
+            event.preventDefault();
+            window.toggleTheme();
+        }
+    });
+})();
+
 </body>
 </html>
