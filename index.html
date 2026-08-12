@@ -5679,8 +5679,12 @@ $("settingsBtn")
    NOTION
    ========================================================= */
 
-$("notionBtn")
-    .addEventListener(
+const notionBtn = $("notionBtn");
+const saveNotionBtn = $("saveNotionBtn");
+
+if (notionBtn) {
+
+    notionBtn.addEventListener(
         "click",
         () => {
 
@@ -5691,14 +5695,337 @@ $("notionBtn")
         }
     );
 
+}
 
-$("saveNotionBtn")
-    .addEventListener(
+
+if (saveNotionBtn) {
+
+    saveNotionBtn.addEventListener(
         "click",
         saveToNotion
     );
 
+}
 
+
+async function saveToNotion() {
+
+    /* -----------------------------------------------------
+       1. 基础检查
+       ----------------------------------------------------- */
+
+    if (
+        state.messages.length === 0
+    ) {
+
+        toast(
+            state.language === "zh"
+                ? "当前没有可保存的对话"
+                : "No conversation to save"
+        );
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------------
+       2. 防止重复点击
+       ----------------------------------------------------- */
+
+    if (
+        saveNotionBtn.disabled
+    ) {
+
+        return;
+
+    }
+
+
+    const originalText =
+        saveNotionBtn.textContent;
+
+
+    saveNotionBtn.disabled =
+        true;
+
+
+    saveNotionBtn.textContent =
+        state.language === "zh"
+            ? "正在保存..."
+            : "Saving...";
+
+
+    /* -----------------------------------------------------
+       3. 获取当前对话
+       ----------------------------------------------------- */
+
+    const conversation =
+        state.conversations.find(
+            conversation =>
+                conversation.id ===
+                state.currentConversationId
+        );
+
+
+    const title =
+        conversation?.title ||
+        "CQS AI Conversation";
+
+
+    try {
+
+        /* -------------------------------------------------
+           4. 请求 Notion API
+           ------------------------------------------------- */
+
+        const response =
+            await fetch(
+                "/api/notion",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            conversationId:
+                                state.currentConversationId,
+
+                            title:
+                                title,
+
+                            messages:
+                                state.messages
+
+                        })
+                }
+            );
+
+
+        /* -------------------------------------------------
+           5. 不管返回什么，先读取原始内容
+           ------------------------------------------------- */
+
+        const rawText =
+            await response.text();
+
+
+        let data = null;
+
+
+        try {
+
+            data =
+                rawText
+                    ? JSON.parse(
+                        rawText
+                    )
+                    : null;
+
+        } catch {
+
+            data = null;
+
+        }
+
+
+        /* -------------------------------------------------
+           6. HTTP 层失败
+           ------------------------------------------------- */
+
+        if (
+            !response.ok
+        ) {
+
+            let errorMessage =
+                `HTTP ${response.status}`;
+
+
+            if (
+                data?.error
+            ) {
+
+                errorMessage =
+                    data.error;
+
+            } else if (
+                data?.message
+            ) {
+
+                errorMessage =
+                    data.message;
+
+            } else if (
+                rawText
+            ) {
+
+                errorMessage =
+                    rawText
+                        .substring(
+                            0,
+                            500
+                        );
+
+            }
+
+
+            throw new Error(
+                errorMessage
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           7. 后端没有返回 JSON
+           ------------------------------------------------- */
+
+        if (
+            !data
+        ) {
+
+            throw new Error(
+                rawText
+                    ? `服务器返回了非 JSON 内容：${rawText.substring(0, 500)}`
+                    : "服务器没有返回数据"
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           8. 后端明确返回失败
+           ------------------------------------------------- */
+
+        if (
+            data.success !== true
+        ) {
+
+            const errorMessage =
+                data.error ||
+                data.message ||
+                "Notion 保存失败，但服务器没有提供具体错误。";
+
+
+            throw new Error(
+                errorMessage
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           9. 获取 Page ID
+           ------------------------------------------------- */
+
+        const pageId =
+            data.pageId ||
+            data.id ||
+            data.page?.id ||
+            data.data?.pageId ||
+            data.data?.id ||
+            "";
+
+
+        /* -------------------------------------------------
+           10. 成功
+           ------------------------------------------------- */
+
+        console.log(
+            "[CQS Notion Saved]",
+            {
+                pageId:
+                    pageId,
+
+                url:
+                    data.url ||
+                    data.page?.url ||
+                    "",
+
+                conversationId:
+                    data.conversationId ||
+                    state.currentConversationId,
+
+                response:
+                    data
+            }
+        );
+
+
+        /* -------------------------------------------------
+           11. 明确显示保存成功 + Page ID
+           ------------------------------------------------- */
+
+        if (
+            pageId
+        ) {
+
+            toast(
+                state.language === "zh"
+                    ? `Notion 保存成功\nPage ID: ${pageId}`
+                    : `Saved to Notion\nPage ID: ${pageId}`
+            );
+
+        } else {
+
+            toast(
+                state.language === "zh"
+                    ? "Notion 保存成功，但服务器没有返回 Page ID"
+                    : "Saved to Notion, but no Page ID was returned"
+            );
+
+        }
+
+
+    } catch (
+        error
+    ) {
+
+        /* -------------------------------------------------
+           12. 真实错误
+           ------------------------------------------------- */
+
+        console.error(
+            "[CQS Notion Error]",
+            error
+        );
+
+
+        const message =
+            error?.message ||
+            "Unknown Notion error";
+
+
+        toast(
+            state.language === "zh"
+                ? `Notion 保存失败：${message}`
+                : `Notion save failed: ${message}`
+        );
+
+
+    } finally {
+
+        /* -------------------------------------------------
+           13. 恢复按钮
+           ------------------------------------------------- */
+
+        saveNotionBtn.disabled =
+            false;
+
+        saveNotionBtn.textContent =
+            originalText;
+
+    }
+
+}
 async function saveToNotion() {
 
     if (
