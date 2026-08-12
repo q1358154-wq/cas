@@ -6691,7 +6691,8 @@ window.addEventListener(
 
 })();
 
-</script><script>
+</script>
+<script>
 (function() {
     // --- 1. Shortcut: Copy last message (Ctrl + Shift + C) ---
     document.addEventListener('keydown', (event) => {
@@ -6728,7 +6729,7 @@ window.addEventListener(
     document.head.appendChild(styleElem);
     document.body.classList.add('auto-gradient-bg');
 
-    // --- 3. 7 Color Themes (English) ---
+    // --- 3. 7 Color Themes ---
     const themes = [
         { name: '🍀 Emerald', bg: '#022c22', text: '#ecfdf5' },
         { name: '🌸 Rose Pink', bg: '#500724', text: '#fdf2f8' },
@@ -6783,13 +6784,13 @@ window.addEventListener(
     }
     document.body.appendChild(btn);
 
-    // --- 4. Hybrid Sound Selector (Audio Links for Rain/Cafe + Synth for Piano/Waves) ---
+    // --- 4. Hybrid Sound Selector (Using high-quality real-world audio sources) ---
     const noiseSelect = document.createElement('select');
     noiseSelect.innerHTML = `
         <option value="">🎵 Ambience Off</option>
         <option value="piano">🎹 Elegant Piano (Synth)</option>
-        <option value="rain">🌧️ Soft Rain (Audio)</option>
-        <option value="cafe">☕ Coffee Shop (Audio)</option>
+        <option value="rain">🌧️ Soft Rain (Real)</option>
+        <option value="cafe">☕ Coffee Shop (Real)</option>
     `;
     Object.assign(noiseSelect.style, {
         position: 'fixed',
@@ -6805,41 +6806,37 @@ window.addEventListener(
         cursor: 'pointer'
     });
 
-    // 独立音频播放器（专门负责 Rain 和 Cafe）
     const audioPlayer = document.createElement('audio');
     audioPlayer.loop = true;
     document.body.appendChild(audioPlayer);
 
+    // Use high-quality, stable real-world environment sound links
     const soundUrls = {
-        rain: 'https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg',
-        cafe: 'https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg'
+        rain: 'https://archive.org/download/rain-sounds/rain-sound.mp3',
+        cafe: 'https://archive.org/download/coffee-shop-ambience/coffee-shop-ambience.mp3'
     };
 
     let audioCtx = null;
     let pianoInterval = null;
 
     function stopEverything() {
-        // 停掉音频外链
         audioPlayer.pause();
         audioPlayer.src = '';
-        // 停掉合成钢琴
         if (pianoInterval) { clearInterval(pianoInterval); pianoInterval = null; }
         if (audioCtx) { audioCtx.close(); audioCtx = null; }
     }
 
     noiseSelect.onchange = function() {
         const val = noiseSelect.value;
-        stopEverything(); // 切换前先清空所有声音
+        stopEverything(); 
 
         if (!val) return;
 
         if (val === 'rain' || val === 'cafe') {
-            // 走外链播放
             audioPlayer.src = soundUrls[val];
             audioPlayer.play().catch(e => console.log('Audio error:', e));
         } 
         else if (val === 'piano') {
-            // 走纯代码合成优雅钢琴
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
             pianoInterval = setInterval(() => {
@@ -6867,6 +6864,7 @@ window.addEventListener(
     document.body.appendChild(noiseSelect);
 })();
 </script>
+
 
 
 
