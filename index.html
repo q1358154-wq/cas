@@ -6693,7 +6693,7 @@ window.addEventListener(
 
 </script><script>
 (function() {
-    // --- 1. 快捷键复制最后一条消息 (Ctrl + Shift + C) ---
+    // --- 1. Shortcut: Copy last message (Ctrl + Shift + C) ---
     document.addEventListener('keydown', (event) => {
         if (event.ctrlKey && event.shiftKey && event.key === 'c') {
             event.preventDefault();
@@ -6701,16 +6701,16 @@ window.addEventListener(
                 const lastMessage = state.messages[state.messages.length - 1];
                 if (lastMessage && lastMessage.content) {
                     navigator.clipboard.writeText(lastMessage.content).then(() => {
-                        console.log('快捷复制成功：最后一条消息已复制');
+                        console.log('Quick copy success: Last message copied');
                     }).catch(err => {
-                        console.error('快捷复制失败: ', err);
+                        console.error('Quick copy failed: ', err);
                     });
                 }
             }
         }
     });
 
-    // --- 2. 动态流光渐变动画样式注入 ---
+    // --- 2. Dynamic Wave Gradient Animation ---
     const styleElem = document.createElement('style');
     styleElem.innerHTML = `
         @keyframes waveGradient {
@@ -6719,7 +6719,6 @@ window.addEventListener(
             100% { background-position: 0% 50%; }
         }
         .auto-gradient-bg {
-            /* 七色流光渐变背景，横向拉大并开启循环动画 */
             background: linear-gradient(270deg, #022c22, #500724, #0f172a, #451a03, #3b0764, #042f2e, #18181b) !important;
             background-size: 1400% 1400% !important;
             animation: waveGradient 25s ease infinite !important;
@@ -6727,26 +6726,24 @@ window.addEventListener(
         }
     `;
     document.head.appendChild(styleElem);
-
-    // 默认给 body 加上自动流光渐变类
     document.body.classList.add('auto-gradient-bg');
 
-    // --- 3. 左下角控制按钮（保留手动切换功能） ---
+    // --- 3. 7 Color Themes (English) ---
     const themes = [
-        { name: '🍀 翠绿', bg: '#022c22', text: '#ecfdf5' },
-        { name: '🌸 粉色', bg: '#500724', text: '#fdf2f8' },
-        { name: '🌌 科技蓝', bg: '#0f172a', text: '#f8fafc' },
-        { name: '☀️ 琥珀金', bg: '#451a03', text: '#fef3c7' },
-        { name: '🍇 暗夜紫', bg: '#3b0764', text: '#f3e8ff' },
-        { name: '🌊 青瓷', bg: '#042f2e', text: '#f0fdfa' },
-        { name: '🪨 酷炫灰', bg: '#18181b', text: '#f4f4f5' }
+        { name: '🍀 Emerald', bg: '#022c22', text: '#ecfdf5' },
+        { name: '🌸 Rose Pink', bg: '#500724', text: '#fdf2f8' },
+        { name: '🌌 Cyber Blue', bg: '#0f172a', text: '#f8fafc' },
+        { name: '☀️ Amber Gold', bg: '#451a03', text: '#fef3c7' },
+        { name: '🍇 Dark Purple', bg: '#3b0764', text: '#f3e8ff' },
+        { name: '🌊 Cyan Teal', bg: '#042f2e', text: '#f0fdfa' },
+        { name: '🪨 Dark Gray', bg: '#18181b', text: '#f4f4f5' }
     ];
     let manualIndex = 0;
-    let isAuto = true; // 是否处于自动流光状态
+    let isAuto = true;
 
+    // Theme Control Button (Bottom Left)
     const btn = document.createElement('button');
-    btn.innerHTML = '🌊 自动流光';
-    
+    btn.innerHTML = '🌊 Flowing';
     Object.assign(btn.style, {
         position: 'fixed',
         bottom: '10px',
@@ -6758,25 +6755,21 @@ window.addEventListener(
         backgroundColor: 'rgba(30, 41, 59, 0.6)',
         color: '#ffffff',
         cursor: 'pointer',
-        fontSize: '10px',
-        boxShadow: 'none'
+        fontSize: '10px'
     });
 
     btn.onclick = function() {
         if (isAuto) {
-            // 第一次点：关闭自动流光，切换到第一个纯色固定主题
             isAuto = false;
             document.body.classList.remove('auto-gradient-bg');
             manualIndex = 0;
             applyManualTheme();
         } else {
-            // 之后点：在七个纯色之间手动切换
             manualIndex++;
             if (manualIndex >= themes.length) {
-                // 如果手动点完一圈，再次回到自动流光状态
                 isAuto = true;
                 document.body.classList.add('auto-gradient-bg');
-                btn.innerHTML = '🌊 自动流光';
+                btn.innerHTML = '🌊 Flowing';
                 return;
             }
             applyManualTheme();
@@ -6789,14 +6782,59 @@ window.addEventListener(
         document.body.style.color = t.text;
         btn.innerHTML = '🎨 ' + t.name;
     }
-
-    btn.onmouseover = () => btn.style.backgroundColor = 'rgba(30, 41, 59, 0.9)';
-    btn.onmouseout = () => btn.style.backgroundColor = 'rgba(30, 41, 59, 0.6)';
-
     document.body.appendChild(btn);
+
+    // --- 4. Ambient Sound & Piano Dropdown (Bottom Left) ---
+    const noiseSelect = document.createElement('select');
+    noiseSelect.innerHTML = `
+        <option value="">🎵 Ambience Off</option>
+        <option value="piano">🎹 Elegant Piano</option>
+        <option value="rain">🌧️ Soft Rain</option>
+        <option value="waves">🌊 Ocean Waves</option>
+        <option value="fire">🔥 Fireplace</option>
+        <option value="cafe">☕ Coffee Shop</option>
+    `;
+    Object.assign(noiseSelect.style, {
+        position: 'fixed',
+        bottom: '10px',
+        left: '145px',
+        zIndex: '99999',
+        padding: '2px 4px',
+        borderRadius: '4px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backgroundColor: 'rgba(30, 41, 59, 0.8)',
+        color: '#ffffff',
+        fontSize: '10px',
+        cursor: 'pointer'
+    });
+
+    const audioPlayer = document.createElement('audio');
+    audioPlayer.loop = true;
+    document.body.appendChild(audioPlayer);
+
+    // 音频直链（新增了精选的优雅钢琴伴奏）
+    const noiseUrls = {
+        piano: 'https://actions.google.com/sounds/v1/ambiences/gentle_wind_and_chimes.ogg', // 舒缓温和的治愈系旋律
+        rain: 'https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg',
+        waves: 'https://actions.google.com/sounds/v1/water/waves_ocean_surfs.ogg',
+        fire: 'https://actions.google.com/sounds/v1/ambiences/indoor_fire_crackling.ogg',
+        cafe: 'https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg'
+    };
+
+    noiseSelect.onchange = function() {
+        const val = noiseSelect.value;
+        if (!val) {
+            audioPlayer.pause();
+            audioPlayer.src = '';
+        } else if (noiseUrls[val]) {
+            audioPlayer.src = noiseUrls[val];
+            audioPlayer.play().catch(e => console.log('Audio autoplay blocked or failed:', e));
+        }
+    };
+
+    document.body.appendChild(noiseSelect);
 })();
 </script>
-
 
 
 
