@@ -5823,72 +5823,128 @@ async function saveToNotion() {
             data.url
         );
 
+        async function saveToNotion() {
+
+    if (
+        state.messages.length ===
+        0
+    ) {
+
         toast(
             state.language === "zh"
-                ? "已保存到 Notion，页面地址已复制"
-                : "Saved to Notion. Page link copied."
+                ? "当前没有可保存的对话"
+                : "No conversation to save"
         );
 
-    } catch {
+        return;
+
+    }
+
+    const button =
+        $("saveNotionBtn");
+
+    const original =
+        button.textContent;
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Saving...";
+
+    try {
+
+        const conversation =
+            state.conversations.find(
+                c =>
+                    c.id ===
+                    state.currentConversationId
+            );
+
+        const title =
+            conversation?.title ||
+            "CQS AI Conversation";
+
+        const response =
+            await fetch(
+                "/api/notion",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            conversationId:
+                                state.currentConversationId,
+
+                            title,
+
+                            messages:
+                                state.messages
+
+                        })
+
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data?.error ||
+                "Notion save failed"
+            );
+
+        }
 
         toast(
             state.language === "zh"
-                ? "已保存到 Notion"
+                ? "对话已保存到 Notion"
                 : "Saved to Notion"
         );
 
         console.log(
-            "[CQS Notion Page URL]",
-            data.url
+            "[CQS Notion Saved]",
+            {
+                pageId:
+                    data.pageId,
+
+                url:
+                    data.url,
+
+                conversationId:
+                    data.conversationId
+            }
         );
 
-    }
+    } catch (error) {
 
-} else {
+        console.error(
+            "[CQS Notion Error]",
+            error
+        );
 
-    toast(
-        state.language === "zh"
-            ? "已保存到 Notion，但未返回页面地址"
-            : "Saved to Notion, but no page URL was returned"
-    );
-
-}
-
-if (data.url) {
-
-    const openNotion =
-        confirm(
+        toast(
             state.language === "zh"
-                ? "对话已保存到 Notion。\n\n是否打开刚刚保存的 Notion 页面？"
-                : "Conversation saved to Notion.\n\nOpen the saved Notion page?"
+                ? `Notion 保存失败：${
+                    error.message ||
+                    "未知错误"
+                }`
+                : `Notion save failed: ${
+                    error.message ||
+                    "Unknown error"
+                }`
         );
-
-    if (openNotion) {
-
-        window.open(
-            data.url,
-            "_blank",
-            "noopener,noreferrer"
-        );
-
-    }
-
-}
-        );
-
-        /*
-if (
-    data.url
-) {
-
-    window.open(
-        data.url,
-        "_blank",
-        "noopener"
-    );
-
-}
-*/
 
     } finally {
 
@@ -5899,6 +5955,8 @@ if (
             original;
 
     }
+
+}
 
 }
 
