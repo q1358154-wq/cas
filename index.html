@@ -6783,15 +6783,14 @@ window.addEventListener(
     }
     document.body.appendChild(btn);
 
-    // --- 4. Ambient Sound (All MP3 Universal Links) ---
+    // --- 4. Web Audio Synthesizer (100% Guaranteed to work, no external files needed) ---
     const noiseSelect = document.createElement('select');
     noiseSelect.innerHTML = `
         <option value="">🎵 Ambience Off</option>
-        <option value="piano">🎹 Elegant Piano</option>
-        <option value="rain">🌧️ Soft Rain</option>
+        <option value="piano">🎹 Lo-Fi Piano Chords</option>
+        <option value="rain">🌧️ Soft Rain Noise</option>
         <option value="waves">🌊 Ocean Waves</option>
-        <option value="fire">🔥 Fireplace</option>
-        <option value="cafe">☕ Coffee Shop</option>
+        <option value="cafe">☕ Gentle Hum (Cafe)</option>
     `;
     Object.assign(noiseSelect.style, {
         position: 'fixed',
@@ -6807,35 +6806,108 @@ window.addEventListener(
         cursor: 'pointer'
     });
 
-    const audioPlayer = document.createElement('audio');
-    audioPlayer.loop = true;
-    document.body.appendChild(audioPlayer);
+    let audioCtx = null;
+    let currentInterval = null;
+    let noiseNode = null;
 
-    // 全部更换为标准、稳妥的 MP3 音频源
-    const noiseUrls = {
-        piano: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=gentle-piano-111164.mp3',
-        rain: 'https://cdn.pixabay.com/download/audio/2021/08/09/audio_4045f22302.mp3?filename=soft-rain-ambient-111154.mp3',
-        waves: 'https://cdn.pixabay.com/download/audio/2022/04/05/audio_1204a919f2.mp3?filename=ocean-waves-112906.mp3',
-        fire: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c97e74857b.mp3?filename=fireplace-crackling-8153.mp3',
-        cafe: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db321d7b42.mp3?filename=coffeeshop-ambience-110464.mp3'
-    };
+    function stopAllSound() {
+        if (currentInterval) { clearInterval(currentInterval); currentInterval = null; }
+        if (noiseNode) { try { noiseNode.stop(); } catch(e){} noiseNode = null; }
+        if (audioCtx) { audioCtx.close(); audioCtx = null; }
+    }
 
     noiseSelect.onchange = function() {
         const val = noiseSelect.value;
-        if (!val) {
-            audioPlayer.pause();
-            audioPlayer.src = '';
-        } else if (noiseUrls[val]) {
-            audioPlayer.src = noiseUrls[val];
-            audioPlayer.play().catch(e => {
-                console.log('Playback error:', e);
-            });
+        stopAllSound();
+
+        if (!val) return;
+
+        // 初始化浏览器音频上下文
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        if (val === 'rain') {
+            // 用算法实时生成粉红雨声
+            const bufferSize = audioCtx.sampleRate * 2;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            let b0 = 0, b1 = 0, b2 = 0;
+            for (let i = 0; i < bufferSize; i++) {
+                const white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                data[i] = (b0 + b1 + b2 + white * 0.5362) * 0.03;
+            }
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = buffer;
+            noiseNode.loop = true;
+            noiseNode.connect(audioCtx.destination);
+            noiseNode.start();
+        } 
+        else if (val === 'waves') {
+            // 用算法模拟海浪起伏声
+            const bufferSize = audioCtx.sampleRate * 4;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                const t = i / audioCtx.sampleRate;
+                const mod = (Math.sin(t * 0.5 * Math.PI * 2) + 1) * 0.5; // 4秒周期海浪
+                data[i] = (Math.random() * 2 - 1) * 0.04 * mod;
+            }
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = buffer;
+            noiseNode.loop = true;
+            noiseNode.connect(audioCtx.destination);
+            noiseNode.start();
+        }
+        else if (val === 'cafe') {
+            // 低沉平稳的环境底噪
+            const bufferSize = audioCtx.sampleRate * 2;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * 0.02;
+            }
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = buffer;
+            noiseNode.loop = true;
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 300; // 沉闷咖啡馆底噪
+            noiseNode.connect(filter);
+            filter.connect(audioCtx.destination);
+            noiseNode.start();
+        }
+        else if (val === 'piano') {
+            // 优雅治愈的自动循环钢琴单音/和弦
+            const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25]; // C大调音阶
+            currentInterval = setInterval(() => {
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sine'; // 柔和的正弦波模拟钢琴清脆音色
+                const freq = notes[Math.floor(Math.random() * notes.length)];
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                // 渐显渐隐（模拟琴键余音）
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 2.5);
+            }, 1200); // 每1.2秒弹奏一个舒缓的音符
         }
     };
 
     document.body.appendChild(noiseSelect);
 })();
 </script>
+
 
 
 
