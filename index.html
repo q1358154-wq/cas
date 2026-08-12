@@ -2,2519 +2,1602 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
->
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#020617">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<title>CQS AI</title>
-
+<meta name="description" content="CQS AI Global — Multi Provider AI Interface">
+<title>CQS AI Global</title>
 <style>
-/* =========================================================
-   CQS AI GLOBAL
-   Frontend Full Version
-   ========================================================= */
-
-:root {
-    --bg: #020617;
-    --bg-soft: #07111f;
-    --panel: rgba(8, 18, 32, .88);
-    --panel-2: rgba(15, 23, 42, .76);
-
-    --border: rgba(148, 163, 184, .14);
-    --border-light: rgba(255,255,255,.08);
-
-    --text: #f8fafc;
-    --muted: #94a3b8;
-    --muted-2: #64748b;
-
-    --accent: #38bdf8;
-    --accent-2: #818cf8;
-
-    --user-bg: linear-gradient(
-        135deg,
-        rgba(56,189,248,.16),
-        rgba(129,140,248,.14)
-    );
-
-    --assistant-bg: rgba(15,23,42,.72);
-
-    --danger: #fb7185;
-    --success: #34d399;
-
-    --radius: 18px;
-
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-
-    --vh: 100dvh;
+:root{
+    --bg:#020617;
+    --bg-soft:#07101f;
+    --panel:#0b1220;
+    --panel-2:#0f172a;
+    --panel-3:#111c31;
+    --border:rgba(148,163,184,.13);
+    --border-strong:rgba(148,163,184,.22);
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --muted-2:#64748b;
+    --accent:#8b5cf6;
+    --accent-2:#6366f1;
+    --danger:#ef4444;
+    --success:#22c55e;
+    --radius:18px;
+    --sidebar:280px;
+    --header:64px;
+    --input-max:760px;
+    --vh:100vh;
 }
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
-
 html,
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100%;
-    background: var(--bg);
-    color: var(--text);
+body{
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    background:var(--bg);
+    color:var(--text);
     font-family:
+        Inter,
         -apple-system,
         BlinkMacSystemFont,
         "SF Pro Display",
-        "SF Pro Text",
         "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
         sans-serif;
 }
-
-body {
-    overflow: hidden;
-}
-
 button,
 textarea,
-input {
-    font: inherit;
+input{
+    font:inherit;
 }
-
-button {
-    border: 0;
-    outline: 0;
-    cursor: pointer;
+button{
+    border:0;
+    cursor:pointer;
+    color:inherit;
 }
-
-button:disabled {
-    opacity: .45;
-    cursor: not-allowed;
+button:disabled{
+    cursor:not-allowed;
+    opacity:.55;
 }
-
-.app {
-    width: 100%;
-    height: 100dvh;
-    min-height: 100dvh;
-    display: flex;
-    overflow: hidden;
+.app{
+    width:100%;
+    height:var(--vh);
+    min-height:100%;
+    display:flex;
+    position:relative;
+    overflow:hidden;
     background:
         radial-gradient(
-            circle at 50% -10%,
-            rgba(56,189,248,.09),
-            transparent 36%
-        ),
-        radial-gradient(
-            circle at 100% 100%,
-            rgba(129,140,248,.06),
-            transparent 32%
+            circle at 70% 0%,
+            rgba(99,102,241,.08),
+            transparent 35%
         ),
         var(--bg);
 }
-
 /* =========================================================
    SIDEBAR
    ========================================================= */
-
-.sidebar {
-    width: 285px;
-    height: 100%;
-    flex: 0 0 285px;
-
-    display: flex;
-    flex-direction: column;
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(2,6,23,.98),
-            rgba(3,10,20,.96)
-        );
-
-    border-right: 1px solid var(--border);
-
-    position: relative;
-    z-index: 30;
-
-    transition:
-        transform .25s ease,
-        width .25s ease;
+.sidebar{
+    width:var(--sidebar);
+    height:100%;
+    flex:0 0 var(--sidebar);
+    display:flex;
+    flex-direction:column;
+    background:rgba(3,8,20,.96);
+    border-right:1px solid var(--border);
+    z-index:50;
 }
-
-.sidebar-header {
-    padding:
-        calc(16px + var(--safe-top))
-        16px
-        12px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.sidebar-top{
+    padding:18px 14px 12px;
 }
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.brand{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:5px 7px 17px;
 }
-
-.brand-logo {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-
-    display: grid;
-    place-items: center;
-
+.brand-mark{
+    width:36px;
+    height:36px;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
     background:
         linear-gradient(
             135deg,
-            rgba(56,189,248,.22),
-            rgba(129,140,248,.18)
+            #8b5cf6,
+            #4f46e5
         );
-
-    border: 1px solid rgba(56,189,248,.18);
-
     box-shadow:
-        0 0 24px rgba(56,189,248,.08);
-
-    font-weight: 800;
-    font-size: 14px;
+        0 8px 25px rgba(99,102,241,.28);
+    font-weight:800;
 }
-
-.brand-text {
-    display: flex;
-    flex-direction: column;
+.brand-name{
+    font-size:16px;
+    font-weight:750;
+    letter-spacing:.1px;
 }
-
-.brand-title {
-    font-weight: 800;
-    letter-spacing: .5px;
-    font-size: 15px;
+.brand-sub{
+    font-size:11px;
+    color:var(--muted-2);
+    margin-top:2px;
 }
-
-.brand-subtitle {
-    font-size: 10px;
-    color: var(--muted-2);
-    margin-top: 2px;
-}
-
-.sidebar-close {
-    width: 32px;
-    height: 32px;
-    display: none;
-    place-items: center;
-    color: var(--muted);
-    background: transparent;
-    border-radius: 10px;
-}
-
-/* =========================================================
-   NEW CHAT
-   ========================================================= */
-
-.new-chat {
-    margin: 8px 14px 14px;
-    height: 44px;
-
-    border-radius: 13px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    color: white;
-
+.new-chat{
+    width:100%;
+    height:44px;
+    border-radius:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
     background:
         linear-gradient(
             135deg,
-            rgba(56,189,248,.16),
-            rgba(129,140,248,.14)
+            rgba(124,58,237,.95),
+            rgba(79,70,229,.95)
         );
-
-    border: 1px solid rgba(56,189,248,.16);
-
-    transition:
-        transform .18s ease,
-        background .18s ease;
+    box-shadow:
+        0 8px 22px rgba(79,70,229,.16);
+    font-weight:650;
 }
-
-.new-chat:active {
-    transform: scale(.98);
+.new-chat:hover{
+    filter:brightness(1.08);
 }
-
-.new-chat:hover {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(56,189,248,.22),
-            rgba(129,140,248,.2)
-        );
+.sidebar-section{
+    padding:16px 14px 8px;
 }
-
-.new-chat-icon {
-    font-size: 18px;
+.section-title{
+    padding:0 8px 8px;
+    font-size:11px;
+    color:var(--muted-2);
+    text-transform:uppercase;
+    letter-spacing:.09em;
 }
-
-.sidebar-section-title {
-    padding: 0 16px 8px;
-    font-size: 10px;
-    color: var(--muted-2);
-    letter-spacing: .8px;
-    text-transform: uppercase;
+.history{
+    flex:1;
+    min-height:0;
+    overflow:auto;
+    padding:0 8px 12px;
 }
-
-/* =========================================================
-   HISTORY
-   ========================================================= */
-
-.history {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 10px 10px;
-
-    scrollbar-width: thin;
-    scrollbar-color:
-        rgba(148,163,184,.16)
-        transparent;
+.history::-webkit-scrollbar,
+.chat::-webkit-scrollbar{
+    width:4px;
 }
-
-.history::-webkit-scrollbar {
-    width: 4px;
+.history::-webkit-scrollbar-thumb,
+.chat::-webkit-scrollbar-thumb{
+    background:rgba(148,163,184,.16);
+    border-radius:20px;
 }
-
-.history::-webkit-scrollbar-thumb {
-    background: rgba(148,163,184,.15);
-    border-radius: 999px;
+.history-item{
+    width:100%;
+    min-height:44px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:7px 8px;
+    margin-bottom:3px;
+    border-radius:11px;
+    background:transparent;
+    color:var(--muted);
+    text-align:left;
 }
-
-.history-item {
-    width: 100%;
-    padding: 11px 10px;
-    margin-bottom: 4px;
-
-    border-radius: 11px;
-
-    background: transparent;
-    color: var(--muted);
-
-    text-align: left;
-
-    display: flex;
-    align-items: center;
-    gap: 9px;
-
-    transition:
-        background .15s ease,
-        color .15s ease;
+.history-item:hover,
+.history-item.active{
+    background:rgba(148,163,184,.075);
+    color:var(--text);
 }
-
-.history-item:hover {
-    background: rgba(255,255,255,.045);
-    color: white;
+.history-icon{
+    width:22px;
+    flex:0 0 22px;
+    color:var(--muted-2);
+    text-align:center;
 }
-
-.history-item.active {
-    background: rgba(56,189,248,.08);
-    color: white;
+.history-title{
+    flex:1;
+    min-width:0;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:13px;
 }
-
-.history-icon {
-    width: 22px;
-    flex: 0 0 22px;
-    text-align: center;
+.history-delete{
+    width:25px;
+    height:25px;
+    flex:0 0 25px;
+    border-radius:7px;
+    background:transparent;
+    color:var(--muted-2);
+    opacity:0;
 }
-
-.history-title {
-    min-width: 0;
-    flex: 1;
-
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-
-    font-size: 13px;
+.history-item:hover .history-delete{
+    opacity:1;
 }
-
-.history-delete {
-    opacity: 0;
-    color: var(--muted-2);
-    background: transparent;
-    font-size: 13px;
+.history-delete:hover{
+    color:#fca5a5;
+    background:rgba(239,68,68,.1);
 }
-
-.history-item:hover .history-delete {
-    opacity: 1;
+.empty-history{
+    padding:22px 10px;
+    text-align:center;
+    color:var(--muted-2);
+    font-size:12px;
 }
-
-/* =========================================================
-   SIDEBAR FOOTER
-   ========================================================= */
-
-.sidebar-footer {
-    padding:
-        10px
-        12px
-        calc(12px + var(--safe-bottom));
-
-    border-top: 1px solid var(--border);
-
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+.sidebar-bottom{
+    border-top:1px solid var(--border);
+    padding:10px;
 }
-
-.sidebar-tool {
-    height: 42px;
-
-    border-radius: 11px;
-
-    background: rgba(255,255,255,.025);
-    border: 1px solid rgba(255,255,255,.05);
-
-    color: var(--muted);
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    gap: 3px;
-
-    font-size: 10px;
+.sidebar-action{
+    width:100%;
+    height:40px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 10px;
+    border-radius:10px;
+    background:transparent;
+    color:var(--muted);
+    text-align:left;
 }
-
-.sidebar-tool span:first-child {
-    font-size: 16px;
+.sidebar-action:hover{
+    color:var(--text);
+    background:rgba(148,163,184,.07);
 }
-
-.sidebar-tool:hover {
-    color: white;
-    background: rgba(255,255,255,.055);
-}
-
 /* =========================================================
    MAIN
    ========================================================= */
-
-.main {
-    min-width: 0;
-    flex: 1;
-    height: 100%;
-
-    display: flex;
-    flex-direction: column;
-
-    position: relative;
+.main{
+    min-width:0;
+    flex:1;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    position:relative;
 }
-
-/* =========================================================
-   TOPBAR
-   ========================================================= */
-
-.topbar {
-    height: 64px;
-    flex: 0 0 64px;
-
-    padding:
-        var(--safe-top)
-        16px
-        0;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    border-bottom: 1px solid var(--border);
-
-    background:
-        rgba(2,6,23,.72);
-
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-
-    position: relative;
-    z-index: 20;
+.header{
+    height:var(--header);
+    flex:0 0 var(--header);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 18px;
+    border-bottom:1px solid var(--border);
+    background:rgba(2,6,23,.72);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    z-index:20;
 }
-
-.topbar-left,
-.topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.header-left,
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
-
-.mobile-menu {
-    width: 36px;
-    height: 36px;
-
-    border-radius: 10px;
-
-    color: var(--muted);
-    background: transparent;
-
-    display: none;
+.mobile-menu{
+    display:none;
 }
-
-.page-title {
-    display: flex;
-    flex-direction: column;
+.model-select{
+    position:relative;
 }
-
-.page-title-main {
-    font-weight: 700;
-    font-size: 14px;
+.model-button{
+    min-width:170px;
+    height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:0 12px;
+    border:1px solid var(--border);
+    border-radius:11px;
+    background:rgba(15,23,42,.72);
+    color:var(--text);
 }
-
-.page-title-sub {
-    font-size: 10px;
-    color: var(--muted-2);
-    margin-top: 2px;
+.model-button:hover{
+    border-color:var(--border-strong);
 }
-
-.top-btn {
-    width: 36px;
-    height: 36px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 10px;
-
-    color: var(--muted);
-    background: transparent;
-
-    border: 1px solid transparent;
+.model-name{
+    font-size:13px;
+    font-weight:650;
 }
-
-.top-btn:hover {
-    color: white;
-    background: rgba(255,255,255,.05);
-    border-color: var(--border);
+.model-arrow{
+    color:var(--muted-2);
+    font-size:11px;
 }
-
-/* =========================================================
-   MODEL SELECT
-   ========================================================= */
-
-.model-select {
-    position: relative;
+.model-menu{
+    display:none;
+    position:absolute;
+    top:46px;
+    left:0;
+    width:245px;
+    padding:7px;
+    border:1px solid var(--border-strong);
+    border-radius:14px;
+    background:#0b1220;
+    box-shadow:0 20px 50px rgba(0,0,0,.45);
+    z-index:100;
 }
-
-.model-button {
-    min-width: 145px;
-    height: 36px;
-
-    padding: 0 10px;
-
-    border-radius: 10px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-
-    color: var(--text);
-
-    background:
-        rgba(255,255,255,.035);
-
-    border: 1px solid var(--border);
-
-    font-size: 12px;
+.model-menu.show{
+    display:block;
 }
-
-.model-button small {
-    color: var(--muted-2);
+.model-group{
+    padding:7px 8px 5px;
+    color:var(--muted-2);
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
 }
-
-.model-menu {
-    position: absolute;
-    right: 0;
-    top: calc(100% + 8px);
-
-    width: 220px;
-
-    padding: 7px;
-
-    border-radius: 14px;
-
-    background:
-        rgba(8,18,32,.98);
-
-    border: 1px solid var(--border);
-
-    box-shadow:
-        0 20px 50px rgba(0,0,0,.4);
-
-    display: none;
+.model-option{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:10px;
+    border-radius:10px;
+    background:transparent;
+    text-align:left;
 }
-
-.model-menu.show {
-    display: block;
-}
-
-.model-option {
-    width: 100%;
-    padding: 10px;
-
-    border-radius: 9px;
-
-    background: transparent;
-    color: var(--muted);
-
-    text-align: left;
-
-    display: flex;
-    align-items: center;
-    gap: 9px;
-}
-
 .model-option:hover,
-.model-option.active {
-    background: rgba(56,189,248,.08);
-    color: white;
+.model-option.active{
+    background:rgba(139,92,246,.1);
 }
-
-.model-option-icon {
-    width: 25px;
-    text-align: center;
+.model-status{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--muted-2);
 }
-
+.model-option.active .model-status{
+    background:var(--success);
+    box-shadow:0 0 8px rgba(34,197,94,.6);
+}
+.model-info{
+    min-width:0;
+    flex:1;
+}
+.model-label{
+    display:block;
+    font-size:13px;
+}
+.model-desc{
+    display:block;
+    margin-top:2px;
+    color:var(--muted-2);
+    font-size:10px;
+}
+.header-button{
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    background:transparent;
+    color:var(--muted);
+    display:grid;
+    place-items:center;
+    font-size:16px;
+}
+.header-button:hover{
+    background:rgba(148,163,184,.08);
+    color:var(--text);
+}
 /* =========================================================
    CHAT
    ========================================================= */
-
-.chat {
-    flex: 1;
-    min-height: 0;
-
-    overflow-y: auto;
-
-    padding:
-        24px
-        20px
-        170px;
-
-    scroll-behavior: smooth;
-
-    scrollbar-width: thin;
-    scrollbar-color:
-        rgba(148,163,184,.16)
-        transparent;
+.chat{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    scroll-behavior:smooth;
 }
-
-.chat::-webkit-scrollbar {
-    width: 5px;
+.chat-inner{
+    width:100%;
+    max-width:900px;
+    margin:0 auto;
+    padding:40px 22px 190px;
 }
-
-.chat::-webkit-scrollbar-thumb {
-    background: rgba(148,163,184,.15);
-    border-radius: 999px;
+.welcome{
+    min-height:calc(var(--vh) - 250px);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
 }
-
-/* =========================================================
-   WELCOME
-   ========================================================= */
-
-.welcome {
-    width: min(760px, 100%);
-    min-height: 65vh;
-
-    margin: 0 auto;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-
-    animation: welcomeIn .65s ease both;
-}
-
-@keyframes welcomeIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.welcome-logo {
-    width: 74px;
-    height: 74px;
-
-    border-radius: 24px;
-
-    display: grid;
-    place-items: center;
-
-    font-weight: 900;
-    font-size: 23px;
-
+.welcome-mark{
+    width:62px;
+    height:62px;
+    display:grid;
+    place-items:center;
+    margin-bottom:22px;
+    border-radius:19px;
     background:
         linear-gradient(
             135deg,
-            rgba(56,189,248,.18),
-            rgba(129,140,248,.18)
+            #8b5cf6,
+            #4f46e5
         );
-
-    border:
-        1px solid
-        rgba(56,189,248,.18);
-
     box-shadow:
-        0 0 60px rgba(56,189,248,.08);
+        0 18px 45px rgba(79,70,229,.25);
+    font-size:24px;
+    font-weight:800;
 }
-
-.welcome-title {
-    margin-top: 22px;
-
-    font-size: clamp(28px, 5vw, 42px);
-    font-weight: 800;
-
-    letter-spacing: -.8px;
+.welcome-title{
+    margin:0;
+    font-size:clamp(28px,5vw,44px);
+    line-height:1.1;
+    font-weight:780;
+    letter-spacing:-.04em;
 }
-
-.welcome-title .letter {
-    display: inline-block;
-    opacity: 0;
-    animation:
-        letterIn .35s ease forwards;
+.letter{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(9px);
+    animation:letterIn .5s ease forwards;
 }
-
-@keyframes letterIn {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
+@keyframes letterIn{
+    to{
+        opacity:1;
+        transform:none;
     }
 }
-
-.welcome-description {
-    max-width: 560px;
-    margin-top: 13px;
-
-    color: var(--muted);
-    line-height: 1.7;
-    font-size: 13px;
+.welcome-sub{
+    max-width:620px;
+    margin:15px auto 28px;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.7;
 }
-
-.welcome-actions {
-    margin-top: 28px;
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
+.quick-actions{
+    width:100%;
+    max-width:760px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
 }
-
-.quick-action {
-    padding: 9px 13px;
-
-    border-radius: 999px;
-
-    color: var(--muted);
-
-    background:
-        rgba(255,255,255,.035);
-
-    border: 1px solid var(--border);
-
-    font-size: 12px;
+.quick-action{
+    min-height:64px;
+    padding:10px;
+    border:1px solid var(--border);
+    border-radius:13px;
+    background:rgba(15,23,42,.55);
+    color:var(--muted);
+    text-align:left;
+    transition:.18s ease;
 }
-
-.quick-action:hover {
-    color: white;
-    background: rgba(255,255,255,.06);
+.quick-action:hover{
+    transform:translateY(-1px);
+    border-color:rgba(139,92,246,.35);
+    color:var(--text);
+    background:rgba(139,92,246,.07);
 }
-
+.quick-title{
+    display:block;
+    font-size:12px;
+    font-weight:650;
+}
+.quick-desc{
+    display:block;
+    margin-top:4px;
+    font-size:10px;
+    color:var(--muted-2);
+}
 /* =========================================================
-   MESSAGE
+   MESSAGES
    ========================================================= */
-
-.message {
-    width: min(860px, 100%);
-    margin: 0 auto 24px;
-
-    display: flex;
-    gap: 12px;
-
-    animation: messageIn .22s ease both;
+.message{
+    display:flex;
+    gap:13px;
+    margin-bottom:30px;
+    animation:messageIn .22s ease;
 }
-
-@keyframes messageIn {
-    from {
-        opacity: 0;
-        transform: translateY(6px);
+@keyframes messageIn{
+    from{
+        opacity:0;
+        transform:translateY(4px);
     }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    to{
+        opacity:1;
+        transform:none;
     }
 }
-
-.avatar {
-    width: 34px;
-    height: 34px;
-
-    flex: 0 0 34px;
-
-    border-radius: 11px;
-
-    display: grid;
-    place-items: center;
-
-    font-size: 13px;
-    font-weight: 800;
-
+.avatar{
+    width:34px;
+    height:34px;
+    flex:0 0 34px;
+    display:grid;
+    place-items:center;
+    border-radius:10px;
+    background:rgba(148,163,184,.1);
+    color:var(--muted);
+    font-size:12px;
+    font-weight:750;
+}
+.message.assistant .avatar{
     background:
-        rgba(255,255,255,.04);
-
-    border: 1px solid var(--border);
+        linear-gradient(
+            135deg,
+            rgba(139,92,246,.9),
+            rgba(79,70,229,.9)
+        );
+    color:white;
 }
-
-.message.user .avatar {
-    background:
-        rgba(56,189,248,.1);
+.message-body{
+    min-width:0;
+    flex:1;
 }
-
-.message.assistant .avatar {
-    background:
-        rgba(129,140,248,.1);
+.message-meta{
+    margin:1px 0 8px;
+    color:var(--muted-2);
+    font-size:11px;
+    font-weight:650;
 }
-
-.message-body {
-    min-width: 0;
-    flex: 1;
+.message.user .message-body{
+    background:rgba(15,23,42,.6);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:11px 14px;
 }
-
-.message-meta {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-
-    margin: 3px 0 7px;
-
-    font-size: 11px;
-    color: var(--muted-2);
+.message.user .message-meta{
+    margin-bottom:5px;
 }
-
-.message-content {
-    max-width: 100%;
-
-    padding: 12px 14px;
-
-    border-radius: 15px;
-
-    color: #e5e7eb;
-
-    font-size: 14px;
-    line-height: 1.75;
-
-    word-break: break-word;
-
-    background:
-        var(--assistant-bg);
-
-    border:
-        1px solid
-        rgba(148,163,184,.08);
+.message-content{
+    color:#e5e7eb;
+    font-size:14px;
+    line-height:1.75;
+    overflow-wrap:anywhere;
 }
-
-.message.user .message-content {
-    background: var(--user-bg);
-    border-color: rgba(56,189,248,.1);
+.message-content p{
+    margin:0 0 12px;
 }
-
-.message-content p {
-    margin: 0 0 10px;
+.message-content p:last-child{
+    margin-bottom:0;
 }
-
-.message-content p:last-child {
-    margin-bottom: 0;
+.message-content strong{
+    color:#fff;
 }
-
-.message-content pre {
-    overflow-x: auto;
-
-    padding: 13px;
-
-    border-radius: 11px;
-
-    background: #020617;
-
-    border: 1px solid var(--border);
-
-    font-size: 12px;
+.message-content em{
+    color:#cbd5e1;
 }
-
-.message-content code {
+.message-content code{
+    padding:2px 5px;
+    border-radius:5px;
+    background:rgba(148,163,184,.12);
     font-family:
         "SFMono-Regular",
         Consolas,
         monospace;
+    font-size:.9em;
 }
-
-.message-content :not(pre) > code {
-    padding: 2px 5px;
-    border-radius: 5px;
-    background: rgba(255,255,255,.07);
+.message-content pre{
+    margin:12px 0;
+    padding:14px;
+    overflow:auto;
+    border:1px solid var(--border);
+    border-radius:11px;
+    background:#020617;
 }
-
-.message-actions {
-    margin-top: 7px;
-
-    display: flex;
-    gap: 5px;
+.message-content pre code{
+    padding:0;
+    background:none;
 }
-
-.message-action {
-    width: 29px;
-    height: 29px;
-
-    border-radius: 8px;
-
-    color: var(--muted-2);
-    background: transparent;
+.md-quote{
+    padding:6px 11px;
+    margin:7px 0;
+    border-left:2px solid #8b5cf6;
+    color:#cbd5e1;
+    background:rgba(139,92,246,.05);
 }
-
-.message-action:hover {
-    color: white;
-    background: rgba(255,255,255,.05);
+.message-actions{
+    display:flex;
+    gap:5px;
+    margin-top:8px;
 }
-
+.message-action{
+    width:29px;
+    height:29px;
+    border-radius:8px;
+    background:rgba(148,163,184,.06);
+    color:var(--muted-2);
+}
+.message-action:hover{
+    color:var(--text);
+    background:rgba(148,163,184,.12);
+}
 /* =========================================================
    THINKING
    ========================================================= */
-
-.thinking-box {
-    margin-bottom: 10px;
-
-    border-radius: 13px;
-
-    background:
-        rgba(129,140,248,.045);
-
-    border:
-        1px solid
-        rgba(129,140,248,.1);
-
-    overflow: hidden;
+.thinking-box{
+    margin-bottom:11px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
+    background:rgba(15,23,42,.35);
 }
-
-.thinking-header {
-    width: 100%;
-
-    min-height: 40px;
-
-    padding: 8px 11px;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    color: #c4b5fd;
-
-    background: transparent;
-
-    text-align: left;
-
-    font-size: 12px;
+.thinking-header{
+    width:100%;
+    min-height:38px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0 11px;
+    background:transparent;
+    color:var(--muted);
+    font-size:11px;
+    text-align:left;
 }
-
-.thinking-icon {
-    animation:
-        thinkingPulse 1.2s ease-in-out infinite;
+.thinking-icon{
+    font-size:13px;
 }
-
-@keyframes thinkingPulse {
-    0%,100% {
-        opacity: .45;
-        transform: scale(.92);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1);
-    }
+.thinking-dots{
+    display:flex;
+    gap:3px;
+    margin-left:3px;
 }
-
-.thinking-content {
-    display: none;
-
-    padding:
-        0 12px
-        12px;
-
-    color: #8b91aa;
-
-    font-size: 12px;
-    line-height: 1.6;
-
-    max-height: 220px;
-    overflow-y: auto;
-
-    white-space: pre-wrap;
+.thinking-dots span{
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:var(--muted-2);
+    animation:dot 1.2s infinite;
 }
-
-.thinking-box.open .thinking-content {
-    display: block;
+.thinking-dots span:nth-child(2){
+    animation-delay:.15s;
 }
-
-.thinking-dots {
-    display: inline-flex;
-    gap: 3px;
+.thinking-dots span:nth-child(3){
+    animation-delay:.3s;
 }
-
-.thinking-dots span {
-    width: 4px;
-    height: 4px;
-
-    border-radius: 50%;
-
-    background: currentColor;
-
-    animation:
-        dotPulse 1s infinite;
+@keyframes dot{
+    0%,80%,100%{opacity:.3}
+    40%{opacity:1}
 }
-
-.thinking-dots span:nth-child(2) {
-    animation-delay: .15s;
+.thinking-content{
+    display:none;
+    padding:0 12px 12px;
+    max-height:260px;
+    overflow:auto;
+    white-space:pre-wrap;
+    color:var(--muted-2);
+    font-size:11px;
+    line-height:1.65;
 }
-
-.thinking-dots span:nth-child(3) {
-    animation-delay: .3s;
+.thinking-box.open .thinking-content{
+    display:block;
 }
-
-@keyframes dotPulse {
-    0%,100% {
-        opacity: .25;
-    }
-
-    50% {
-        opacity: 1;
-    }
-}
-
 /* =========================================================
-   INPUT AREA
+   COMPOSER
    ========================================================= */
-
-.composer-wrap {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
+.composer-area{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
     padding:
-        12px
-        18px
-        calc(16px + var(--safe-bottom));
-
+        14px
+        max(18px,env(safe-area-inset-right))
+        max(18px,env(safe-area-inset-bottom))
+        max(18px,env(safe-area-inset-left));
     background:
         linear-gradient(
-            180deg,
-            transparent,
-            rgba(2,6,23,.96) 30%
+            to top,
+            rgba(2,6,23,1) 25%,
+            rgba(2,6,23,.88) 70%,
+            transparent
         );
-
-    z-index: 15;
+    z-index:15;
 }
-
-.composer {
-    width: min(860px, 100%);
-    margin: 0 auto;
-
-    border-radius: 19px;
-
-    background:
-        rgba(8,18,32,.94);
-
-    border:
-        1px solid
-        rgba(148,163,184,.16);
-
+.composer{
+    width:100%;
+    max-width:var(--input-max);
+    margin:0 auto;
+    border:1px solid var(--border-strong);
+    border-radius:17px;
+    background:rgba(10,18,32,.92);
     box-shadow:
-        0 18px 55px rgba(0,0,0,.35);
-
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-
-    overflow: hidden;
+        0 20px 55px rgba(0,0,0,.35);
+    backdrop-filter:blur(18px);
 }
-
-.composer-top {
-    display: flex;
-    align-items: flex-end;
+.attachments{
+    display:none;
+    flex-wrap:wrap;
+    gap:7px;
+    padding:10px 12px 0;
 }
-
-.textarea {
-    flex: 1;
-
-    width: 100%;
-
-    min-height: 48px;
-    max-height: 180px;
-
-    padding:
-        14px
-        14px
-        11px
-        16px;
-
-    resize: none;
-
-    background: transparent;
-
-    color: white;
-
-    border: 0;
-    outline: 0;
-
-    font-size: 14px;
-    line-height: 1.55;
+.attachments.show{
+    display:flex;
 }
-
-.textarea::placeholder {
-    color: #64748b;
+.attachment{
+    max-width:240px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 8px;
+    border-radius:8px;
+    background:rgba(148,163,184,.08);
+    color:var(--muted);
+    font-size:11px;
 }
-
-.composer-bottom {
-    min-height: 44px;
-
-    padding:
-        0
-        8px
-        8px
-        9px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.attachment-name{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
-
-.composer-tools {
-    display: flex;
-    align-items: center;
-    gap: 3px;
+.composer-row{
+    display:flex;
+    align-items:flex-end;
+    gap:7px;
+    padding:9px;
 }
-
-.tool-btn {
-    width: 34px;
-    height: 34px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 9px;
-
-    color: var(--muted);
-
-    background: transparent;
-
-    font-size: 17px;
+.input{
+    flex:1;
+    min-width:0;
+    max-height:180px;
+    min-height:40px;
+    resize:none;
+    border:0;
+    outline:none;
+    background:transparent;
+    color:var(--text);
+    padding:9px 5px;
+    line-height:1.5;
 }
-
-.tool-btn:hover {
-    color: white;
-    background: rgba(255,255,255,.05);
+.input::placeholder{
+    color:var(--muted-2);
 }
-
-.send-btn {
-    width: 38px;
-    height: 38px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 12px;
-
-    color: #fff;
-
+.composer-button{
+    width:38px;
+    height:38px;
+    flex:0 0 38px;
+    border-radius:10px;
+    display:grid;
+    place-items:center;
+    background:transparent;
+    color:var(--muted);
+}
+.composer-button:hover{
+    background:rgba(148,163,184,.08);
+    color:var(--text);
+}
+.send-button{
     background:
         linear-gradient(
             135deg,
-            #0ea5e9,
-            #6366f1
+            #8b5cf6,
+            #4f46e5
         );
-
-    box-shadow:
-        0 7px 22px rgba(14,165,233,.15);
-
-    transition:
-        transform .16s ease,
-        filter .16s ease;
+    color:white;
 }
-
-.send-btn:hover {
-    filter: brightness(1.08);
+.send-button:hover{
+    filter:brightness(1.08);
 }
-
-.send-btn:active {
-    transform: scale(.94);
+.send-button svg{
+    width:17px;
+    height:17px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
 }
-
-.send-btn svg {
-    width: 19px;
-    height: 19px;
-
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+.stop-btn{
+    background:#ef4444;
 }
-
-.stop-btn {
-    background:
-        rgba(251,113,133,.14);
-
-    color: #fb7185;
-
-    border:
-        1px solid
-        rgba(251,113,133,.16);
-}
-
-/* =========================================================
-   ATTACHMENT PREVIEW
-   ========================================================= */
-
-.attachments {
-    display: none;
-
-    padding: 7px 9px 0;
-
-    gap: 6px;
-
-    flex-wrap: wrap;
-}
-
-.attachments.show {
-    display: flex;
-}
-
-.attachment {
-    max-width: 190px;
-
-    padding: 6px 8px;
-
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    border-radius: 8px;
-
-    background: rgba(255,255,255,.045);
-
-    border: 1px solid var(--border);
-
-    color: var(--muted);
-
-    font-size: 11px;
-}
-
-.attachment-name {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
 /* =========================================================
    STATUS
    ========================================================= */
-
-.status-line {
-    width: min(860px, 100%);
-
-    margin: 6px auto 0;
-
-    min-height: 16px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    color: var(--muted-2);
-
-    font-size: 10px;
+.status{
+    position:absolute;
+    left:50%;
+    top:70px;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:5px 9px;
+    border:1px solid var(--border);
+    border-radius:20px;
+    background:rgba(2,6,23,.62);
+    color:var(--muted-2);
+    font-size:10px;
+    pointer-events:none;
+    z-index:10;
+    opacity:.85;
 }
-
-.status-left {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.status-dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--success);
 }
-
-.status-dot {
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background: var(--success);
-
-    box-shadow:
-        0 0 8px rgba(52,211,153,.55);
+.status-dot.busy{
+    background:#f59e0b;
+    box-shadow:0 0 8px rgba(245,158,11,.5);
 }
-
-.status-dot.busy {
-    background: #fbbf24;
-
-    box-shadow:
-        0 0 8px rgba(251,191,36,.5);
-}
-
 /* =========================================================
-   MODAL
+   OVERLAY / MODALS
    ========================================================= */
-
-.overlay {
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 100;
-
-    background:
-        rgba(0,0,0,.58);
-
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
+.overlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    background:rgba(0,0,0,.62);
+    backdrop-filter:blur(7px);
+    z-index:200;
 }
-
-.overlay.show {
-    display: flex;
+.overlay.show{
+    display:flex;
 }
-
-.modal {
-    width: min(560px, 100%);
-
-    max-height: min(720px, 90vh);
-
-    overflow-y: auto;
-
-    border-radius: 20px;
-
-    background:
-        #081220;
-
-    border:
-        1px solid
-        rgba(148,163,184,.16);
-
-    box-shadow:
-        0 30px 100px rgba(0,0,0,.5);
-
-    animation:
-        modalIn .2s ease both;
+.modal{
+    width:min(480px,100%);
+    max-height:min(720px,90vh);
+    overflow:auto;
+    border:1px solid var(--border-strong);
+    border-radius:20px;
+    background:#0b1220;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
 }
-
-@keyframes modalIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px) scale(.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 19px;
+    border-bottom:1px solid var(--border);
 }
-
-.modal-header {
-    min-height: 60px;
-
-    padding: 0 17px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    border-bottom: 1px solid var(--border);
+.modal-title{
+    font-size:15px;
+    font-weight:700;
 }
-
-.modal-title {
-    font-size: 15px;
-    font-weight: 700;
+.modal-close{
+    width:30px;
+    height:30px;
+    border-radius:8px;
+    background:transparent;
+    color:var(--muted);
 }
-
-.modal-close {
-    width: 34px;
-    height: 34px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 9px;
-
-    color: var(--muted);
-    background: transparent;
+.modal-close:hover{
+    background:rgba(148,163,184,.08);
+    color:var(--text);
 }
-
-.modal-body {
-    padding: 17px;
+.modal-body{
+    padding:18px;
 }
-
-.setting-row {
-    padding: 12px 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-
-    border-bottom: 1px solid rgba(255,255,255,.05);
+.setting-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    min-height:52px;
+    padding:8px 0;
+    border-bottom:1px solid var(--border);
 }
-
-.setting-row:last-child {
-    border-bottom: 0;
+.setting-row:last-child{
+    border-bottom:0;
 }
-
-.setting-name {
-    font-size: 13px;
+.setting-main{
+    min-width:0;
 }
-
-.setting-desc {
-    margin-top: 4px;
-    color: var(--muted-2);
-    font-size: 10px;
-    line-height: 1.5;
+.setting-title{
+    font-size:13px;
+    font-weight:600;
 }
-
-.select {
-    min-width: 150px;
-
-    padding: 8px 10px;
-
-    border-radius: 9px;
-
-    background:
-        rgba(255,255,255,.045);
-
-    border: 1px solid var(--border);
-
-    color: white;
-
-    outline: 0;
+.setting-desc{
+    margin-top:4px;
+    color:var(--muted-2);
+    font-size:11px;
+    line-height:1.5;
 }
-
-.primary-btn {
-    width: 100%;
-    height: 42px;
-
-    margin-top: 14px;
-
-    border-radius: 11px;
-
-    color: white;
-
+.modal-button{
+    min-height:42px;
+    padding:0 14px;
+    border-radius:10px;
+    background:rgba(148,163,184,.08);
+    color:var(--text);
+}
+.modal-button.primary{
     background:
         linear-gradient(
             135deg,
-            #0ea5e9,
-            #6366f1
+            #8b5cf6,
+            #4f46e5
         );
 }
-
-/* =========================================================
-   LANGUAGE GRID
-   ========================================================= */
-
-.language-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 8px;
+.modal-button:hover{
+    filter:brightness(1.08);
 }
-
-.language-option {
-    min-height: 54px;
-
-    padding: 8px 10px;
-
-    border-radius: 11px;
-
-    display: flex;
-    align-items: center;
-    gap: 9px;
-
-    color: var(--muted);
-
-    background:
-        rgba(255,255,255,.025);
-
-    border: 1px solid var(--border);
-
-    text-align: left;
+.language-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
 }
-
+.language-option{
+    min-height:45px;
+    padding:0 12px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:rgba(148,163,184,.04);
+    color:var(--muted);
+    text-align:left;
+}
 .language-option:hover,
-.language-option.active {
-    color: white;
-
-    border-color:
-        rgba(56,189,248,.18);
-
-    background:
-        rgba(56,189,248,.07);
+.language-option.active{
+    border-color:rgba(139,92,246,.4);
+    color:var(--text);
+    background:rgba(139,92,246,.08);
 }
-
-.language-flag {
-    font-size: 20px;
+.notion-info{
+    padding:13px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:rgba(148,163,184,.035);
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.7;
+    margin-bottom:15px;
 }
-
-.language-name {
-    font-size: 12px;
+.share-input{
+    width:100%;
+    min-height:80px;
+    resize:none;
+    padding:10px;
+    outline:none;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#020617;
+    color:var(--muted);
+    font-size:11px;
 }
-
-.language-native {
-    color: var(--muted-2);
-    font-size: 10px;
-    margin-top: 2px;
-}
-
-/* =========================================================
-   SHARE
-   ========================================================= */
-
-.share-url {
-    width: 100%;
-
-    min-height: 80px;
-
-    resize: none;
-
-    padding: 11px;
-
-    border-radius: 10px;
-
-    background:
-        rgba(255,255,255,.035);
-
-    color: white;
-
-    border: 1px solid var(--border);
-
-    outline: 0;
-
-    font-size: 11px;
-}
-
 /* =========================================================
    TOAST
    ========================================================= */
-
-.toast-container {
-    position: fixed;
-
-    left: 50%;
-    bottom: calc(100px + var(--safe-bottom));
-
-    transform: translateX(-50%);
-
-    z-index: 300;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    gap: 7px;
-
-    pointer-events: none;
+.toast-container{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    transform:translateX(-50%);
+    z-index:500;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    pointer-events:none;
 }
-
-.toast {
-    padding: 9px 13px;
-
-    border-radius: 10px;
-
-    color: white;
-
-    background:
-        rgba(15,23,42,.96);
-
-    border:
-        1px solid
-        rgba(148,163,184,.15);
-
-    box-shadow:
-        0 12px 35px rgba(0,0,0,.3);
-
-    font-size: 12px;
-
-    animation:
-        toastIn .2s ease both;
+.toast{
+    padding:10px 14px;
+    border:1px solid var(--border-strong);
+    border-radius:11px;
+    background:#0f172a;
+    color:var(--text);
+    box-shadow:0 15px 35px rgba(0,0,0,.35);
+    font-size:12px;
+    transition:opacity .2s ease;
+    white-space:nowrap;
 }
-
-@keyframes toastIn {
-    from {
-        opacity: 0;
-        transform: translateY(5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* =========================================================
-   FILE INPUT
-   ========================================================= */
-
-.hidden-input {
-    display: none;
-}
-
 /* =========================================================
    MOBILE
    ========================================================= */
-
-@media (max-width: 820px) {
-
-    .sidebar {
-        position: fixed;
-        inset:
-            0 auto 0 0;
-
-        width: min(310px, 86vw);
-
-        transform:
-            translateX(-102%);
-
-        box-shadow:
-            20px 0 70px rgba(0,0,0,.4);
+@media(max-width:800px){
+    .sidebar{
+        position:fixed;
+        left:0;
+        top:0;
+        bottom:0;
+        transform:translateX(-102%);
+        transition:transform .22s ease;
+        box-shadow:20px 0 60px rgba(0,0,0,.4);
     }
-
-    .sidebar.open {
-        transform:
-            translateX(0);
+    .sidebar.open{
+        transform:none;
     }
-
-    .sidebar-close {
-        display: grid;
+    .mobile-menu{
+        display:grid;
     }
-
-    .mobile-menu {
-        display: grid;
+    .header{
+        padding:0 10px;
     }
-
-    .model-button {
-        min-width: 112px;
+    .model-button{
+        min-width:140px;
     }
-
-    .chat {
+    .header-right{
+        gap:2px;
+    }
+    .quick-actions{
+        grid-template-columns:repeat(2,1fr);
+    }
+    .chat-inner{
         padding:
-            18px
-            12px
-            165px;
+            28px
+            13px
+            180px;
     }
-
-    .composer-wrap {
-        padding:
-            8px
-            10px
-            calc(10px + var(--safe-bottom));
+    .welcome{
+        min-height:calc(var(--vh) - 220px);
     }
-
-    .message {
-        gap: 8px;
-        margin-bottom: 20px;
+    .welcome-title{
+        font-size:30px;
     }
-
-    .avatar {
-        width: 30px;
-        height: 30px;
-        flex-basis: 30px;
-        border-radius: 9px;
-        font-size: 11px;
+    .message{
+        gap:9px;
+        margin-bottom:24px;
     }
-
-    .message-content {
-        font-size: 13px;
-        line-height: 1.7;
+    .avatar{
+        width:30px;
+        height:30px;
+        flex-basis:30px;
     }
-
-    .topbar {
-        padding-left: 10px;
-        padding-right: 10px;
+    .message-content{
+        font-size:13px;
     }
-
-    .top-btn:nth-child(2) {
-        display: none;
+    .status{
+        display:none;
+    }
+    .composer-area{
+        padding-bottom:
+            max(10px,env(safe-area-inset-bottom));
     }
 }
-
-@media (max-width: 500px) {
-
-    .page-title-sub {
-        display: none;
+@media(max-width:480px){
+    .model-button{
+        min-width:0;
+        width:128px;
     }
-
-    .model-button {
-        min-width: 100px;
-        max-width: 115px;
+    .model-desc{
+        display:none;
     }
-
-    .model-button small {
-        display: none;
+    .model-menu{
+        width:220px;
     }
-
-    .welcome {
-        min-height: 58vh;
+    .header-button{
+        width:34px;
+        height:34px;
     }
-
-    .welcome-logo {
-        width: 64px;
-        height: 64px;
-        border-radius: 21px;
+    .quick-actions{
+        gap:7px;
     }
-
-    .welcome-title {
-        font-size: 28px;
+    .quick-action{
+        min-height:58px;
     }
-
-    .welcome-description {
-        font-size: 12px;
-        padding: 0 12px;
+    .quick-desc{
+        display:none;
     }
-
-    .welcome-actions {
-        padding: 0 10px;
+    .language-grid{
+        grid-template-columns:1fr;
     }
-
-    .quick-action {
-        font-size: 11px;
-    }
-
-    .language-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .setting-row {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 9px;
-    }
-
-    .select {
-        width: 100%;
-    }
-}
-
-/* =========================================================
-   RECORDING
-   ========================================================= */
-
-.recording {
-    color: #fb7185 !important;
-    background: rgba(251,113,133,.08) !important;
-}
-
-.recording-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #fb7185;
-
-    animation:
-        recordPulse 1s infinite;
-}
-
-@keyframes recordPulse {
-    0%,100% {
-        opacity: .35;
-        transform: scale(.8);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.2);
-    }
-}
-
-/* =========================================================
-   EMPTY HISTORY
-   ========================================================= */
-
-.empty-history {
-    padding: 30px 15px;
-
-    text-align: center;
-
-    color: var(--muted-2);
-
-    font-size: 11px;
-}
-
-/* =========================================================
-   MARKDOWN BASIC
-   ========================================================= */
-
-.md-bold {
-    font-weight: 700;
-    color: white;
-}
-
-.md-link {
-    color: #7dd3fc;
-    text-decoration: underline;
-}
-
-.md-list {
-    margin: 8px 0;
-    padding-left: 22px;
-}
-
-.md-quote {
-    padding-left: 10px;
-    border-left: 2px solid rgba(56,189,248,.3);
-    color: var(--muted);
 }
 </style>
 </head>
-
 <body>
-
 <div class="app">
-
     <!-- =====================================================
          SIDEBAR
          ===================================================== -->
-
-    <aside class="sidebar" id="sidebar">
-
-        <div class="sidebar-header">
-
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-top">
             <div class="brand">
-
-                <div class="brand-logo">
-                    C
-                </div>
-
-                <div class="brand-text">
-                    <div class="brand-title">
+                <div class="brand-mark">C</div>
+                <div>
+                    <div class="brand-name">
                         CQS AI
                     </div>
-
-                    <div class="brand-subtitle">
-                        GLOBAL INTELLIGENCE
+                    <div class="brand-sub">
+                        Global AI Interface
                     </div>
                 </div>
-
             </div>
-
             <button
-                class="sidebar-close"
-                id="sidebarClose"
-                aria-label="Close"
+                id="newChatBtn"
+                class="new-chat"
+                type="button"
             >
-                ×
+                <span>＋</span>
+                <span data-i18n="newChat">
+                    新建对话
+                </span>
             </button>
-
         </div>
-
-        <button
-            class="new-chat"
-            id="newChatBtn"
-        >
-            <span class="new-chat-icon">＋</span>
-            <span data-i18n="newChat">新建对话</span>
-        </button>
-
-        <div
-            class="sidebar-section-title"
-            data-i18n="history"
-        >
-            HISTORY
+        <div class="sidebar-section">
+            <div
+                class="section-title"
+                data-i18n="history"
+            >
+                历史对话
+            </div>
         </div>
-
         <div
-            class="history"
             id="historyList"
+            class="history"
         ></div>
-
-        <div class="sidebar-footer">
-
+        <div class="sidebar-bottom">
             <button
-                class="sidebar-tool"
                 id="languageBtn"
+                class="sidebar-action"
+                type="button"
             >
-                <span>🌐</span>
-                <span data-i18n="language">语言</span>
+                <span>◎</span>
+                <span data-i18n="language">
+                    语言
+                </span>
+                <span
+                    id="currentLanguageText"
+                    style="margin-left:auto;font-size:11px;color:var(--muted-2)"
+                >
+                    简体中文
+                </span>
             </button>
-
             <button
-                class="sidebar-tool"
-                id="notionBtn"
-            >
-                <span>📝</span>
-                <span>Notion</span>
-            </button>
-
-            <button
-                class="sidebar-tool"
                 id="settingsBtn"
+                class="sidebar-action"
+                type="button"
             >
-                <span>⚙️</span>
-                <span data-i18n="settings">设置</span>
+                <span>⚙</span>
+                <span data-i18n="settings">
+                    设置
+                </span>
             </button>
-
         </div>
-
     </aside>
-
-
     <!-- =====================================================
          MAIN
          ===================================================== -->
-
     <main class="main">
-
-        <!-- TOPBAR -->
-
-        <header class="topbar">
-
-            <div class="topbar-left">
-
+        <header class="header">
+            <div class="header-left">
                 <button
-                    class="mobile-menu"
                     id="mobileMenu"
+                    class="header-button mobile-menu"
+                    type="button"
                     aria-label="Menu"
                 >
                     ☰
                 </button>
-
-                <div class="page-title">
-
-                    <div
-                        class="page-title-main"
-                        id="pageTitle"
-                    >
-                        CQS AI
-                    </div>
-
-                    <div
-                        class="page-title-sub"
-                        id="pageSubtitle"
-                    >
-                        Online
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="topbar-right">
-
                 <div class="model-select">
-
                     <button
-                        class="model-button"
                         id="modelButton"
+                        class="model-button"
+                        type="button"
                     >
-                        <span id="modelName">
-                            DeepSeek
+                        <span
+                            id="modelName"
+                            class="model-name"
+                        >
+                            DeepSeek V4 Flash
                         </span>
-
-                        <small id="modelVersion">
-                            V4
-                        </small>
-
-                        <span>⌄</span>
+                        <span class="model-arrow">
+                            ▾
+                        </span>
                     </button>
-
                     <div
-                        class="model-menu"
                         id="modelMenu"
+                        class="model-menu"
                     >
-
+                        <div class="model-group">
+                            AI PROVIDERS
+                        </div>
                         <button
                             class="model-option active"
                             data-model="deepseek-v4-flash"
-                            data-label="DeepSeek"
+                            data-label="DeepSeek V4 Flash"
+                            type="button"
                         >
-                            <span class="model-option-icon">
-                                ◈
-                            </span>
-
-                            <span>
-                                <strong>
-                                    DeepSeek
-                                </strong>
-                                <br>
-                                <small>
-                                    V4 Flash
-                                </small>
+                            <span class="model-status"></span>
+                            <span class="model-info">
+                                <span class="model-label">
+                                    DeepSeek V4 Flash
+                                </span>
+                                <span class="model-desc">
+                                    Default Gateway Provider
+                                </span>
                             </span>
                         </button>
-
                         <button
                             class="model-option"
-                            data-model="deepseek-v4-pro"
-                            data-label="DeepSeek Pro"
+                            data-model="still"
+                            data-label="STILL"
+                            type="button"
                         >
-                            <span class="model-option-icon">
-                                ◇
-                            </span>
-
-                            <span>
-                                <strong>
-                                    DeepSeek Pro
-                                </strong>
-                                <br>
-                                <small>
-                                    V4 Pro
-                                </small>
+                            <span class="model-status"></span>
+                            <span class="model-info">
+                                <span class="model-label">
+                                    STILL
+                                </span>
+                                <span class="model-desc">
+                                    STILL Adapter / Provider
+                                </span>
                             </span>
                         </button>
-
                         <button
                             class="model-option"
-                            data-model="openai"
-                            data-label="OpenAI"
+                            data-model="agent"
+                            data-label="AGENT"
+                            type="button"
                         >
-                            <span class="model-option-icon">
-                                ◎
-                            </span>
-
-                            <span>
-                                <strong>
-                                    OpenAI
-                                </strong>
-                                <br>
-                                <small>
-                                    API Ready
-                                </small>
+                            <span class="model-status"></span>
+                            <span class="model-info">
+                                <span class="model-label">
+                                    AGENT
+                                </span>
+                                <span class="model-desc">
+                                    Agent Adapter / Provider
+                                </span>
                             </span>
                         </button>
-
+                        <div class="model-group">
+                            RESERVED
+                        </div>
+                        <button
+                            class="model-option"
+                            data-model="gpt-4o"
+                            data-label="GPT-4o"
+                            type="button"
+                        >
+                            <span class="model-status"></span>
+                            <span class="model-info">
+                                <span class="model-label">
+                                    GPT-4o
+                                </span>
+                                <span class="model-desc">
+                                    Gateway Reserved
+                                </span>
+                            </span>
+                        </button>
                         <button
                             class="model-option"
                             data-model="claude"
                             data-label="Claude"
+                            type="button"
                         >
-                            <span class="model-option-icon">
-                                ◉
-                            </span>
-
-                            <span>
-                                <strong>
+                            <span class="model-status"></span>
+                            <span class="model-info">
+                                <span class="model-label">
                                     Claude
-                                </strong>
-                                <br>
-                                <small>
-                                    API Ready
-                                </small>
+                                </span>
+                                <span class="model-desc">
+                                    Gateway Reserved
+                                </span>
                             </span>
                         </button>
-
                         <button
                             class="model-option"
                             data-model="gemini"
                             data-label="Gemini"
+                            type="button"
                         >
-                            <span class="model-option-icon">
-                                ✦
-                            </span>
-
-                            <span>
-                                <strong>
+                            <span class="model-status"></span>
+                            <span class="model-info">
+                                <span class="model-label">
                                     Gemini
-                                </strong>
-                                <br>
-                                <small>
-                                    API Ready
-                                </small>
+                                </span>
+                                <span class="model-desc">
+                                    Gateway Reserved
+                                </span>
                             </span>
                         </button>
-
                     </div>
-
                 </div>
-
+            </div>
+            <div class="header-right">
                 <button
-                    class="top-btn"
+                    id="notionBtn"
+                    class="header-button"
+                    type="button"
+                    title="Notion"
+                >
+                    N
+                </button>
+                <button
                     id="shareBtn"
+                    class="header-button"
+                    type="button"
                     title="Share"
                 >
                     ↗
                 </button>
-
                 <button
-                    class="top-btn"
                     id="exportBtn"
+                    class="header-button"
+                    type="button"
                     title="Export"
                 >
                     ↓
                 </button>
-
+                <button
+                    id="soundBtn"
+                    class="header-button"
+                    type="button"
+                    title="Sound"
+                >
+                    🔊
+                </button>
             </div>
-
         </header>
-
-
-        <!-- =================================================
-             CHAT
-             ================================================= -->
-
-        <section
-            class="chat"
-            id="chat"
+        <div
+            id="status"
+            class="status"
         >
-
-            <div
-                class="welcome"
-                id="welcome"
-            >
-
-                <div class="welcome-logo">
-                    CQS
-                </div>
-
+            <span
+                id="statusDot"
+                class="status-dot"
+            ></span>
+            <span id="statusText">
+                Online
+            </span>
+        </div>
+        <section
+            id="chat"
+            class="chat"
+        >
+            <div class="chat-inner">
                 <div
-                    class="welcome-title"
-                    id="welcomeTitle"
+                    id="welcome"
+                    class="welcome"
                 >
-                    CQS AI
+                    <div class="welcome-mark">
+                        C
+                    </div>
+                    <h1
+                        id="welcomeTitle"
+                        class="welcome-title"
+                    >
+                        南源欢迎你
+                    </h1>
+                    <p class="welcome-sub">
+                        CQS AI Global — Multi-Provider AI Interface
+                    </p>
+                    <div class="quick-actions">
+                        <button
+                            class="quick-action"
+                            data-prompt="请介绍一下你自己。"
+                            type="button"
+                        >
+                            <span
+                                class="quick-title"
+                                data-i18n="quickAbout"
+                            >
+                                介绍自己
+                            </span>
+                            <span class="quick-desc">
+                                Explore CQS AI
+                            </span>
+                        </button>
+                        <button
+                            class="quick-action"
+                            data-prompt="请对这个问题进行深度思考并给出清晰结论。"
+                            type="button"
+                        >
+                            <span
+                                class="quick-title"
+                                data-i18n="quickThink"
+                            >
+                                深度思考
+                            </span>
+                            <span class="quick-desc">
+                                Reason deeply
+                            </span>
+                        </button>
+                        <button
+                            class="quick-action"
+                            data-prompt="帮我写一段高质量、可直接运行的代码。"
+                            type="button"
+                        >
+                            <span
+                                class="quick-title"
+                                data-i18n="quickCode"
+                            >
+                                写代码
+                            </span>
+                            <span class="quick-desc">
+                                Build software
+                            </span>
+                        </button>
+                        <button
+                            class="quick-action"
+                            data-prompt="帮我制定一个清晰、可执行的计划。"
+                            type="button"
+                        >
+                            <span
+                                class="quick-title"
+                                data-i18n="quickPlan"
+                            >
+                                制定计划
+                            </span>
+                            <span class="quick-desc">
+                                Create a plan
+                            </span>
+                        </button>
+                    </div>
                 </div>
-
                 <div
-                    class="welcome-description"
-                    id="welcomeDescription"
-                >
-                    Intelligent conversation powered by CQS AI.
-                    Ask questions, explore ideas and build
-                    something new.
-                </div>
-
-                <div class="welcome-actions">
-
-                    <button
-                        class="quick-action"
-                        data-prompt="请介绍一下你自己"
-                    >
-                        ✨ <span data-i18n="quickAbout">介绍自己</span>
-                    </button>
-
-                    <button
-                        class="quick-action"
-                        data-prompt="帮我分析一个复杂问题"
-                    >
-                        🧠 <span data-i18n="quickThink">深度思考</span>
-                    </button>
-
-                    <button
-                        class="quick-action"
-                        data-prompt="帮我写一段代码"
-                    >
-                        💻 <span data-i18n="quickCode">写代码</span>
-                    </button>
-
-                    <button
-                        class="quick-action"
-                        data-prompt="帮我制定一个计划"
-                    >
-                        📋 <span data-i18n="quickPlan">制定计划</span>
-                    </button>
-
-                </div>
-
+                    id="messages"
+                ></div>
             </div>
-
-            <div id="messages"></div>
-
         </section>
-
-
         <!-- =================================================
              COMPOSER
              ================================================= -->
-
-        <div class="composer-wrap">
-
+        <div class="composer-area">
             <div class="composer">
-
                 <div
-                    class="attachments"
                     id="attachments"
+                    class="attachments"
                 ></div>
-
-                <div class="composer-top">
-
+                <div class="composer-row">
+                    <button
+                        id="fileBtn"
+                        class="composer-button"
+                        type="button"
+                        title="Attach"
+                    >
+                        ＋
+                    </button>
                     <textarea
                         id="input"
-                        class="textarea"
+                        class="input"
                         rows="1"
-                        maxlength="12000"
-                        autocomplete="off"
                         data-placeholder="messagePlaceholder"
                         placeholder="给 CQS AI 发送消息..."
                     ></textarea>
-
-                </div>
-
-                <div class="composer-bottom">
-
-                    <div class="composer-tools">
-
-                        <button
-                            class="tool-btn"
-                            id="fileBtn"
-                            title="Upload"
-                        >
-                            📎
-                        </button>
-
-                        <button
-                            class="tool-btn"
-                            id="voiceBtn"
-                            title="Voice"
-                        >
-                            🎙️
-                        </button>
-
-                        <button
-                            class="tool-btn"
-                            id="soundBtn"
-                            title="Sound"
-                        >
-                            🔊
-                        </button>
-
-                        <input
-                            type="file"
-                            id="fileInput"
-                            class="hidden-input"
-                            multiple
-                        >
-
-                    </div>
-
                     <button
-                        class="send-btn"
+                        id="voiceBtn"
+                        class="composer-button"
+                        type="button"
+                        title="Voice"
+                    >
+                        🎙️
+                    </button>
+                    <button
                         id="sendBtn"
-                        aria-label="Send"
+                        class="composer-button send-button"
+                        type="button"
                         title="Send"
                     >
-
-                        <!-- 纸飞机 -->
-
                         <svg
                             viewBox="0 0 24 24"
                             aria-hidden="true"
                         >
-                            <path
-                                d="M22 2 11 13"
-                            ></path>
-
-                            <path
-                                d="m22 2-7 20-4-9-9-4Z"
-                            ></path>
+                            <path d="M22 2 11 13"></path>
+                            <path d="m22 2-7 20-4-9-9-4Z"></path>
                         </svg>
-
                     </button>
-
                 </div>
-
             </div>
-
-            <div class="status-line">
-
-                <div class="status-left">
-
-                    <span
-                        class="status-dot"
-                        id="statusDot"
-                    ></span>
-
-                    <span id="statusText">
-                        Online
-                    </span>
-
-                </div>
-
-                <span>
-                    CQS AI
-                </span>
-
-            </div>
-
         </div>
-
     </main>
-
 </div>
-
-
+<input
+    id="fileInput"
+    type="file"
+    multiple
+    hidden
+>
 <!-- =========================================================
      LANGUAGE MODAL
      ========================================================= -->
-
 <div
-    class="overlay"
     id="languageOverlay"
+    class="overlay"
 >
-
     <div class="modal">
-
         <div class="modal-header">
-
             <div
                 class="modal-title"
                 data-i18n="selectLanguage"
             >
                 选择语言
             </div>
-
             <button
                 class="modal-close"
                 data-close="languageOverlay"
+                type="button"
             >
                 ×
             </button>
-
         </div>
-
         <div class="modal-body">
-
             <div class="language-grid">
-
                 <button
                     class="language-option active"
                     data-language="zh"
+                    type="button"
                 >
-                    <span class="language-flag">
-                        🇨🇳
-                    </span>
-
-                    <span>
-                        <div class="language-name">
-                            简体中文
-                        </div>
-
-                        <div class="language-native">
-                            Chinese
-                        </div>
-                    </span>
+                    简体中文
                 </button>
-
                 <button
                     class="language-option"
                     data-language="en"
+                    type="button"
                 >
-                    <span class="language-flag">
-                        🇺🇸
-                    </span>
-
-                    <span>
-                        <div class="language-name">
-                            English
-                        </div>
-
-                        <div class="language-native">
-                            English
-                        </div>
-                    </span>
+                    English
                 </button>
-
                 <button
                     class="language-option"
                     data-language="ja"
+                    type="button"
                 >
-                    <span class="language-flag">
-                        🇯🇵
-                    </span>
-
-                    <span>
-                        <div class="language-name">
-                            日本語
-                        </div>
-
-                        <div class="language-native">
-                            Japanese
-                        </div>
-                    </span>
+                    日本語
                 </button>
-
                 <button
                     class="language-option"
                     data-language="ko"
+                    type="button"
                 >
-                    <span class="language-flag">
-                        🇰🇷
-                    </span>
-
-                    <span>
-                        <div class="language-name">
-                            한국어
-                        </div>
-
-                        <div class="language-native">
-                            Korean
-                        </div>
-                    </span>
+                    한국어
                 </button>
-
                 <button
                     class="language-option"
                     data-language="fr"
+                    type="button"
                 >
-                    <span class="language-flag">
-                        🇫🇷
-                    </span>
-
-                    <span>
-                        <div class="language-name">
-                            Français
-                        </div>
-
-                        <div class="language-native">
-                            French
-                        </div>
-                    </span>
+                    Français
                 </button>
-
                 <button
                     class="language-option"
                     data-language="de"
+                    type="button"
                 >
-                    <span class="language-flag">
-                        🇩🇪
-                    </span>
-
-                    <span>
-                        <div class="language-name">
-                            Deutsch
-                        </div>
-
-                        <div class="language-native">
-                            German
-                        </div>
-                    </span>
+                    Deutsch
                 </button>
-
                 <button
                     class="language-option"
                     data-language="es"
+                    type="button"
                 >
-                    <span class="language-flag">
-                        🇪🇸
-                    </span>
-
-                    <span>
-                        <div class="language-name">
-                            Español
-                        </div>
-
-                        <div class="language-native">
-                            Spanish
-                        </div>
-                    </span>
+                    Español
                 </button>
-
                 <button
                     class="language-option"
                     data-language="ru"
+                    type="button"
                 >
-                    <span class="language-flag">
-                        🇷🇺
-                    </span>
-
-                    <span>
-                        <div class="language-name">
-                            Русский
-                        </div>
-
-                        <div class="language-native">
-                            Russian
-                        </div>
-                    </span>
+                    Русский
                 </button>
-
+                <button
+                    class="language-option"
+                    data-language="ar"
+                    type="button"
+                >
+                    العربية
+                </button>
             </div>
-
         </div>
-
     </div>
-
 </div>
-
-
 <!-- =========================================================
-     SETTINGS MODAL
+     SETTINGS
      ========================================================= -->
-
 <div
-    class="overlay"
     id="settingsOverlay"
+    class="overlay"
 >
-
     <div class="modal">
-
         <div class="modal-header">
-
             <div
                 class="modal-title"
                 data-i18n="settings"
             >
                 设置
             </div>
-
             <button
                 class="modal-close"
                 data-close="settingsOverlay"
+                type="button"
             >
                 ×
             </button>
-
         </div>
-
         <div class="modal-body">
-
             <div class="setting-row">
-
-                <div>
+                <div class="setting-main">
                     <div
-                        class="setting-name"
+                        class="setting-title"
                         data-i18n="soundSetting"
                     >
                         气泡音
                     </div>
-
                     <div
                         class="setting-desc"
                         data-i18n="soundDesc"
@@ -2522,1739 +1605,872 @@ button:disabled {
                         输入、输出和 Thinking 状态音效
                     </div>
                 </div>
-
                 <button
-                    class="top-btn"
                     id="soundSettingBtn"
+                    class="modal-button"
+                    type="button"
                 >
                     🔊
                 </button>
-
             </div>
-
-
             <div class="setting-row">
-
-                <div>
-                    <div
-                        class="setting-name"
-                        data-i18n="language"
-                    >
-                        语言
+                <div class="setting-main">
+                    <div class="setting-title">
+                        Language
                     </div>
-
-                    <div
-                        class="setting-desc"
-                        id="currentLanguageText"
-                    >
-                        简体中文
+                    <div class="setting-desc">
+                        Interface language
                     </div>
                 </div>
-
                 <button
-                    class="top-btn"
                     id="settingLanguageBtn"
+                    class="modal-button"
+                    type="button"
                 >
-                    🌐
+                    Change
                 </button>
-
             </div>
-
-
-            <div class="setting-row">
-
-                <div>
-                    <div
-                        class="setting-name"
-                    >
-                        CQS AI
-                    </div>
-
-                    <div
-                        class="setting-desc"
-                    >
-                        Global AI Console
-                    </div>
-                </div>
-
-                <span
-                    style="
-                        color:#34d399;
-                        font-size:11px;
-                    "
-                >
-                    Online
-                </span>
-
-            </div>
-
         </div>
-
     </div>
-
 </div>
-
-
 <!-- =========================================================
-     NOTION MODAL
+     NOTION
      ========================================================= -->
-
 <div
-    class="overlay"
     id="notionOverlay"
+    class="overlay"
 >
-
     <div class="modal">
-
         <div class="modal-header">
-
             <div class="modal-title">
                 Notion
             </div>
-
             <button
                 class="modal-close"
                 data-close="notionOverlay"
+                type="button"
             >
                 ×
             </button>
-
         </div>
-
         <div class="modal-body">
-
-            <div
-                style="
-                    color:#94a3b8;
-                    font-size:12px;
-                    line-height:1.7;
-                "
-            >
-                将当前 CQS AI 对话保存到已经部署好的
-                Notion Secure Gateway。
+            <div class="notion-info">
+                将当前 CQS AI 对话保存到你配置的 Notion
+                Integration 和目标页面中。
+                API Token 不放在前端，由
+                <strong>/api/notion</strong>
+                服务端安全处理。
             </div>
-
             <button
-                class="primary-btn"
                 id="saveNotionBtn"
+                class="modal-button primary"
+                style="width:100%"
+                type="button"
             >
-                📝 保存当前对话到 Notion
+                Save to Notion
             </button>
-
         </div>
-
     </div>
-
 </div>
-
-
 <!-- =========================================================
-     SHARE MODAL
+     EXPORT
      ========================================================= -->
-
 <div
+    id="exportOverlay"
     class="overlay"
-    id="shareOverlay"
 >
-
     <div class="modal">
-
         <div class="modal-header">
-
+            <div class="modal-title">
+                Export
+            </div>
+            <button
+                class="modal-close"
+                data-close="exportOverlay"
+                type="button"
+            >
+                ×
+            </button>
+        </div>
+        <div class="modal-body">
+            <button
+                id="exportTxtBtn"
+                class="modal-button"
+                style="width:100%;margin-bottom:8px"
+                type="button"
+            >
+                Export TXT
+            </button>
+            <button
+                id="exportJsonBtn"
+                class="modal-button"
+                style="width:100%"
+                type="button"
+            >
+                Export JSON
+            </button>
+        </div>
+    </div>
+</div>
+<!-- =========================================================
+     SHARE
+     ========================================================= -->
+<div
+    id="shareOverlay"
+    class="overlay"
+>
+    <div class="modal">
+        <div class="modal-header">
             <div
                 class="modal-title"
                 data-i18n="share"
             >
                 分享对话
             </div>
-
             <button
                 class="modal-close"
                 data-close="shareOverlay"
+                type="button"
             >
                 ×
             </button>
-
         </div>
-
         <div class="modal-body">
-
             <textarea
-                class="share-url"
                 id="shareText"
+                class="share-input"
                 readonly
             ></textarea>
-
             <button
-                class="primary-btn"
                 id="copyShareBtn"
-                data-i18n="copy"
+                class="modal-button primary"
+                style="width:100%;margin-top:10px"
+                type="button"
             >
-                复制
+                Copy Share Link
             </button>
-
         </div>
-
     </div>
-
 </div>
-
-
-<!-- =========================================================
-     EXPORT MODAL
-     ========================================================= -->
-
 <div
-    class="overlay"
-    id="exportOverlay"
->
-
-    <div class="modal">
-
-        <div class="modal-header">
-
-            <div
-                class="modal-title"
-                data-i18n="export"
-            >
-                导出对话
-            </div>
-
-            <button
-                class="modal-close"
-                data-close="exportOverlay"
-            >
-                ×
-            </button>
-
-        </div>
-
-        <div class="modal-body">
-
-            <button
-                class="primary-btn"
-                id="exportTxtBtn"
-            >
-                📄 TXT
-            </button>
-
-            <button
-                class="primary-btn"
-                id="exportJsonBtn"
-            >
-                {} JSON
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     TOAST
-     ========================================================= -->
-
-<div
-    class="toast-container"
     id="toastContainer"
+    class="toast-container"
 ></div>
-
-
 <script>
-/* =========================================================
-   CQS AI GLOBAL
-   Frontend Application
-   ========================================================= */
-
 (() => {
-
 "use strict";
-
 /* =========================================================
    STATE
    ========================================================= */
-
 const state = {
-
     conversations: [],
-
     currentConversationId: null,
-
     messages: [],
-
     isStreaming: false,
-
     abortController: null,
-
     selectedModel:
-        localStorage.getItem(
-            "cqs_model"
-        ) || "deepseek-v4-flash",
-
+        localStorage.getItem("cqs_model") ||
+        "deepseek-v4-flash",
     language:
-        localStorage.getItem(
-            "cqs_language"
-        ) || "zh",
-
+        localStorage.getItem("cqs_language") ||
+        "zh",
     soundEnabled:
-        localStorage.getItem(
-            "cqs_sound"
-        ) !== "false",
-
+        localStorage.getItem("cqs_sound") !== "false",
     attachments: [],
-
     recognition: null,
-
     isRecording: false,
-
     streamReasoning: "",
-
     streamAnswer: ""
-
 };
-
-
 /* =========================================================
    ELEMENTS
    ========================================================= */
-
-const $ = (id) =>
+const $ = id =>
     document.getElementById(id);
-
-const sidebar =
-    $("sidebar");
-
-const chat =
-    $("chat");
-
-const messagesEl =
-    $("messages");
-
-const welcome =
-    $("welcome");
-
-const input =
-    $("input");
-
-const sendBtn =
-    $("sendBtn");
-
-const fileInput =
-    $("fileInput");
-
-const attachmentsEl =
-    $("attachments");
-
-const historyList =
-    $("historyList");
-
-const modelButton =
-    $("modelButton");
-
-const modelMenu =
-    $("modelMenu");
-
-const modelName =
-    $("modelName");
-
-const statusDot =
-    $("statusDot");
-
-const statusText =
-    $("statusText");
-
-
+const sidebar = $("sidebar");
+const chat = $("chat");
+const messagesEl = $("messages");
+const welcome = $("welcome");
+const input = $("input");
+const sendBtn = $("sendBtn");
+const fileInput = $("fileInput");
+const attachmentsEl = $("attachments");
+const historyList = $("historyList");
+const modelButton = $("modelButton");
+const modelMenu = $("modelMenu");
+const modelName = $("modelName");
+const statusDot = $("statusDot");
+const statusText = $("statusText");
+/* =========================================================
+   TRANSLATIONS
+   ========================================================= */
+const translations = {
+    zh: {
+        newChat:"新建对话",
+        history:"历史对话",
+        language:"语言",
+        settings:"设置",
+        selectLanguage:"选择语言",
+        quickAbout:"介绍自己",
+        quickThink:"深度思考",
+        quickCode:"写代码",
+        quickPlan:"制定计划",
+        messagePlaceholder:"给 CQS AI 发送消息...",
+        share:"分享对话",
+        copy:"复制",
+        export:"导出",
+        soundSetting:"气泡音",
+        soundDesc:"输入、输出和 Thinking 状态音效"
+    },
+    en: {
+        newChat:"New Chat",
+        history:"History",
+        language:"Language",
+        settings:"Settings",
+        selectLanguage:"Select Language",
+        quickAbout:"About",
+        quickThink:"Think",
+        quickCode:"Code",
+        quickPlan:"Plan",
+        messagePlaceholder:"Message CQS AI...",
+        share:"Share",
+        copy:"Copy",
+        export:"Export",
+        soundSetting:"Bubble Sound",
+        soundDesc:"Input, output and thinking sounds"
+    },
+    ja: {
+        newChat:"新しい会話",
+        history:"履歴",
+        language:"言語",
+        settings:"設定",
+        selectLanguage:"言語を選択",
+        quickAbout:"自己紹介",
+        quickThink:"深く考える",
+        quickCode:"コード",
+        quickPlan:"計画",
+        messagePlaceholder:"CQS AI にメッセージ...",
+        share:"共有",
+        copy:"コピー",
+        export:"エクスポート",
+        soundSetting:"バブル音",
+        soundDesc:"入力・出力・思考音"
+    },
+    ko: {
+        newChat:"새 대화",
+        history:"기록",
+        language:"언어",
+        settings:"설정",
+        selectLanguage:"언어 선택",
+        quickAbout:"소개",
+        quickThink:"깊이 생각",
+        quickCode:"코드",
+        quickPlan:"계획",
+        messagePlaceholder:"CQS AI에게 메시지...",
+        share:"공유",
+        copy:"복사",
+        export:"내보내기",
+        soundSetting:"버블 사운드",
+        soundDesc:"입력, 출력 및 사고 사운드"
+    },
+    fr: {
+        newChat:"Nouvelle discussion",
+        history:"Historique",
+        language:"Langue",
+        settings:"Paramètres",
+        selectLanguage:"Choisir la langue",
+        quickAbout:"À propos",
+        quickThink:"Réflexion",
+        quickCode:"Code",
+        quickPlan:"Plan",
+        messagePlaceholder:"Message à CQS AI...",
+        share:"Partager",
+        copy:"Copier",
+        export:"Exporter",
+        soundSetting:"Son bulle",
+        soundDesc:"Sons d'entrée, sortie et réflexion"
+    },
+    de: {
+        newChat:"Neuer Chat",
+        history:"Verlauf",
+        language:"Sprache",
+        settings:"Einstellungen",
+        selectLanguage:"Sprache auswählen",
+        quickAbout:"Über mich",
+        quickThink:"Denken",
+        quickCode:"Code",
+        quickPlan:"Plan",
+        messagePlaceholder:"Nachricht an CQS AI...",
+        share:"Teilen",
+        copy:"Kopieren",
+        export:"Exportieren",
+        soundSetting:"Blasenton",
+        soundDesc:"Eingabe-, Ausgabe- und Denkgeräusche"
+    },
+    es: {
+        newChat:"Nuevo chat",
+        history:"Historial",
+        language:"Idioma",
+        settings:"Configuración",
+        selectLanguage:"Seleccionar idioma",
+        quickAbout:"Presentación",
+        quickThink:"Pensar",
+        quickCode:"Código",
+        quickPlan:"Plan",
+        messagePlaceholder:"Mensaje para CQS AI...",
+        share:"Compartir",
+        copy:"Copiar",
+        export:"Exportar",
+        soundSetting:"Sonido burbuja",
+        soundDesc:"Sonidos de entrada, salida y pensamiento"
+    },
+    ru: {
+        newChat:"Новый чат",
+        history:"История",
+        language:"Язык",
+        settings:"Настройки",
+        selectLanguage:"Выберите язык",
+        quickAbout:"О себе",
+        quickThink:"Размышление",
+        quickCode:"Код",
+        quickPlan:"План",
+        messagePlaceholder:"Сообщение CQS AI...",
+        share:"Поделиться",
+        copy:"Копировать",
+        export:"Экспорт",
+        soundSetting:"Звук пузырька",
+        soundDesc:"Звуки ввода, вывода и размышления"
+    },
+    ar: {
+        newChat:"محادثة جديدة",
+        history:"السجل",
+        language:"اللغة",
+        settings:"الإعدادات",
+        selectLanguage:"اختر اللغة",
+        quickAbout:"عنّي",
+        quickThink:"تفكير عميق",
+        quickCode:"برمجة",
+        quickPlan:"خطة",
+        messagePlaceholder:"أرسل رسالة إلى CQS AI...",
+        share:"مشاركة",
+        copy:"نسخ",
+        export:"تصدير",
+        soundSetting:"صوت الفقاعة",
+        soundDesc:"أصوات الإدخال والإخراج والتفكير"
+    }
+};
+function t(key){
+    return (
+        translations[state.language]?.[key] ||
+        translations.zh[key] ||
+        key
+    );
+}
+function applyLanguage(){
+    document
+        .querySelectorAll("[data-i18n]")
+        .forEach(el => {
+            el.textContent =
+                t(el.dataset.i18n);
+        });
+    input.placeholder =
+        t(input.dataset.placeholder);
+    const names = {
+        zh:"简体中文",
+        en:"English",
+        ja:"日本語",
+        ko:"한국어",
+        fr:"Français",
+        de:"Deutsch",
+        es:"Español",
+        ru:"Русский",
+        ar:"العربية"
+    };
+    $("currentLanguageText").textContent =
+        names[state.language] ||
+        names.zh;
+    document
+        .querySelectorAll(".language-option")
+        .forEach(button => {
+            button.classList.toggle(
+                "active",
+                button.dataset.language ===
+                state.language
+            );
+        });
+}
+/* =========================================================
+   AUDIO
+   ========================================================= */
+let audioContext = null;
+function getAudioContext(){
+    if(!audioContext){
+        const AudioCtx =
+            window.AudioContext ||
+            window.webkitAudioContext;
+        if(!AudioCtx) return null;
+        audioContext =
+            new AudioCtx();
+    }
+    if(audioContext.state === "suspended"){
+        audioContext.resume().catch(() => {});
+    }
+    return audioContext;
+}
+function bubbleSound(type = "output"){
+    if(!state.soundEnabled) return;
+    const ctx =
+        getAudioContext();
+    if(!ctx) return;
+    const now =
+        ctx.currentTime;
+    const oscillator =
+        ctx.createOscillator();
+    const gain =
+        ctx.createGain();
+    let frequency = 580;
+    if(type === "input") frequency = 420;
+    if(type === "thinking") frequency = 330;
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(
+        frequency,
+        now
+    );
+    oscillator.frequency.exponentialRampToValueAtTime(
+        frequency * 1.32,
+        now + .12
+    );
+    gain.gain.setValueAtTime(
+        .0001,
+        now
+    );
+    gain.gain.exponentialRampToValueAtTime(
+        .055,
+        now + .015
+    );
+    gain.gain.exponentialRampToValueAtTime(
+        .0001,
+        now + .16
+    );
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+    oscillator.start(now);
+    oscillator.stop(now + .18);
+}
+let lastSound = {
+    input:0,
+    output:0,
+    thinking:0
+};
+function throttledSound(type){
+    const now = Date.now();
+    const limits = {
+        input:650,
+        output:700,
+        thinking:1100
+    };
+    if(
+        now -
+        lastSound[type] <
+        limits[type]
+    ){
+        return;
+    }
+    lastSound[type] = now;
+    bubbleSound(type);
+}
 /* =========================================================
    STORAGE
    ========================================================= */
-
-function loadConversations() {
-
-    try {
-
+function loadConversations(){
+    try{
         const raw =
             localStorage.getItem(
                 "cqs_conversations"
             );
-
-        if (!raw) {
-            state.conversations = [];
-            return;
-        }
-
         const parsed =
-            JSON.parse(raw);
-
+            raw ?
+            JSON.parse(raw) :
+            [];
         state.conversations =
             Array.isArray(parsed)
-                ? parsed
-                : [];
-
-    } catch {
-
+            ? parsed
+            : [];
+    }catch{
         state.conversations = [];
-
     }
-
 }
-
-function saveConversations() {
-
-    try {
-
+function saveConversations(){
+    try{
         localStorage.setItem(
             "cqs_conversations",
             JSON.stringify(
                 state.conversations
             )
         );
-
-    } catch {}
-
+    }catch(error){
+        console.warn(
+            "CQS storage error",
+            error
+        );
+    }
 }
-
-
-/* =========================================================
-   IDS
-   ========================================================= */
-
-function createId() {
-
+function createId(){
     return (
         Date.now().toString(36) +
         Math.random()
             .toString(36)
-            .substring(2, 9)
+            .slice(2,9)
     );
-
 }
-
-
 /* =========================================================
    TOAST
    ========================================================= */
-
-function toast(message) {
-
+function toast(message){
     const container =
         $("toastContainer");
-
     const item =
-        document.createElement(
-            "div"
-        );
-
-    item.className =
-        "toast";
-
-    item.textContent =
-        message;
-
-    container.appendChild(
-        item
-    );
-
+        document.createElement("div");
+    item.className = "toast";
+    item.textContent = message;
+    container.appendChild(item);
     setTimeout(() => {
-
         item.style.opacity = "0";
-
         setTimeout(() => {
-
             item.remove();
-
-        }, 200);
-
-    }, 2400);
-
+        },200);
+    },2400);
 }
-
-
-/* =========================================================
-   LANGUAGE
-   ========================================================= */
-
-const translations = {
-
-    zh: {
-
-        newChat:
-            "新建对话",
-
-        history:
-            "历史对话",
-
-        language:
-            "语言",
-
-        settings:
-            "设置",
-
-        selectLanguage:
-            "选择语言",
-
-        quickAbout:
-            "介绍自己",
-
-        quickThink:
-            "深度思考",
-
-        quickCode:
-            "写代码",
-
-        quickPlan:
-            "制定计划",
-
-        messagePlaceholder:
-            "给 CQS AI 发送消息...",
-
-        share:
-            "分享对话",
-
-        copy:
-            "复制",
-
-        export:
-            "导出对话",
-
-        soundSetting:
-            "气泡音",
-
-        soundDesc:
-            "输入、输出和 Thinking 状态音效"
-
-    },
-
-    en: {
-
-        newChat:
-            "New Chat",
-
-        history:
-            "History",
-
-        language:
-            "Language",
-
-        settings:
-            "Settings",
-
-        selectLanguage:
-            "Select Language",
-
-        quickAbout:
-            "About",
-
-        quickThink:
-            "Think",
-
-        quickCode:
-            "Code",
-
-        quickPlan:
-            "Plan",
-
-        messagePlaceholder:
-            "Message CQS AI...",
-
-        share:
-            "Share",
-
-        copy:
-            "Copy",
-
-        export:
-            "Export",
-
-        soundSetting:
-            "Bubble Sound",
-
-        soundDesc:
-            "Input, output and thinking sounds"
-
-    },
-
-    ja: {
-
-        newChat:
-            "新しい会話",
-
-        history:
-            "履歴",
-
-        language:
-            "言語",
-
-        settings:
-            "設定",
-
-        selectLanguage:
-            "言語を選択",
-
-        quickAbout:
-            "自己紹介",
-
-        quickThink:
-            "深く考える",
-
-        quickCode:
-            "コード",
-
-        quickPlan:
-            "計画",
-
-        messagePlaceholder:
-            "CQS AI にメッセージ...",
-
-        share:
-            "共有",
-
-        copy:
-            "コピー",
-
-        export:
-            "エクスポート",
-
-        soundSetting:
-            "バブル音",
-
-        soundDesc:
-            "入力・出力・思考音"
-
-    },
-
-    ko: {
-
-        newChat:
-            "새 대화",
-
-        history:
-            "기록",
-
-        language:
-            "언어",
-
-        settings:
-            "설정",
-
-        selectLanguage:
-            "언어 선택",
-
-        quickAbout:
-            "소개",
-
-        quickThink:
-            "깊이 생각",
-
-        quickCode:
-            "코드",
-
-        quickPlan:
-            "계획",
-
-        messagePlaceholder:
-            "CQS AI에게 메시지...",
-
-        share:
-            "공유",
-
-        copy:
-            "복사",
-
-        export:
-            "내보내기",
-
-        soundSetting:
-            "버블 사운드",
-
-        soundDesc:
-            "입력, 출력 및 사고 사운드"
-
-    },
-
-    fr: {
-
-        newChat:
-            "Nouvelle discussion",
-
-        history:
-            "Historique",
-
-        language:
-            "Langue",
-
-        settings:
-            "Paramètres",
-
-        selectLanguage:
-            "Choisir la langue",
-
-        quickAbout:
-            "À propos",
-
-        quickThink:
-            "Réflexion",
-
-        quickCode:
-            "Code",
-
-        quickPlan:
-            "Plan",
-
-        messagePlaceholder:
-            "Message à CQS AI...",
-
-        share:
-            "Partager",
-
-        copy:
-            "Copier",
-
-        export:
-            "Exporter",
-
-        soundSetting:
-            "Son bulle",
-
-        soundDesc:
-            "Sons d'entrée, sortie et réflexion"
-
-    },
-
-    de: {
-
-        newChat:
-            "Neuer Chat",
-
-        history:
-            "Verlauf",
-
-        language:
-            "Sprache",
-
-        settings:
-            "Einstellungen",
-
-        selectLanguage:
-            "Sprache auswählen",
-
-        quickAbout:
-            "Über mich",
-
-        quickThink:
-            "Denken",
-
-        quickCode:
-            "Code",
-
-        quickPlan:
-            "Plan",
-
-        messagePlaceholder:
-            "Nachricht an CQS AI...",
-
-        share:
-            "Teilen",
-
-        copy:
-            "Kopieren",
-
-        export:
-            "Exportieren",
-
-        soundSetting:
-            "Blasenton",
-
-        soundDesc:
-            "Eingabe-, Ausgabe- und Denkgeräusche"
-
-    },
-
-    es: {
-
-        newChat:
-            "Nuevo chat",
-
-        history:
-            "Historial",
-
-        language:
-            "Idioma",
-
-        settings:
-            "Configuración",
-
-        selectLanguage:
-            "Seleccionar idioma",
-
-        quickAbout:
-            "Presentación",
-
-        quickThink:
-            "Pensar",
-
-        quickCode:
-            "Código",
-
-        quickPlan:
-            "Plan",
-
-        messagePlaceholder:
-            "Mensaje para CQS AI...",
-
-        share:
-            "Compartir",
-
-        copy:
-            "Copiar",
-
-        export:
-            "Exportar",
-
-        soundSetting:
-            "Sonido burbuja",
-
-        soundDesc:
-            "Sonidos de entrada, salida y pensamiento"
-
-    },
-
-    ru: {
-
-        newChat:
-            "Новый чат",
-
-        history:
-            "История",
-
-        language:
-            "Язык",
-
-        settings:
-            "Настройки",
-
-        selectLanguage:
-            "Выберите язык",
-
-        quickAbout:
-            "О себе",
-
-        quickThink:
-            "Размышление",
-
-        quickCode:
-            "Код",
-
-        quickPlan:
-            "План",
-
-        messagePlaceholder:
-            "Сообщение CQS AI...",
-
-        share:
-            "Поделиться",
-
-        copy:
-            "Копировать",
-
-        export:
-            "Экспорт",
-
-        soundSetting:
-            "Звук пузырька",
-
-        soundDesc:
-            "Звуки ввода, вывода и размышления"
-
-    }
-
-};
-
-
-function t(key) {
-
-    return (
-        translations[state.language]?.[key] ||
-        translations.zh[key] ||
-        key
-    );
-
-}
-
-
-function applyLanguage() {
-
-    document
-        .querySelectorAll(
-            "[data-i18n]"
-        )
-        .forEach(el => {
-
-            const key =
-                el.dataset.i18n;
-
-            el.textContent =
-                t(key);
-
-        });
-
-    const placeholderKey =
-        input.dataset.placeholder;
-
-    input.placeholder =
-        t(placeholderKey);
-
-    const names = {
-
-        zh: "简体中文",
-
-        en: "English",
-
-        ja: "日本語",
-
-        ko: "한국어",
-
-        fr: "Français",
-
-        de: "Deutsch",
-
-        es: "Español",
-
-        ru: "Русский"
-
-    };
-
-    $("currentLanguageText")
-        .textContent =
-        names[state.language];
-
-    document
-        .querySelectorAll(
-            ".language-option"
-        )
-        .forEach(btn => {
-
-            btn.classList.toggle(
-                "active",
-                btn.dataset.language ===
-                state.language
-            );
-
-        });
-
-}
-
-
-/* =========================================================
-   AUDIO ENGINE
-   ========================================================= */
-
-let audioContext = null;
-
-function getAudioContext() {
-
-    if (!audioContext) {
-
-        const AudioCtx =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-        if (!AudioCtx) {
-            return null;
-        }
-
-        audioContext =
-            new AudioCtx();
-
-    }
-
-    if (
-        audioContext.state ===
-        "suspended"
-    ) {
-
-        audioContext.resume()
-            .catch(() => {});
-
-    }
-
-    return audioContext;
-
-}
-
-
-function bubbleSound(
-    type = "output"
-) {
-
-    if (!state.soundEnabled) {
-        return;
-    }
-
-    const ctx =
-        getAudioContext();
-
-    if (!ctx) {
-        return;
-    }
-
-    const now =
-        ctx.currentTime;
-
-    const oscillator =
-        ctx.createOscillator();
-
-    const gain =
-        ctx.createGain();
-
-    oscillator.type =
-        type === "thinking"
-            ? "sine"
-            : "sine";
-
-    let frequency = 540;
-
-    if (type === "input") {
-        frequency = 420;
-    }
-
-    if (type === "output") {
-        frequency = 580;
-    }
-
-    if (type === "thinking") {
-        frequency = 330;
-    }
-
-    oscillator.frequency.setValueAtTime(
-        frequency,
-        now
-    );
-
-    oscillator.frequency.exponentialRampToValueAtTime(
-        frequency * 1.32,
-        now + .12
-    );
-
-    gain.gain.setValueAtTime(
-        .0001,
-        now
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        .055,
-        now + .015
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        .0001,
-        now + .16
-    );
-
-    oscillator.connect(gain);
-    gain.connect(ctx.destination);
-
-    oscillator.start(now);
-    oscillator.stop(now + .18);
-
-}
-
-
-let lastInputSound = 0;
-let lastOutputSound = 0;
-let lastThinkingSound = 0;
-
-function throttledSound(type) {
-
-    const now =
-        Date.now();
-
-    if (type === "input") {
-
-        if (
-            now -
-            lastInputSound <
-            650
-        ) {
-            return;
-        }
-
-        lastInputSound =
-            now;
-
-    }
-
-    if (type === "output") {
-
-        if (
-            now -
-            lastOutputSound <
-            700
-        ) {
-            return;
-        }
-
-        lastOutputSound =
-            now;
-
-    }
-
-    if (type === "thinking") {
-
-        if (
-            now -
-            lastThinkingSound <
-            1100
-        ) {
-            return;
-        }
-
-        lastThinkingSound =
-            now;
-
-    }
-
-    bubbleSound(type);
-
-}
-
-
 /* =========================================================
    STATUS
    ========================================================= */
-
-function setStatus(
-    text,
-    busy = false
-) {
-
-    statusText.textContent =
-        text;
-
+function setStatus(text,busy=false){
+    statusText.textContent = text;
     statusDot.classList.toggle(
         "busy",
         busy
     );
-
 }
-
-
 /* =========================================================
    HISTORY
    ========================================================= */
-
-function renderHistory() {
-
+function renderHistory(){
     historyList.innerHTML = "";
-
-    if (
-        state.conversations.length === 0
-    ) {
-
+    if(!state.conversations.length){
         const empty =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
         empty.className =
             "empty-history";
-
         empty.textContent =
             state.language === "zh"
-                ? "暂无历史对话"
-                : "No conversations";
-
-        historyList.appendChild(
-            empty
-        );
-
+            ? "暂无历史对话"
+            : "No conversations";
+        historyList.appendChild(empty);
         return;
     }
-
-    const sorted =
-        [...state.conversations]
-            .sort(
-                (a,b) =>
-                    b.updatedAt -
-                    a.updatedAt
-            );
-
-    sorted.forEach(
-        conversation => {
-
+    [...state.conversations]
+        .sort(
+            (a,b) =>
+                b.updatedAt -
+                a.updatedAt
+        )
+        .forEach(conversation => {
             const item =
-                document.createElement(
-                    "button"
-                );
-
-            item.className =
-                "history-item";
-
-            if (
+                document.createElement("button");
+            item.type = "button";
+            item.className = "history-item";
+            if(
                 conversation.id ===
                 state.currentConversationId
-            ) {
-
-                item.classList.add(
-                    "active"
-                );
-
+            ){
+                item.classList.add("active");
             }
-
             const icon =
-                document.createElement(
-                    "span"
-                );
-
-            icon.className =
-                "history-icon";
-
-            icon.textContent =
-                "◌";
-
+                document.createElement("span");
+            icon.className = "history-icon";
+            icon.textContent = "◌";
             const title =
-                document.createElement(
-                    "span"
-                );
-
-            title.className =
-                "history-title";
-
+                document.createElement("span");
+            title.className = "history-title";
             title.textContent =
                 conversation.title ||
                 "CQS AI";
-
             const del =
-                document.createElement(
-                    "button"
-                );
-
-            del.className =
-                "history-delete";
-
-            del.textContent =
-                "×";
-
+                document.createElement("button");
+            del.type = "button";
+            del.className = "history-delete";
+            del.textContent = "×";
             del.addEventListener(
                 "click",
                 event => {
-
                     event.stopPropagation();
-
                     deleteConversation(
                         conversation.id
                     );
-
                 }
             );
-
-            item.appendChild(
-                icon
-            );
-
-            item.appendChild(
-                title
-            );
-
-            item.appendChild(
+            item.append(
+                icon,
+                title,
                 del
             );
-
             item.addEventListener(
                 "click",
                 () => {
-
                     loadConversation(
                         conversation.id
                     );
-
                     closeSidebar();
-
                 }
             );
-
-            historyList.appendChild(
-                item
-            );
-
-        }
-    );
-
+            historyList.appendChild(item);
+        });
 }
-
-
-function saveCurrentConversation() {
-
-    if (
-        !state.currentConversationId
-    ) {
-        return;
-    }
-
+function saveCurrentConversation(){
+    if(!state.currentConversationId) return;
     const conversation =
         state.conversations.find(
-            c =>
-                c.id ===
+            item =>
+                item.id ===
                 state.currentConversationId
         );
-
-    if (!conversation) {
-        return;
-    }
-
+    if(!conversation) return;
     conversation.messages =
         state.messages;
-
     conversation.updatedAt =
         Date.now();
-
-    if (
-        state.messages.length > 0
-    ) {
-
-        const firstUser =
-            state.messages.find(
-                m =>
-                    m.role ===
-                    "user"
-            );
-
-        if (firstUser) {
-
-            conversation.title =
-                firstUser.content
-                    .replace(/\s+/g, " ")
-                    .substring(0, 35);
-
-        }
-
+    const firstUser =
+        state.messages.find(
+            item =>
+                item.role === "user"
+        );
+    if(firstUser){
+        conversation.title =
+            String(firstUser.content || "")
+                .replace(/\s+/g," ")
+                .slice(0,35);
     }
-
     saveConversations();
     renderHistory();
-
 }
-
-
-function createConversation() {
-
-    const id =
-        createId();
-
+function createConversation(){
+    const id = createId();
     const conversation = {
-
         id,
-
         title:
             state.language === "zh"
-                ? "新对话"
-                : "New Chat",
-
-        messages: [],
-
-        createdAt:
-            Date.now(),
-
-        updatedAt:
-            Date.now()
-
+            ? "新对话"
+            : "New Chat",
+        messages:[],
+        createdAt:Date.now(),
+        updatedAt:Date.now()
     };
-
     state.conversations.push(
         conversation
     );
-
-    state.currentConversationId =
-        id;
-
+    state.currentConversationId = id;
     state.messages = [];
-
     saveConversations();
-
     renderHistory();
-
     renderMessages();
-
 }
-
-
-function loadConversation(id) {
-
+function loadConversation(id){
     const conversation =
         state.conversations.find(
-            c => c.id === id
+            item => item.id === id
         );
-
-    if (!conversation) {
-        return;
-    }
-
-    state.currentConversationId =
-        id;
-
+    if(!conversation) return;
+    state.currentConversationId = id;
     state.messages =
-        Array.isArray(
-            conversation.messages
-        )
-            ? conversation.messages
-            : [];
-
+        Array.isArray(conversation.messages)
+        ? conversation.messages
+        : [];
     renderHistory();
     renderMessages();
-
 }
-
-
-function deleteConversation(id) {
-
+function deleteConversation(id){
     state.conversations =
         state.conversations.filter(
-            c => c.id !== id
+            item => item.id !== id
         );
-
-    if (
+    if(
         state.currentConversationId === id
-    ) {
-
-        state.currentConversationId =
-            null;
-
+    ){
+        state.currentConversationId = null;
         state.messages = [];
-
-        renderMessages();
-
     }
-
     saveConversations();
     renderHistory();
-
+    renderMessages();
 }
-
-
 /* =========================================================
-   RENDER MESSAGES
+   MARKDOWN
    ========================================================= */
-
-function escapeHTML(value) {
-
+function escapeHTML(value){
     return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 }
-
-
-function formatMarkdown(text) {
-
+function formatMarkdown(text){
     let html =
-        escapeHTML(
-            text
-        );
-
+        escapeHTML(text || "");
     html =
         html.replace(
             /```([\s\S]*?)```/g,
-            (_, code) =>
+            (_,code) =>
                 "<pre><code>" +
                 code.trim() +
                 "</code></pre>"
         );
-
     html =
         html.replace(
             /`([^`]+)`/g,
             "<code>$1</code>"
         );
-
     html =
         html.replace(
             /\*\*(.*?)\*\*/g,
             "<strong>$1</strong>"
         );
-
     html =
         html.replace(
             /\*(.*?)\*/g,
             "<em>$1</em>"
         );
-
     html =
         html.replace(
             /^>\s?(.*)$/gm,
             '<div class="md-quote">$1</div>'
         );
-
     html =
         html.replace(
             /^[-*]\s+(.*)$/gm,
-            '<div>• $1</div>'
+            "<div>• $1</div>"
         );
-
     html =
         html.replace(
             /\n\n/g,
             "</p><p>"
         );
-
     html =
         html.replace(
             /\n/g,
             "<br>"
         );
-
     return "<p>" + html + "</p>";
-
 }
-
-
-function renderMessages() {
-
+/* =========================================================
+   MESSAGE RENDERING
+   ========================================================= */
+function renderMessages(){
     messagesEl.innerHTML = "";
-
-    if (
-        state.messages.length === 0
-    ) {
-
-        welcome.style.display =
-            "flex";
-
+    if(!state.messages.length){
+        welcome.style.display = "flex";
         return;
-
     }
-
-    welcome.style.display =
-        "none";
-
+    welcome.style.display = "none";
     state.messages.forEach(
         message => {
-
-            const wrapper =
-                createMessageElement(
-                    message
-                );
-
             messagesEl.appendChild(
-                wrapper
+                createMessageElement(message)
             );
-
         }
     );
-
     scrollToBottom();
-
 }
-
-
-function createMessageElement(
-    message
-) {
-
+function createMessageElement(message){
     const wrapper =
-        document.createElement(
-            "div"
-        );
-
+        document.createElement("div");
     wrapper.className =
         "message " +
         message.role;
-
     const avatar =
-        document.createElement(
-            "div"
-        );
-
-    avatar.className =
-        "avatar";
-
+        document.createElement("div");
+    avatar.className = "avatar";
     avatar.textContent =
         message.role === "user"
-            ? "U"
-            : "C";
-
+        ? "U"
+        : "C";
     const body =
-        document.createElement(
-            "div"
-        );
-
-    body.className =
-        "message-body";
-
+        document.createElement("div");
+    body.className = "message-body";
     const meta =
-        document.createElement(
-            "div"
-        );
-
-    meta.className =
-        "message-meta";
-
+        document.createElement("div");
+    meta.className = "message-meta";
     meta.textContent =
         message.role === "user"
-            ? "You"
-            : "CQS AI";
-
+        ? "You"
+        : "CQS AI";
     const content =
-        document.createElement(
-            "div"
-        );
-
+        document.createElement("div");
     content.className =
         "message-content";
-
     content.innerHTML =
         formatMarkdown(
             message.content || ""
         );
-
-    body.appendChild(
-        meta
-    );
-
-    body.appendChild(
+    body.append(
+        meta,
         content
     );
-
-    if (
-        message.role ===
-        "assistant"
-    ) {
-
+    if(message.role === "assistant"){
         const actions =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
         actions.className =
             "message-actions";
-
         const copy =
-            document.createElement(
-                "button"
-            );
-
+            document.createElement("button");
+        copy.type = "button";
         copy.className =
             "message-action";
-
-        copy.textContent =
-            "⧉";
-
-        copy.title =
-            "Copy";
-
+        copy.textContent = "⧉";
+        copy.title = t("copy");
         copy.addEventListener(
             "click",
-            () => {
-
+            () =>
                 copyText(
                     message.content || ""
-                );
-
-            }
+                )
         );
-
-        actions.appendChild(
-            copy
-        );
-
-        body.appendChild(
-            actions
-        );
-
+        actions.appendChild(copy);
+        body.appendChild(actions);
     }
-
-    wrapper.appendChild(
-        avatar
-    );
-
-    wrapper.appendChild(
+    wrapper.append(
+        avatar,
         body
     );
-
     return wrapper;
-
 }
-
-
 /* =========================================================
-   STREAM MESSAGE
+   STREAMING UI
    ========================================================= */
-
-function createStreamingMessage() {
-
+function createStreamingMessage(){
     const wrapper =
-        document.createElement(
-            "div"
-        );
-
+        document.createElement("div");
     wrapper.className =
         "message assistant";
-
     const avatar =
-        document.createElement(
-            "div"
-        );
-
-    avatar.className =
-        "avatar";
-
-    avatar.textContent =
-        "C";
-
+        document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = "C";
     const body =
-        document.createElement(
-            "div"
-        );
-
-    body.className =
-        "message-body";
-
+        document.createElement("div");
+    body.className = "message-body";
     const meta =
-        document.createElement(
-            "div"
-        );
-
-    meta.className =
-        "message-meta";
-
-    meta.textContent =
-        "CQS AI";
-
+        document.createElement("div");
+    meta.className = "message-meta";
+    meta.textContent = "CQS AI";
     const thinking =
-        document.createElement(
-            "div"
-        );
-
-    thinking.className =
-        "thinking-box";
-
-    const thinkingHeader =
-        document.createElement(
-            "button"
-        );
-
-    thinkingHeader.className =
-        "thinking-header";
-
-    thinkingHeader.innerHTML =
-        `
+        document.createElement("div");
+    thinking.className = "thinking-box";
+    const header =
+        document.createElement("button");
+    header.type = "button";
+    header.className = "thinking-header";
+    header.innerHTML = `
         <span class="thinking-icon">🧠</span>
         <span>Thinking</span>
         <span class="thinking-dots">
@@ -4262,185 +2478,165 @@ function createStreamingMessage() {
             <span></span>
             <span></span>
         </span>
-        `;
-
+    `;
     const thinkingContent =
-        document.createElement(
-            "div"
-        );
-
+        document.createElement("div");
     thinkingContent.className =
         "thinking-content";
-
-    thinkingHeader.addEventListener(
+    header.addEventListener(
         "click",
         () => {
-
-            thinking.classList.toggle(
-                "open"
-            );
-
+            thinking.classList.toggle("open");
         }
     );
-
-    thinking.appendChild(
-        thinkingHeader
-    );
-
-    thinking.appendChild(
+    thinking.append(
+        header,
         thinkingContent
     );
-
     const content =
-        document.createElement(
-            "div"
-        );
-
+        document.createElement("div");
     content.className =
         "message-content";
-
-    content.innerHTML =
-        "<p></p>";
-
-    body.appendChild(
-        meta
-    );
-
-    body.appendChild(
-        thinking
-    );
-
-    body.appendChild(
+    content.innerHTML = "<p></p>";
+    body.append(
+        meta,
+        thinking,
         content
     );
-
-    wrapper.appendChild(
-        avatar
-    );
-
-    wrapper.appendChild(
+    wrapper.append(
+        avatar,
         body
     );
-
-    messagesEl.appendChild(
-        wrapper
-    );
-
+    messagesEl.appendChild(wrapper);
     return {
-
         wrapper,
-
         thinking,
-
         thinkingContent,
-
         content
-
     };
-
 }
-
-
 /* =========================================================
    SCROLL
    ========================================================= */
-
-function scrollToBottom() {
-
-    requestAnimationFrame(
-        () => {
-
-            chat.scrollTop =
-                chat.scrollHeight;
-
-        }
-    );
-
+function scrollToBottom(){
+    requestAnimationFrame(() => {
+        chat.scrollTop =
+            chat.scrollHeight;
+    });
 }
-
-
 /* =========================================================
-   SEND MESSAGE
+   PROVIDER SYSTEM
    ========================================================= */
-
-async function sendMessage() {
-
-    if (
-        state.isStreaming
-    ) {
-        return;
+const PROVIDERS = {
+    "deepseek-v4-flash":{
+        id:"deepseek",
+        name:"DeepSeek V4 Flash",
+        type:"provider"
+    },
+    still:{
+        id:"still",
+        name:"STILL",
+        type:"adapter"
+    },
+    agent:{
+        id:"agent",
+        name:"AGENT",
+        type:"adapter"
+    },
+    "gpt-4o":{
+        id:"openai",
+        name:"GPT-4o",
+        type:"reserved"
+    },
+    claude:{
+        id:"anthropic",
+        name:"Claude",
+        type:"reserved"
+    },
+    gemini:{
+        id:"google",
+        name:"Gemini",
+        type:"reserved"
     }
-
+};
+function getCurrentProvider(){
+    return (
+        PROVIDERS[state.selectedModel] ||
+        PROVIDERS["deepseek-v4-flash"]
+    );
+}
+/* =========================================================
+   SYSTEM PROMPT
+   ========================================================= */
+function buildSystemPrompt(){
+    const languageName = {
+        zh:"Simplified Chinese",
+        en:"English",
+        ja:"Japanese",
+        ko:"Korean",
+        fr:"French",
+        de:"German",
+        es:"Spanish",
+        ru:"Russian",
+        ar:"Arabic"
+    }[state.language] || "Simplified Chinese";
+    const provider =
+        getCurrentProvider();
+    return `
+You are CQS AI.
+Respond naturally, clearly and helpfully.
+Preferred response language:
+${languageName}
+Selected model:
+${state.selectedModel}
+Selected provider:
+${provider.id}
+CQS AI is a global multi-provider AI interface.
+Maintain concise, clear and useful responses.
+Do not expose private server-side credentials.
+Do not claim a provider was contacted unless the gateway confirms it.
+`.trim();
+}
+/* =========================================================
+   SEND
+   ========================================================= */
+async function sendMessage(){
+    if(state.isStreaming) return;
     const text =
         input.value.trim();
-
-    if (
+    if(
         !text &&
         state.attachments.length === 0
-    ) {
+    ){
         return;
     }
-
-    if (
-        !state.currentConversationId
-    ) {
-
+    if(!state.currentConversationId){
         createConversation();
-
     }
-
-    throttledSound(
-        "input"
-    );
-
+    throttledSound("input");
     const userContent =
         text ||
         state.attachments
             .map(
-                f =>
-                    `[File: ${f.name}]`
+                file =>
+                    `[File: ${file.name}]`
             )
             .join("\n");
-
     state.messages.push({
-
-        role: "user",
-
-        content:
-            userContent
-
+        role:"user",
+        content:userContent
     });
-
     saveCurrentConversation();
-
     input.value = "";
-
     autoResize();
-
     clearAttachments();
-
     renderMessages();
-
-    state.isStreaming =
-        true;
-
-    state.streamReasoning =
-        "";
-
-    state.streamAnswer =
-        "";
-
-    setStatus(
-        "Thinking...",
-        true
-    );
-
-    sendBtn.classList.add(
-        "stop-btn"
-    );
-
-    sendBtn.innerHTML =
-        `
+    state.isStreaming = true;
+    state.streamReasoning = "";
+    state.streamAnswer = "";
+    setStatus("Thinking...",true);
+    sendBtn.classList.add("stop-btn");
+    sendBtn.innerHTML = `
         <span
             style="
                 width:12px;
@@ -4450,74 +2646,44 @@ async function sendMessage() {
                 display:block;
             "
         ></span>
-        `;
-
+    `;
     const streamUI =
         createStreamingMessage();
-
     state.abortController =
         new AbortController();
-
-    try {
-
-        await streamChat(
-            streamUI
-        );
-
-    } catch (error) {
-
-        if (
-            error?.name ===
-            "AbortError"
-        ) {
-
+    try{
+        await streamChat(streamUI);
+    }catch(error){
+        if(error?.name === "AbortError"){
             toast(
                 state.language === "zh"
-                    ? "已停止生成"
-                    : "Generation stopped"
+                ? "已停止生成"
+                : "Generation stopped"
             );
-
-        } else {
-
-            console.error(error);
-
+        }else{
+            console.error(
+                "[CQS Stream Error]",
+                error
+            );
             streamUI.content.innerHTML =
-                `
-                <p>
-                    ${
-                        state.language === "zh"
-                            ? "请求失败，请稍后重试。"
-                            : "Request failed. Please try again."
-                    }
-                </p>
-                `;
-
+                `<p>${
+                    state.language === "zh"
+                    ? "请求失败，请稍后重试。"
+                    : "Request failed. Please try again."
+                }</p>`;
             toast(
                 error?.message ||
                 "Request failed"
             );
-
         }
-
-    } finally {
-
-        state.isStreaming =
-            false;
-
-        state.abortController =
-            null;
-
-        setStatus(
-            "Online",
-            false
-        );
-
+    }finally{
+        state.isStreaming = false;
+        state.abortController = null;
+        setStatus("Online",false);
         sendBtn.classList.remove(
             "stop-btn"
         );
-
-        sendBtn.innerHTML =
-            `
+        sendBtn.innerHTML = `
             <svg
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -4525,583 +2691,260 @@ async function sendMessage() {
                 <path d="M22 2 11 13"></path>
                 <path d="m22 2-7 20-4-9-9-4Z"></path>
             </svg>
-            `;
-
+        `;
         saveCurrentConversation();
-
     }
-
 }
-
-
 /* =========================================================
    STREAM CHAT
    ========================================================= */
-
-async function streamChat(
-    streamUI
-) {
-
+async function streamChat(streamUI){
     const payload = {
-
-        messages:
-            state.messages,
-
+        messages:state.messages,
         conversationId:
             state.currentConversationId,
-
+        model:
+            state.selectedModel,
+        provider:
+            getCurrentProvider().id,
         systemPrompt:
             buildSystemPrompt()
-
     };
-
     const response =
         await fetch(
             "/api/chat",
             {
-                method: "POST",
-
-                headers: {
+                method:"POST",
+                headers:{
                     "Content-Type":
                         "application/json",
-
                     "Accept":
                         "text/event-stream"
                 },
-
                 body:
-                    JSON.stringify(
-                        payload
-                    ),
-
+                    JSON.stringify(payload),
                 signal:
-                    state.abortController
-                        .signal
+                    state.abortController.signal
             }
         );
-
-    if (
-        !response.ok
-    ) {
-
+    if(!response.ok){
         let message =
             `HTTP ${response.status}`;
-
-        try {
-
+        try{
             const data =
                 await response.json();
-
             message =
                 data?.error ||
                 message;
-
-        } catch {}
-
-        throw new Error(
-            message
-        );
-
+        }catch{}
+        throw new Error(message);
     }
-
-    if (
-        !response.body
-    ) {
-
+    if(!response.body){
         throw new Error(
             "No streaming body"
         );
-
     }
-
     const reader =
         response.body.getReader();
-
     const decoder =
-        new TextDecoder(
-            "utf-8"
-        );
-
+        new TextDecoder("utf-8");
     let buffer = "";
-
-    while (true) {
-
+    while(true){
         const {
             value,
             done
         } =
             await reader.read();
-
-        if (done) {
-            break;
-        }
-
+        if(done) break;
         buffer +=
             decoder.decode(
                 value,
-                {
-                    stream: true
-                }
+                {stream:true}
             );
-
         const events =
             buffer.split(
                 /\r?\n\r?\n/
             );
-
         buffer =
             events.pop() || "";
-
-        for (
-            const event
-            of events
-        ) {
-
+        for(const event of events){
             processSSEEvent(
                 event,
                 streamUI
             );
-
         }
-
     }
-
-    buffer +=
-        decoder.decode();
-
-    if (
-        buffer.trim()
-    ) {
-
+    buffer += decoder.decode();
+    if(buffer.trim()){
         processSSEEvent(
             buffer,
             streamUI
         );
-
     }
-
-    if (
-        !state.streamAnswer
-    ) {
-
+    if(!state.streamAnswer){
         state.streamAnswer =
             "...";
-
     }
-
     state.messages.push({
-
-        role: "assistant",
-
-        content:
-            state.streamAnswer
-
+        role:"assistant",
+        content:state.streamAnswer
     });
-
     saveCurrentConversation();
-
 }
-
-
 /* =========================================================
-   SSE EVENT
+   SSE
    ========================================================= */
-
 function processSSEEvent(
     event,
     streamUI
-) {
-
-    const lines =
-        event.split(
-            /\r?\n/
-        );
-
+){
     const dataLines =
-        lines
+        event
+            .split(/\r?\n/)
             .filter(
                 line =>
-                    line.startsWith(
-                        "data:"
-                    )
+                    line.startsWith("data:")
             )
             .map(
                 line =>
-                    line
-                        .slice(5)
-                        .trim()
+                    line.slice(5).trim()
             );
-
-    if (
-        dataLines.length === 0
-    ) {
-        return;
-    }
-
+    if(!dataLines.length) return;
     const data =
         dataLines.join("\n");
-
-    if (
-        !data ||
-        data === "[DONE]"
-    ) {
+    if(!data || data === "[DONE]"){
         return;
     }
-
     let packet;
-
-    try {
-
+    try{
         packet =
-            JSON.parse(
-                data
-            );
-
-    } catch {
-
+            JSON.parse(data);
+    }catch{
         return;
-
     }
-
-    if (
-        packet.type ===
-        "reasoning"
-    ) {
-
+    if(packet.type === "reasoning"){
         state.streamReasoning +=
             packet.content || "";
-
-        streamUI.thinkingContent
-            .textContent =
+        streamUI.thinkingContent.textContent =
             state.streamReasoning;
-
         streamUI.thinking.classList.add(
             "open"
         );
-
-        throttledSound(
-            "thinking"
-        );
-
+        throttledSound("thinking");
         scrollToBottom();
-
         return;
-
     }
-
-    if (
-        packet.type ===
-        "delta"
-    ) {
-
-        if (
-            !state.streamAnswer
-        ) {
-
-            throttledSound(
-                "output"
-            );
-
+    if(packet.type === "delta"){
+        if(!state.streamAnswer){
+            throttledSound("output");
         }
-
         state.streamAnswer +=
             packet.content || "";
-
         streamUI.content.innerHTML =
             formatMarkdown(
                 state.streamAnswer
             );
-
         scrollToBottom();
-
         return;
-
     }
-
-    if (
-        packet.type ===
-        "error"
-    ) {
-
+    if(packet.type === "error"){
         throw new Error(
             packet.error ||
             "AI request failed"
         );
-
     }
-
-    if (
-        packet.type ===
-        "usage"
-    ) {
-
-        return;
-
-    }
-
-    if (
-        packet.type ===
-        "done"
-    ) {
-
+    if(packet.type === "done"){
         streamUI.thinking
             .querySelector(
                 ".thinking-dots"
             )
             ?.remove();
-
         setStatus(
             "Online",
             false
         );
-
     }
-
 }
-
-
-/* =========================================================
-   SYSTEM PROMPT
-   ========================================================= */
-
-function buildSystemPrompt() {
-
-    const languageName = {
-
-        zh:
-            "Simplified Chinese",
-
-        en:
-            "English",
-
-        ja:
-            "Japanese",
-
-        ko:
-            "Korean",
-
-        fr:
-            "French",
-
-        de:
-            "German",
-
-        es:
-            "Spanish",
-
-        ru:
-            "Russian"
-
-    }[state.language];
-
-    return `
-You are CQS AI.
-
-Respond naturally and helpfully.
-
-Preferred response language:
-${languageName}
-
-Model:
-${state.selectedModel}
-
-CQS AI is a global AI interface.
-Maintain concise, clear and useful responses.
-    `.trim();
-
-}
-
-
 /* =========================================================
    STOP
    ========================================================= */
-
-function stopGeneration() {
-
-    if (
-        state.abortController
-    ) {
-
+function stopGeneration(){
+    if(state.abortController){
         state.abortController.abort();
-
     }
-
 }
-
-
-/* =========================================================
-   NEW CHAT
-   ========================================================= */
-
-$("newChatBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            createConversation();
-
-            input.focus();
-
-            closeSidebar();
-
-        }
-    );
-
-
 /* =========================================================
    INPUT
    ========================================================= */
-
-input.addEventListener(
-    "input",
-    () => {
-
-        autoResize();
-
-        if (
-            input.value.trim()
-        ) {
-
-            throttledSound(
-                "input"
-            );
-
-        }
-
-    }
-);
-
-
-input.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key ===
-            "Enter" &&
-            !event.shiftKey
-        ) {
-
-            event.preventDefault();
-
-            sendMessage();
-
-        }
-
-    }
-);
-
-
-function autoResize() {
-
-    input.style.height =
-        "auto";
-
+function autoResize(){
+    input.style.height = "auto";
     input.style.height =
         Math.min(
             input.scrollHeight,
             180
         ) + "px";
-
 }
-
-
-/* =========================================================
-   SEND BUTTON
-   ========================================================= */
-
+input.addEventListener(
+    "input",
+    autoResize
+);
+input.addEventListener(
+    "keydown",
+    event => {
+        if(
+            event.key === "Enter" &&
+            !event.shiftKey
+        ){
+            event.preventDefault();
+            sendMessage();
+        }
+    }
+);
 sendBtn.addEventListener(
     "click",
     () => {
-
-        if (
-            state.isStreaming
-        ) {
-
+        if(state.isStreaming){
             stopGeneration();
-
-        } else {
-
+        }else{
             sendMessage();
-
         }
-
     }
 );
-
-
 /* =========================================================
    FILES
    ========================================================= */
-
-$("fileBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            fileInput.click();
-
-        }
-    );
-
-
+$("fileBtn").addEventListener(
+    "click",
+    () =>
+        fileInput.click()
+);
 fileInput.addEventListener(
     "change",
     event => {
-
         const files =
             Array.from(
                 event.target.files || []
             );
-
-        state.attachments.push(
-            ...files
-        );
-
+        state.attachments.push(...files);
         renderAttachments();
-
-        fileInput.value =
-            "";
-
+        fileInput.value = "";
     }
 );
-
-
-function renderAttachments() {
-
-    attachmentsEl.innerHTML =
-        "";
-
-    if (
-        state.attachments.length ===
-        0
-    ) {
-
+function renderAttachments(){
+    attachmentsEl.innerHTML = "";
+    if(!state.attachments.length){
         attachmentsEl.classList.remove(
             "show"
         );
-
         return;
-
     }
-
-    attachmentsEl.classList.add(
-        "show"
-    );
-
+    attachmentsEl.classList.add("show");
     state.attachments.forEach(
-        (file, index) => {
-
+        (file,index) => {
             const item =
-                document.createElement(
-                    "div"
-                );
-
-            item.className =
-                "attachment";
-
-            item.innerHTML =
-                `
+                document.createElement("div");
+            item.className = "attachment";
+            item.innerHTML = `
                 <span>📎</span>
                 <span class="attachment-name">
                     ${escapeHTML(file.name)}
@@ -5115,1237 +2958,499 @@ function renderAttachments() {
                 >
                     ×
                 </button>
-                `;
-
+            `;
             item
                 .querySelector("button")
                 .addEventListener(
                     "click",
                     () => {
-
                         state.attachments.splice(
                             index,
                             1
                         );
-
                         renderAttachments();
-
                     }
                 );
-
-            attachmentsEl.appendChild(
-                item
-            );
-
+            attachmentsEl.appendChild(item);
         }
     );
-
 }
-
-
-function clearAttachments() {
-
+function clearAttachments(){
     state.attachments = [];
-
     renderAttachments();
-
 }
-
-
 /* =========================================================
    VOICE
    ========================================================= */
-
-$("voiceBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            if (
-                state.isRecording
-            ) {
-
-                stopVoice();
-
-            } else {
-
-                startVoice();
-
-            }
-
+$("voiceBtn").addEventListener(
+    "click",
+    () => {
+        if(state.isRecording){
+            stopVoice();
+        }else{
+            startVoice();
         }
-    );
-
-
-function startVoice() {
-
+    }
+);
+function startVoice(){
     const Recognition =
         window.SpeechRecognition ||
         window.webkitSpeechRecognition;
-
-    if (!Recognition) {
-
+    if(!Recognition){
         toast(
             state.language === "zh"
-                ? "当前浏览器不支持语音识别"
-                : "Speech recognition is not supported"
+            ? "当前浏览器不支持语音识别"
+            : "Speech recognition is not supported"
         );
-
         return;
-
     }
-
     getAudioContext();
-
     const recognition =
         new Recognition();
-
     recognition.lang =
         {
-            zh: "zh-CN",
-            en: "en-US",
-            ja: "ja-JP",
-            ko: "ko-KR",
-            fr: "fr-FR",
-            de: "de-DE",
-            es: "es-ES",
-            ru: "ru-RU"
+            zh:"zh-CN",
+            en:"en-US",
+            ja:"ja-JP",
+            ko:"ko-KR",
+            fr:"fr-FR",
+            de:"de-DE",
+            es:"es-ES",
+            ru:"ru-RU",
+            ar:"ar-SA"
         }[state.language] ||
         "zh-CN";
-
-    recognition.continuous =
-        true;
-
-    recognition.interimResults =
-        true;
-
-    state.recognition =
-        recognition;
-
-    state.isRecording =
-        true;
-
-    $("voiceBtn")
-        .classList.add(
-            "recording"
-        );
-
-    $("voiceBtn")
-        .innerHTML =
-        '<span class="recording-dot"></span>';
-
-    throttledSound(
-        "input"
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    state.recognition = recognition;
+    state.isRecording = true;
+    $("voiceBtn").classList.add(
+        "recording"
     );
-
-    let finalText =
-        "";
-
-    recognition.onresult =
-        event => {
-
-            let interim =
-                "";
-
-            for (
-                let i =
-                    event.resultIndex;
-                i <
-                    event.results.length;
-                i++
-            ) {
-
-                const result =
-                    event.results[i];
-
-                const transcript =
-                    result[0]
-                        .transcript;
-
-                if (
-                    result.isFinal
-                ) {
-
-                    finalText +=
-                        transcript;
-
-                } else {
-
-                    interim +=
-                        transcript;
-
-                }
-
+    $("voiceBtn").innerHTML =
+        '<span style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:block"></span>';
+    let finalText = "";
+    recognition.onresult = event => {
+        let interim = "";
+        for(
+            let i = event.resultIndex;
+            i < event.results.length;
+            i++
+        ){
+            const result =
+                event.results[i];
+            const transcript =
+                result[0].transcript;
+            if(result.isFinal){
+                finalText += transcript;
+            }else{
+                interim += transcript;
             }
-
-            input.value =
-                finalText +
-                interim;
-
-            autoResize();
-
-        };
-
-    recognition.onerror =
-        error => {
-
-            console.warn(
-                "Speech recognition:",
-                error
-            );
-
-            stopVoice();
-
-        };
-
-    recognition.onend =
-        () => {
-
-            if (
-                state.isRecording
-            ) {
-
-                try {
-
-                    recognition.start();
-
-                } catch {}
-
-            }
-
-        };
-
-    try {
-
-        recognition.start();
-
-    } catch {
-
-        stopVoice();
-
-    }
-
-}
-
-
-function stopVoice() {
-
-    state.isRecording =
-        false;
-
-    if (
-        state.recognition
-    ) {
-
-        try {
-
-            state.recognition.stop();
-
-        } catch {}
-
-    }
-
-    state.recognition =
-        null;
-
-    $("voiceBtn")
-        .classList.remove(
-            "recording"
+        }
+        input.value =
+            finalText +
+            interim;
+        autoResize();
+    };
+    recognition.onerror = error => {
+        console.warn(
+            "Speech recognition",
+            error
         );
-
-    $("voiceBtn")
-        .textContent =
-        "🎙️";
-
+        stopVoice();
+    };
+    recognition.onend = () => {
+        if(state.isRecording){
+            try{
+                recognition.start();
+            }catch{}
+        }
+    };
+    try{
+        recognition.start();
+    }catch{
+        stopVoice();
+    }
 }
-
-
+function stopVoice(){
+    state.isRecording = false;
+    if(state.recognition){
+        try{
+            state.recognition.stop();
+        }catch{}
+    }
+    state.recognition = null;
+    $("voiceBtn").classList.remove(
+        "recording"
+    );
+    $("voiceBtn").textContent = "🎙️";
+}
 /* =========================================================
-   SOUND BUTTON
+   SOUND
    ========================================================= */
-
-function updateSoundButtons() {
-
+function updateSoundButtons(){
     const icon =
         state.soundEnabled
-            ? "🔊"
-            : "🔇";
-
-    $("soundBtn")
-        .textContent =
-        icon;
-
-    $("soundSettingBtn")
-        .textContent =
-        icon;
-
+        ? "🔊"
+        : "🔇";
+    $("soundBtn").textContent = icon;
+    $("soundSettingBtn").textContent = icon;
 }
-
-
-$("soundBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            state.soundEnabled =
-                !state.soundEnabled;
-
-            localStorage.setItem(
-                "cqs_sound",
-                String(
-                    state.soundEnabled
-                )
-            );
-
-            updateSoundButtons();
-
-            if (
-                state.soundEnabled
-            ) {
-
-                bubbleSound(
-                    "output"
-                );
-
-            }
-
-        }
+function toggleSound(){
+    state.soundEnabled =
+        !state.soundEnabled;
+    localStorage.setItem(
+        "cqs_sound",
+        String(state.soundEnabled)
     );
-
-
-$("soundSettingBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            state.soundEnabled =
-                !state.soundEnabled;
-
-            localStorage.setItem(
-                "cqs_sound",
-                String(
-                    state.soundEnabled
-                )
-            );
-
-            updateSoundButtons();
-
-        }
-    );
-
-
+    updateSoundButtons();
+    if(state.soundEnabled){
+        bubbleSound("output");
+    }
+}
+$("soundBtn").addEventListener(
+    "click",
+    toggleSound
+);
+$("soundSettingBtn").addEventListener(
+    "click",
+    toggleSound
+);
 /* =========================================================
    MODEL
    ========================================================= */
-
 modelButton.addEventListener(
     "click",
     event => {
-
         event.stopPropagation();
-
-        modelMenu.classList.toggle(
-            "show"
-        );
-
+        modelMenu.classList.toggle("show");
     }
 );
-
-
 document
-    .querySelectorAll(
-        ".model-option"
-    )
-    .forEach(
-        option => {
-
-            option.addEventListener(
-                "click",
-                () => {
-
-                    state.selectedModel =
-                        option.dataset.model;
-
-                    localStorage.setItem(
-                        "cqs_model",
-                        state.selectedModel
+    .querySelectorAll(".model-option")
+    .forEach(option => {
+        option.addEventListener(
+            "click",
+            () => {
+                state.selectedModel =
+                    option.dataset.model;
+                localStorage.setItem(
+                    "cqs_model",
+                    state.selectedModel
+                );
+                modelName.textContent =
+                    option.dataset.label;
+                document
+                    .querySelectorAll(
+                        ".model-option"
+                    )
+                    .forEach(
+                        item =>
+                            item.classList.remove(
+                                "active"
+                            )
                     );
-
-                    modelName.textContent =
-                        option.dataset.label;
-
-                    document
-                        .querySelectorAll(
-                            ".model-option"
-                        )
-                        .forEach(
-                            x =>
-                                x.classList.remove(
-                                    "active"
-                                )
-                        );
-
-                    option.classList.add(
-                        "active"
+                option.classList.add("active");
+                modelMenu.classList.remove(
+                    "show"
+                );
+                const provider =
+                    getCurrentProvider();
+                if(provider.type === "reserved"){
+                    toast(
+                        "该模型入口已预留，当前请确保 /api/chat 已配置对应 Provider。"
                     );
-
-                    modelMenu.classList.remove(
-                        "show"
+                }else{
+                    toast(
+                        `${provider.name} selected`
                     );
-
-                    if (
-                        state.selectedModel !==
-                        "deepseek-v4-flash"
-                    ) {
-
-                        toast(
-                            "该模型入口已预留，当前网关仍使用 DeepSeek。"
-                        );
-
-                    }
-
                 }
-            );
-
-        }
-    );
-
-
+            }
+        );
+    });
 /* =========================================================
    LANGUAGE
    ========================================================= */
-
-$("languageBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            openModal(
-                "languageOverlay"
-            );
-
-        }
-    );
-
-
-$("settingLanguageBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            closeModal(
-                "settingsOverlay"
-            );
-
-            openModal(
-                "languageOverlay"
-            );
-
-        }
-    );
-
-
+$("languageBtn").addEventListener(
+    "click",
+    () =>
+        openModal("languageOverlay")
+);
+$("settingLanguageBtn").addEventListener(
+    "click",
+    () => {
+        closeModal("settingsOverlay");
+        openModal("languageOverlay");
+    }
+);
 document
-    .querySelectorAll(
-        ".language-option"
-    )
-    .forEach(
-        option => {
-
-            option.addEventListener(
-                "click",
-                () => {
-
-                    state.language =
-                        option.dataset.language;
-
-                    localStorage.setItem(
-                        "cqs_language",
-                        state.language
-                    );
-
-                    applyLanguage();
-
-                    closeModal(
-                        "languageOverlay"
-                    );
-
-                    renderHistory();
-
-                    toast(
-                        "Language updated"
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
+    .querySelectorAll(".language-option")
+    .forEach(option => {
+        option.addEventListener(
+            "click",
+            () => {
+                state.language =
+                    option.dataset.language;
+                localStorage.setItem(
+                    "cqs_language",
+                    state.language
+                );
+                applyLanguage();
+                renderHistory();
+                closeModal(
+                    "languageOverlay"
+                );
+            }
+        );
+    });
 /* =========================================================
    MODALS
    ========================================================= */
-
-function openModal(id) {
-
-    $(id)
-        .classList.add(
-            "show"
-        );
-
+function openModal(id){
+    const element = $(id);
+    if(element){
+        element.classList.add("show");
+    }
 }
-
-
-function closeModal(id) {
-
-    $(id)
-        .classList.remove(
-            "show"
-        );
-
+function closeModal(id){
+    const element = $(id);
+    if(element){
+        element.classList.remove("show");
+    }
 }
-
-
 document
-    .querySelectorAll(
-        "[data-close]"
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    closeModal(
-                        button.dataset.close
+    .querySelectorAll("[data-close]")
+    .forEach(button => {
+        button.addEventListener(
+            "click",
+            () =>
+                closeModal(
+                    button.dataset.close
+                )
+        );
+    });
+document
+    .querySelectorAll(".overlay")
+    .forEach(overlay => {
+        overlay.addEventListener(
+            "click",
+            event => {
+                if(
+                    event.target === overlay
+                ){
+                    overlay.classList.remove(
+                        "show"
                     );
-
                 }
-            );
-
-        }
-    );
-
-
-document
-    .querySelectorAll(
-        ".overlay"
-    )
-    .forEach(
-        overlay => {
-
-            overlay.addEventListener(
-                "click",
-                event => {
-
-                    if (
-                        event.target ===
-                        overlay
-                    ) {
-
-                        overlay.classList.remove(
-                            "show"
-                        );
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-
-/* =========================================================
-   SETTINGS
-   ========================================================= */
-
-$("settingsBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            openModal(
-                "settingsOverlay"
-            );
-
-        }
-    );
-
-
+            }
+        );
+    });
+$("settingsBtn").addEventListener(
+    "click",
+    () =>
+        openModal("settingsOverlay")
+);
 /* =========================================================
    NOTION
    ========================================================= */
-
-const notionBtn = $("notionBtn");
-const saveNotionBtn = $("saveNotionBtn");
-
-if (notionBtn) {
-
-    notionBtn.addEventListener(
-        "click",
-        () => {
-
-            openModal(
-                "notionOverlay"
-            );
-
-        }
-    );
-
-}
-
-
-if (saveNotionBtn) {
-
-    saveNotionBtn.addEventListener(
-        "click",
-        saveToNotion
-    );
-
-}
-
-
-async function saveToNotion() {
-
-    /* -----------------------------------------------------
-       1. 基础检查
-       ----------------------------------------------------- */
-
-    if (
-        state.messages.length === 0
-    ) {
-
+$("notionBtn").addEventListener(
+    "click",
+    () =>
+        openModal("notionOverlay")
+);
+$("saveNotionBtn").addEventListener(
+    "click",
+    saveToNotion
+);
+async function saveToNotion(){
+    if(!state.messages.length){
         toast(
             state.language === "zh"
-                ? "当前没有可保存的对话"
-                : "No conversation to save"
+            ? "当前没有可保存的对话"
+            : "No conversation to save"
         );
-
         return;
-
     }
-
-
-    /* -----------------------------------------------------
-       2. 防止重复点击
-       ----------------------------------------------------- */
-
-    if (
-        saveNotionBtn.disabled
-    ) {
-
-        return;
-
-    }
-
-
-    const originalText =
-        saveNotionBtn.textContent;
-
-
-    saveNotionBtn.disabled =
-        true;
-
-
-    saveNotionBtn.textContent =
-        state.language === "zh"
-            ? "正在保存..."
-            : "Saving...";
-
-
-    /* -----------------------------------------------------
-       3. 获取当前对话
-       ----------------------------------------------------- */
-
-    const conversation =
-        state.conversations.find(
-            conversation =>
-                conversation.id ===
-                state.currentConversationId
-        );
-
-
-    const title =
-        conversation?.title ||
-        "CQS AI Conversation";
-
-
-    try {
-
-        /* -------------------------------------------------
-           4. 请求 Notion API
-           ------------------------------------------------- */
-
-        const response =
-            await fetch(
-                "/api/notion",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            conversationId:
-                                state.currentConversationId,
-
-                            title:
-                                title,
-
-                            messages:
-                                state.messages
-
-                        })
-                }
-            );
-
-
-        /* -------------------------------------------------
-           5. 不管返回什么，先读取原始内容
-           ------------------------------------------------- */
-
-        const rawText =
-            await response.text();
-
-
-        let data = null;
-
-
-        try {
-
-            data =
-                rawText
-                    ? JSON.parse(
-                        rawText
-                    )
-                    : null;
-
-        } catch {
-
-            data = null;
-
-        }
-
-
-        /* -------------------------------------------------
-           6. HTTP 层失败
-           ------------------------------------------------- */
-
-        if (
-            !response.ok
-        ) {
-
-            let errorMessage =
-                `HTTP ${response.status}`;
-
-
-            if (
-                data?.error
-            ) {
-
-                errorMessage =
-                    data.error;
-
-            } else if (
-                data?.message
-            ) {
-
-                errorMessage =
-                    data.message;
-
-            } else if (
-                rawText
-            ) {
-
-                errorMessage =
-                    rawText
-                        .substring(
-                            0,
-                            500
-                        );
-
-            }
-
-
-            throw new Error(
-                errorMessage
-            );
-
-        }
-
-
-        /* -------------------------------------------------
-           7. 后端没有返回 JSON
-           ------------------------------------------------- */
-
-        if (
-            !data
-        ) {
-
-            throw new Error(
-                rawText
-                    ? `服务器返回了非 JSON 内容：${rawText.substring(0, 500)}`
-                    : "服务器没有返回数据"
-            );
-
-        }
-
-
-        /* -------------------------------------------------
-           8. 后端明确返回失败
-           ------------------------------------------------- */
-
-        if (
-            data.success !== true
-        ) {
-
-            const errorMessage =
-                data.error ||
-                data.message ||
-                "Notion 保存失败，但服务器没有提供具体错误。";
-
-
-            throw new Error(
-                errorMessage
-            );
-
-        }
-
-
-        /* -------------------------------------------------
-           9. 获取 Page ID
-           ------------------------------------------------- */
-
-        const pageId =
-            data.pageId ||
-            data.id ||
-            data.page?.id ||
-            data.data?.pageId ||
-            data.data?.id ||
-            "";
-
-
-        /* -------------------------------------------------
-           10. 成功
-           ------------------------------------------------- */
-
-        console.log(
-            "[CQS Notion Saved]",
-            {
-                pageId:
-                    pageId,
-
-                url:
-                    data.url ||
-                    data.page?.url ||
-                    "",
-
-                conversationId:
-                    data.conversationId ||
-                    state.currentConversationId,
-
-                response:
-                    data
-            }
-        );
-
-
-        /* -------------------------------------------------
-           11. 明确显示保存成功 + Page ID
-           ------------------------------------------------- */
-
-        if (
-            pageId
-        ) {
-
-            toast(
-                state.language === "zh"
-                    ? `Notion 保存成功\nPage ID: ${pageId}`
-                    : `Saved to Notion\nPage ID: ${pageId}`
-            );
-
-        } else {
-
-            toast(
-                state.language === "zh"
-                    ? "Notion 保存成功，但服务器没有返回 Page ID"
-                    : "Saved to Notion, but no Page ID was returned"
-            );
-
-        }
-
-
-    } catch (
-        error
-    ) {
-
-        /* -------------------------------------------------
-           12. 真实错误
-           ------------------------------------------------- */
-
-        console.error(
-            "[CQS Notion Error]",
-            error
-        );
-
-
-        const message =
-            error?.message ||
-            "Unknown Notion error";
-
-
-        toast(
-            state.language === "zh"
-                ? `Notion 保存失败：${message}`
-                : `Notion save failed: ${message}`
-        );
-
-
-    } finally {
-
-        /* -------------------------------------------------
-           13. 恢复按钮
-           ------------------------------------------------- */
-
-        saveNotionBtn.disabled =
-            false;
-
-        saveNotionBtn.textContent =
-            originalText;
-
-    }
-
-}
-async function saveToNotion() {
-
-    if (
-        state.messages.length ===
-        0
-    ) {
-
-        toast(
-            state.language === "zh"
-                ? "当前没有可保存的对话"
-                : "No conversation to save"
-        );
-
-        return;
-
-    }
-
     const button =
         $("saveNotionBtn");
-
     const original =
         button.textContent;
-
-    button.disabled =
-        true;
-
-    button.textContent =
-        "Saving...";
-
-    try {
-
+    button.disabled = true;
+    button.textContent = "Saving...";
+    try{
         const conversation =
             state.conversations.find(
-                c =>
-                    c.id ===
+                item =>
+                    item.id ===
                     state.currentConversationId
             );
-
         const title =
             conversation?.title ||
             "CQS AI Conversation";
-
         const response =
             await fetch(
                 "/api/notion",
                 {
-                    method: "POST",
-
-                    headers: {
+                    method:"POST",
+                    headers:{
                         "Content-Type":
                             "application/json"
                     },
-
                     body:
                         JSON.stringify({
-
                             conversationId:
                                 state.currentConversationId,
-
                             title,
-
                             messages:
                                 state.messages
-
                         })
-
                 }
             );
-
-        const data =
-            await response.json();
-
-        if (
+        let data = {};
+        try{
+            data =
+                await response.json();
+        }catch{
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
+        if(
             !response.ok ||
             !data.success
-        ) {
-
+        ){
             throw new Error(
                 data?.error ||
                 "Notion save failed"
             );
-
         }
-
         toast(
             state.language === "zh"
-                ? "对话已保存到 Notion"
-                : "Saved to Notion"
+            ? "对话已保存到 Notion"
+            : "Saved to Notion"
         );
-
         console.log(
             "[CQS Notion Saved]",
             {
-                pageId:
-                    data.pageId,
-
-                url:
-                    data.url,
-
-                conversationId:
-                    data.conversationId
+                pageId:data.pageId,
+                url:data.url,
+                conversationId:data.conversationId
             }
         );
-
-    } catch (error) {
-
+    }catch(error){
         console.error(
             "[CQS Notion Error]",
             error
         );
-
         toast(
             state.language === "zh"
-                ? `Notion 保存失败：${
-                    error.message ||
-                    "未知错误"
-                }`
-                : `Notion save failed: ${
-                    error.message ||
-                    "Unknown error"
-                }`
+            ? `Notion 保存失败：${error.message || "未知错误"}`
+            : `Notion save failed: ${error.message || "Unknown error"}`
         );
-
-    } finally {
-
-        button.disabled =
-            false;
-
-        button.textContent =
-            original;
-
+    }finally{
+        button.disabled = false;
+        button.textContent = original;
     }
-
 }
-
-
 /* =========================================================
    EXPORT
    ========================================================= */
-
-$("exportBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            if (
-                state.messages.length ===
-                0
-            ) {
-
-                toast(
-                    "没有可导出的对话"
-                );
-
-                return;
-
-            }
-
-            openModal(
-                "exportOverlay"
-            );
-
+$("exportBtn").addEventListener(
+    "click",
+    () => {
+        if(!state.messages.length){
+            toast("没有可导出的对话");
+            return;
         }
-    );
-
-
-$("exportTxtBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            exportTXT();
-
-            closeModal(
-                "exportOverlay"
-            );
-
-        }
-    );
-
-
-$("exportJsonBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            exportJSON();
-
-            closeModal(
-                "exportOverlay"
-            );
-
-        }
-    );
-
-
+        openModal("exportOverlay");
+    }
+);
+$("exportTxtBtn").addEventListener(
+    "click",
+    () => {
+        exportTXT();
+        closeModal("exportOverlay");
+    }
+);
+$("exportJsonBtn").addEventListener(
+    "click",
+    () => {
+        exportJSON();
+        closeModal("exportOverlay");
+    }
+);
 function downloadFile(
     content,
     filename,
     type
-) {
-
+){
     const blob =
         new Blob(
             [content],
-            {
-                type
-            }
+            {type}
         );
-
     const url =
-        URL.createObjectURL(
-            blob
-        );
-
+        URL.createObjectURL(blob);
     const link =
-        document.createElement(
-            "a"
-        );
-
-    link.href =
-        url;
-
-    link.download =
-        filename;
-
-    document.body.appendChild(
-        link
-    );
-
+        document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
     link.click();
-
     link.remove();
-
     setTimeout(
         () =>
-            URL.revokeObjectURL(
-                url
-            ),
+            URL.revokeObjectURL(url),
         1000
     );
-
 }
-
-
-function exportTXT() {
-
+function exportTXT(){
     const conversation =
         state.conversations.find(
-            c =>
-                c.id ===
+            item =>
+                item.id ===
                 state.currentConversationId
         );
-
     const title =
         conversation?.title ||
         "CQS AI Conversation";
-
-    const lines = [];
-
-    lines.push(
-        "CQS AI"
-    );
-
-    lines.push(
-        title
-    );
-
-    lines.push(
+    const lines = [
+        "CQS AI",
+        title,
         ""
-    );
-
-    state.messages.forEach(
-        message => {
-
-            lines.push(
-                message.role ===
-                "user"
-                    ? "USER"
-                    : "CQS AI"
-            );
-
-            lines.push(
-                message.content
-            );
-
-            lines.push(
-                ""
-            );
-
-        }
-    );
-
+    ];
+    state.messages.forEach(message => {
+        lines.push(
+            message.role === "user"
+            ? "USER"
+            : "CQS AI"
+        );
+        lines.push(
+            message.content || ""
+        );
+        lines.push("");
+    });
     downloadFile(
         lines.join("\n"),
         "cqs-ai-conversation.txt",
         "text/plain;charset=utf-8"
     );
-
-    toast(
-        "TXT exported"
-    );
-
+    toast("TXT exported");
 }
-
-
-function exportJSON() {
-
+function exportJSON(){
     downloadFile(
         JSON.stringify(
             {
                 conversationId:
                     state.currentConversationId,
-
+                model:
+                    state.selectedModel,
+                provider:
+                    getCurrentProvider().id,
                 messages:
                     state.messages,
-
                 exportedAt:
                     new Date().toISOString()
-
             },
             null,
             2
@@ -6353,283 +3458,148 @@ function exportJSON() {
         "cqs-ai-conversation.json",
         "application/json;charset=utf-8"
     );
-
-    toast(
-        "JSON exported"
-    );
-
+    toast("JSON exported");
 }
-
-
 /* =========================================================
    SHARE
    ========================================================= */
-
-$("shareBtn")
-    .addEventListener(
-        "click",
-        openShare
-    );
-
-
-function openShare() {
-
-    if (
-        state.messages.length ===
-        0
-    ) {
-
-        toast(
-            "没有可分享的对话"
-        );
-
+$("shareBtn").addEventListener(
+    "click",
+    openShare
+);
+function openShare(){
+    if(!state.messages.length){
+        toast("没有可分享的对话");
         return;
-
     }
-
     const data = {
-
         id:
             state.currentConversationId,
-
         messages:
             state.messages
-
     };
-
     const encoded =
         encodeBase64Unicode(
-            JSON.stringify(
-                data
-            )
+            JSON.stringify(data)
         );
-
     const url =
         window.location.origin +
         window.location.pathname +
         "#share=" +
-        encodeURIComponent(
-            encoded
-        );
-
-    $("shareText")
-        .value =
-        url;
-
-    openModal(
-        "shareOverlay"
-    );
-
+        encodeURIComponent(encoded);
+    $("shareText").value = url;
+    openModal("shareOverlay");
 }
-
-
-$("copyShareBtn")
-    .addEventListener(
-        "click",
-        async () => {
-
-            await copyText(
-                $("shareText").value
-            );
-
-        }
-    );
-
-
-function encodeBase64Unicode(
-    value
-) {
-
+$("copyShareBtn").addEventListener(
+    "click",
+    () =>
+        copyText(
+            $("shareText").value
+        )
+);
+function encodeBase64Unicode(value){
     const bytes =
         new TextEncoder()
-            .encode(
-                value
-            );
-
+            .encode(value);
     let binary = "";
-
     bytes.forEach(
-        byte => {
-
+        byte =>
             binary +=
-                String.fromCharCode(
-                    byte
-                );
-
-        }
+                String.fromCharCode(byte)
     );
-
-    return btoa(
-        binary
-    );
-
+    return btoa(binary);
 }
-
-
+function decodeBase64Unicode(value){
+    const binary =
+        atob(value);
+    const bytes =
+        Uint8Array.from(
+            binary,
+            char =>
+                char.charCodeAt(0)
+        );
+    return new TextDecoder()
+        .decode(bytes);
+}
 /* =========================================================
    CLIPBOARD
    ========================================================= */
-
-async function copyText(
-    text
-) {
-
-    try {
-
-        if (
-            navigator.clipboard
-        ) {
-
+async function copyText(text){
+    try{
+        if(navigator.clipboard){
             await navigator.clipboard.writeText(
                 text
             );
-
-        } else {
-
+        }else{
             const area =
-                document.createElement(
-                    "textarea"
-                );
-
-            area.value =
-                text;
-
-            document.body.appendChild(
-                area
-            );
-
+                document.createElement("textarea");
+            area.value = text;
+            document.body.appendChild(area);
             area.select();
-
-            document.execCommand(
-                "copy"
-            );
-
+            document.execCommand("copy");
             area.remove();
-
         }
-
         toast(
             state.language === "zh"
-                ? "已复制"
-                : "Copied"
+            ? "已复制"
+            : "Copied"
         );
-
-    } catch {
-
-        toast(
-            "Copy failed"
-        );
-
+    }catch{
+        toast("Copy failed");
     }
-
 }
-
-
 /* =========================================================
    QUICK ACTIONS
    ========================================================= */
-
 document
-    .querySelectorAll(
-        ".quick-action"
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    input.value =
-                        button.dataset.prompt;
-
-                    autoResize();
-
-                    input.focus();
-
-                    throttledSound(
-                        "input"
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
+    .querySelectorAll(".quick-action")
+    .forEach(button => {
+        button.addEventListener(
+            "click",
+            () => {
+                input.value =
+                    button.dataset.prompt;
+                autoResize();
+                input.focus();
+                throttledSound("input");
+            }
+        );
+    });
 /* =========================================================
    MOBILE SIDEBAR
    ========================================================= */
-
-$("mobileMenu")
-    .addEventListener(
-        "click",
-        () => {
-
-            sidebar.classList.add(
-                "open"
-            );
-
-        }
-    );
-
-
-$("sidebarClose")
-    .addEventListener(
-        "click",
-        closeSidebar
-    );
-
-
-function closeSidebar() {
-
-    sidebar.classList.remove(
-        "open"
-    );
-
+$("mobileMenu").addEventListener(
+    "click",
+    () =>
+        sidebar.classList.add("open")
+);
+function closeSidebar(){
+    sidebar.classList.remove("open");
 }
-
-
 /* =========================================================
    OUTSIDE CLICK
    ========================================================= */
-
 document.addEventListener(
     "click",
     event => {
-
-        if (
+        if(
             !event.target.closest(
                 ".model-select"
             )
-        ) {
-
+        ){
             modelMenu.classList.remove(
                 "show"
             );
-
         }
-
     }
 );
-
-
 /* =========================================================
-   KEYBOARD ESC
+   ESC
    ========================================================= */
-
 document.addEventListener(
     "keydown",
     event => {
-
-        if (
-            event.key !==
-            "Escape"
-        ) {
-            return;
-        }
-
+        if(event.key !== "Escape") return;
         document
             .querySelectorAll(
                 ".overlay.show"
@@ -6640,268 +3610,158 @@ document.addEventListener(
                         "show"
                     )
             );
-
         modelMenu.classList.remove(
             "show"
         );
-
         closeSidebar();
-
     }
 );
-
-
 /* =========================================================
-   WINDOW RESIZE
+   VIEWPORT
    ========================================================= */
-
-function updateViewportHeight() {
-
+function updateViewportHeight(){
     const height =
-        window.visualViewport
-            ?.height ||
+        window.visualViewport?.height ||
         window.innerHeight;
-
     document.documentElement
         .style
         .setProperty(
             "--vh",
-            height + "px"
+            `${height}px`
         );
-
 }
-
-
 window.addEventListener(
     "resize",
     updateViewportHeight
 );
-
 window.visualViewport?.addEventListener(
     "resize",
     updateViewportHeight
 );
-
-
 /* =========================================================
-   INITIAL MODEL
+   MODEL INIT
    ========================================================= */
-
-function initModel() {
-
+function initModel(){
     const option =
         document.querySelector(
             `.model-option[data-model="${CSS.escape(
                 state.selectedModel
             )}"]`
         );
-
-    if (
-        option
-    ) {
-
-        modelName.textContent =
-            option.dataset.label;
-
-        document
-            .querySelectorAll(
-                ".model-option"
-            )
-            .forEach(
-                x =>
-                    x.classList.remove(
-                        "active"
-                    )
-            );
-
-        option.classList.add(
-            "active"
+    if(!option){
+        state.selectedModel =
+            "deepseek-v4-flash";
+        localStorage.setItem(
+            "cqs_model",
+            state.selectedModel
         );
-
+        return initModel();
     }
-
+    modelName.textContent =
+        option.dataset.label;
+    document
+        .querySelectorAll(".model-option")
+        .forEach(
+            item =>
+                item.classList.remove("active")
+        );
+    option.classList.add("active");
 }
-
-
 /* =========================================================
-   WELCOME LETTER ANIMATION
+   WELCOME ANIMATION
    ========================================================= */
-
-function initWelcomeAnimation() {
-
+function initWelcomeAnimation(){
     const title =
         $("welcomeTitle");
-
+    if(!title) return;
     const text =
         title.textContent;
-
-    title.innerHTML =
-        "";
-
+    title.innerHTML = "";
     [...text].forEach(
-        (char, index) => {
-
+        (char,index) => {
             const span =
-                document.createElement(
-                    "span"
-                );
-
-            span.className =
-                "letter";
-
+                document.createElement("span");
+            span.className = "letter";
             span.textContent =
                 char === " "
-                    ? "\u00a0"
-                    : char;
-
+                ? "\u00a0"
+                : char;
             span.style.animationDelay =
                 `${index * 90}ms`;
-
-            title.appendChild(
-                span
-            );
-
+            title.appendChild(span);
         }
     );
-
 }
-
-
 /* =========================================================
-   SHARE LOAD
+   SHARED CONVERSATION
    ========================================================= */
-
-function loadSharedConversation() {
-
-    if (
+function loadSharedConversation(){
+    if(
         !window.location.hash.startsWith(
             "#share="
         )
-    ) {
+    ){
         return false;
     }
-
-    try {
-
+    try{
         const encoded =
             decodeURIComponent(
-                window.location.hash
-                    .substring(7)
+                window.location.hash.substring(7)
             );
-
-        const binary =
-            atob(
-                encoded
-            );
-
-        const bytes =
-            Uint8Array.from(
-                binary,
-                char =>
-                    char.charCodeAt(0)
-            );
-
         const json =
-            new TextDecoder()
-                .decode(
-                    bytes
-                );
-
+            decodeBase64Unicode(encoded);
         const data =
-            JSON.parse(
-                json
-            );
-
-        if (
-            Array.isArray(
-                data.messages
-            )
-        ) {
-
-            state.messages =
-                data.messages;
-
-            state.currentConversationId =
-                createId();
-
-            const conversation = {
-
-                id:
-                    state.currentConversationId,
-
-                title:
-                    "Shared CQS AI Conversation",
-
-                messages:
-                    state.messages,
-
-                createdAt:
-                    Date.now(),
-
-                updatedAt:
-                    Date.now()
-
-            };
-
-            state.conversations.push(
-                conversation
-            );
-
-            saveConversations();
-
-            renderHistory();
-
-            renderMessages();
-
-            return true;
-
+            JSON.parse(json);
+        if(
+            !Array.isArray(data.messages)
+        ){
+            return false;
         }
-
-    } catch (
-        error
-    ) {
-
+        state.messages =
+            data.messages;
+        state.currentConversationId =
+            createId();
+        state.conversations.push({
+            id:
+                state.currentConversationId,
+            title:
+                "Shared CQS AI Conversation",
+            messages:
+                state.messages,
+            createdAt:
+                Date.now(),
+            updatedAt:
+                Date.now()
+        });
+        saveConversations();
+        renderHistory();
+        renderMessages();
+        return true;
+    }catch(error){
         console.warn(
             "Invalid share data",
             error
         );
-
+        return false;
     }
-
-    return false;
-
 }
-
-
 /* =========================================================
-   INITIALIZATION
+   INIT
    ========================================================= */
-
-function init() {
-
+function init(){
     updateViewportHeight();
-
     loadConversations();
-
     initModel();
-
     applyLanguage();
-
     updateSoundButtons();
-
     initWelcomeAnimation();
-
     renderHistory();
-
     const shared =
         loadSharedConversation();
-
-    if (
+    if(
         !shared &&
-        state.conversations.length >
-            0
-    ) {
-
+        state.conversations.length
+    ){
         const latest =
             [...state.conversations]
                 .sort(
@@ -6909,91 +3769,53 @@ function init() {
                         b.updatedAt -
                         a.updatedAt
                 )[0];
-
-        if (
+        if(
             latest &&
-            latest.messages?.length
-        ) {
-
+            Array.isArray(latest.messages) &&
+            latest.messages.length
+        ){
             state.currentConversationId =
                 latest.id;
-
             state.messages =
                 latest.messages;
-
             renderHistory();
-
             renderMessages();
-
         }
-
     }
-
     setStatus(
         "Online",
         false
     );
-
 }
-
 init();
-
-
 /* =========================================================
    AUDIO UNLOCK
    ========================================================= */
-
 document.addEventListener(
     "pointerdown",
     () => {
-
-        if (
-            state.soundEnabled
-        ) {
-
-            const ctx =
-                getAudioContext();
-
-            if (
-                ctx &&
-                ctx.state ===
-                "suspended"
-            ) {
-
-                ctx.resume()
-                    .catch(
-                        () => {}
-                    );
-
-            }
-
+        if(!state.soundEnabled) return;
+        const ctx =
+            getAudioContext();
+        if(
+            ctx &&
+            ctx.state === "suspended"
+        ){
+            ctx.resume().catch(() => {});
         }
-
     },
-    {
-        once: true
-    }
+    {once:true}
 );
-
-
 /* =========================================================
    BEFORE UNLOAD
    ========================================================= */
-
 window.addEventListener(
     "beforeunload",
     () => {
-
         saveCurrentConversation();
-
     }
 );
-
-
-/* =========================================================
-   END
-   ========================================================= */
-
 })();
 </script>
-
+</body>
+</html>
