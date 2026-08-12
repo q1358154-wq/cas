@@ -6692,6 +6692,8 @@ window.addEventListener(
 })();
 
 </script>//** 
+<script>
+/** 
  * CQS AI 完整综合增强模块
  * 包含：
  * 1. 快捷键复制最后一条消息 (Ctrl + Shift + C)
@@ -6735,11 +6737,9 @@ window.addEventListener(
         document.body.style.color = t.text;
     }
 
-    // 页面加载时应用已保存的主题
     const savedTheme = localStorage.getItem('cqs_ai_theme') || 'dark';
     applyTheme(savedTheme);
 
-    // 快捷键切换主题 (Ctrl + Shift + D)
     document.addEventListener('keydown', (event) => {
         if (event.ctrlKey && event.shiftKey && event.key === 'd') {
             event.preventDefault();
@@ -6780,6 +6780,8 @@ window.addEventListener(
 
     document.body.appendChild(btn);
 })();
+</script>
+
 
  
 
