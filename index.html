@@ -5815,10 +5815,16 @@ async function saveToNotion() {
 
         }
 
-        toast(
+                toast(
             state.language === "zh"
-                ? "对话已保存到 Notion"
-                : "Saved to Notion"
+                ? `Notion 保存成功\nPage ID: ${
+                    data.pageId ||
+                    "未返回"
+                }`
+                : `Saved to Notion\nPage ID: ${
+                    data.pageId ||
+                    "Not returned"
+                }`
         );
 
         /*
