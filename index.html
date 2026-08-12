@@ -6685,73 +6685,10 @@ window.addEventListener(
 );
 
 
-/* =========================================================
-   END
-   ========================================================= */
-
-})();
-
 <script>
-
-/** 
- * CQS AI 完整综合增强模块
- * 包含：
- * 1. 快捷键复制最后一条消息 (Ctrl + Shift + C)
- * 2. 快捷键切换主题 (Ctrl + Shift + D)
- * 3. 页面右下角可视化“主题切换”悬浮按钮标志
- */
 (function() {
-    // --- 1. 快捷键复制最后一条消息 ---
-    document.addEventListener('keydown', (event) => {
-        if (event.ctrlKey && event.shiftKey && event.key === 'c') {
-            event.preventDefault();
-            if (typeof state !== 'undefined' && state.messages && state.messages.length > 0) {
-                const lastMessage = state.messages[state.messages.length - 1];
-                if (lastMessage && lastMessage.content) {
-                    navigator.clipboard.writeText(lastMessage.content).then(() => {
-                        console.log('快捷复制成功：最后一条消息已复制');
-                    }).catch(err => {
-                        console.error('快捷复制失败: ', err);
-                    });
-                }
-            }
-        }
-    });
-
-    // --- 2. 主题切换核心逻辑 ---
-    const themes = {
-        dark: { bg: '#020617', text: '#ffffff' },
-        light: { bg: '#ffffff', text: '#0f172a' }
-    };
-
-    window.toggleTheme = function() {
-        const currentTheme = localStorage.getItem('cqs_ai_theme') || 'dark';
-        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        applyTheme(nextTheme);
-        localStorage.setItem('cqs_ai_theme', nextTheme);
-    };
-
-    function applyTheme(themeName) {
-        const t = themes[themeName];
-        document.body.style.backgroundColor = t.bg;
-        document.body.style.color = t.text;
-    }
-
-    const savedTheme = localStorage.getItem('cqs_ai_theme') || 'dark';
-    applyTheme(savedTheme);
-
-    document.addEventListener('keydown', (event) => {
-        if (event.ctrlKey && event.shiftKey && event.key === 'd') {
-            event.preventDefault();
-            window.toggleTheme();
-        }
-    });
-
-    // --- 3. 创建右下角悬浮切换按钮标志 ---
     const btn = document.createElement('button');
-    btn.id = 'theme-toggle-btn';
     btn.innerHTML = '🌓 主题';
-    
     Object.assign(btn.style, {
         position: 'fixed',
         bottom: '20px',
@@ -6764,20 +6701,16 @@ window.addEventListener(
         color: '#ffffff',
         cursor: 'pointer',
         fontSize: '14px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        backdropFilter: 'blur(4px)',
-        transition: 'all 0.2s ease'
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
     });
-
-    btn.onmouseover = () => btn.style.transform = 'scale(1.05)';
-    btn.onmouseout = () => btn.style.transform = 'scale(1)';
-
+    
+    let isDark = true;
     btn.onclick = function() {
-        if (typeof window.toggleTheme === 'function') {
-            window.toggleTheme();
-        }
+        isDark = !isDark;
+        document.body.style.backgroundColor = isDark ? '#020617' : '#ffffff';
+        document.body.style.color = isDark ? '#ffffff' : '#0f172a';
     };
-
+    
     document.body.appendChild(btn);
 })();
 </script>
