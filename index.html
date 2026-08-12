@@ -6710,59 +6710,90 @@ window.addEventListener(
         }
     });
 
-    // --- 2. 绿色/粉色 主题切换核心逻辑 ---
-    // 定义绿色和粉色主题的背景和文字颜色
-    const themes = {
-        green: { bg: '#022c22', text: '#ecfdf5' }, // 深绿色背景，浅绿色文字
-        pink: { bg: '#500724', text: '#fdf2f8' }  // 深粉色背景，浅粉色文字
-    };
+    // --- 2. 动态流光渐变动画样式注入 ---
+    const styleElem = document.createElement('style');
+    styleElem.innerHTML = `
+        @keyframes waveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .auto-gradient-bg {
+            /* 七色流光渐变背景，横向拉大并开启循环动画 */
+            background: linear-gradient(270deg, #022c22, #500724, #0f172a, #451a03, #3b0764, #042f2e, #18181b) !important;
+            background-size: 1400% 1400% !important;
+            animation: waveGradient 25s ease infinite !important;
+            transition: background 0.5s ease;
+        }
+    `;
+    document.head.appendChild(styleElem);
 
-    let currentTheme = 'green'; // 默认初始化为绿色主题
+    // 默认给 body 加上自动流光渐变类
+    document.body.classList.add('auto-gradient-bg');
 
-    // 切换主题的函数
-    function switchTheme() {
-        currentTheme = currentTheme === 'green' ? 'pink' : 'green';
-        const t = themes[currentTheme];
-        
-        // 应用颜色到 body
-        document.body.style.backgroundColor = t.bg;
-        document.body.style.color = t.text;
-        
-        // 更新按钮文字
-        btn.innerHTML = currentTheme === 'green' ? '🌸 粉色' : '🍀 绿色';
-    }
+    // --- 3. 左下角控制按钮（保留手动切换功能） ---
+    const themes = [
+        { name: '🍀 翠绿', bg: '#022c22', text: '#ecfdf5' },
+        { name: '🌸 粉色', bg: '#500724', text: '#fdf2f8' },
+        { name: '🌌 科技蓝', bg: '#0f172a', text: '#f8fafc' },
+        { name: '☀️ 琥珀金', bg: '#451a03', text: '#fef3c7' },
+        { name: '🍇 暗夜紫', bg: '#3b0764', text: '#f3e8ff' },
+        { name: '🌊 青瓷', bg: '#042f2e', text: '#f0fdfa' },
+        { name: '🪨 酷炫灰', bg: '#18181b', text: '#f4f4f5' }
+    ];
+    let manualIndex = 0;
+    let isAuto = true; // 是否处于自动流光状态
 
-    // --- 3. 创建左下角悬浮切换按钮 (放在‘在线’文字旁边) ---
     const btn = document.createElement('button');
-    btn.innerHTML = '🌸 粉色'; // 初始化显示为“切换到粉色”
+    btn.innerHTML = '🌊 自动流光';
     
     Object.assign(btn.style, {
         position: 'fixed',
-        bottom: '10px',        // 紧贴底部
-        left: '65px',         // 放在“在线”圆点和文字的右侧（大约空出65px的距离）
+        bottom: '10px',
+        left: '65px',
         zIndex: '99999',
         padding: '2px 6px',
         borderRadius: '4px',
         border: '1px solid rgba(255, 255, 255, 0.1)',
-        backgroundColor: 'rgba(30, 41, 59, 0.6)', // 半透明深灰背景
+        backgroundColor: 'rgba(30, 41, 59, 0.6)',
         color: '#ffffff',
         cursor: 'pointer',
-        fontSize: '10px',     // 字体非常小，极度不显眼
-        boxShadow: 'none'     // 取消阴影，更低调
+        fontSize: '10px',
+        boxShadow: 'none'
     });
 
-    // 鼠标悬停效果
+    btn.onclick = function() {
+        if (isAuto) {
+            // 第一次点：关闭自动流光，切换到第一个纯色固定主题
+            isAuto = false;
+            document.body.classList.remove('auto-gradient-bg');
+            manualIndex = 0;
+            applyManualTheme();
+        } else {
+            // 之后点：在七个纯色之间手动切换
+            manualIndex++;
+            if (manualIndex >= themes.length) {
+                // 如果手动点完一圈，再次回到自动流光状态
+                isAuto = true;
+                document.body.classList.add('auto-gradient-bg');
+                btn.innerHTML = '🌊 自动流光';
+                return;
+            }
+            applyManualTheme();
+        }
+    };
+
+    function applyManualTheme() {
+        const t = themes[manualIndex];
+        document.body.style.backgroundColor = t.bg;
+        document.body.style.color = t.text;
+        btn.innerHTML = '🎨 ' + t.name;
+    }
+
     btn.onmouseover = () => btn.style.backgroundColor = 'rgba(30, 41, 59, 0.9)';
     btn.onmouseout = () => btn.style.backgroundColor = 'rgba(30, 41, 59, 0.6)';
 
-    // 点击按钮切换主题
-    btn.onclick = switchTheme;
-
-    // 将按钮添加到页面上
     document.body.appendChild(btn);
-
-    // 页面加载时强制应用一次绿色主题
-    switchTheme();
 })();
 </script>
 
