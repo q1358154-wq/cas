@@ -5789,27 +5789,37 @@ async function saveToNotion() {
                 : "Saved to Notion"
         );
 
-        if (
-            data.url
-        ) {
+        console.log(
+            "[CQS Notion Saved]",
+            {
+                pageId:
+                    data.pageId,
 
-            window.open(
-                data.url,
-                "_blank",
-                "noopener"
-            );
+                url:
+                    data.url,
 
-        }
+                conversationId:
+                    data.conversationId
+            }
+        );
 
     } catch (error) {
 
         console.error(
+            "[CQS Notion Error]",
             error
         );
 
         toast(
-            error?.message ||
-            "Notion save failed"
+            state.language === "zh"
+                ? `Notion 保存失败：${
+                    error.message ||
+                    "未知错误"
+                }`
+                : `Notion save failed: ${
+                    error.message ||
+                    "Unknown error"
+                }`
         );
 
     } finally {
