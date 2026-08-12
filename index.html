@@ -762,24 +762,6 @@ button:disabled {
     animation: messageIn .22s ease both;
 }
 
-/* =========================================================
-   出场动画样式 (新增/修改)
-   ========================================================= */
-@keyframes fadeInDown {
-    0% {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-welcome {
-    animation: fadeInDown 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
 @keyframes messageIn {
     from {
         opacity: 0;
@@ -1975,7 +1957,10 @@ button:disabled {
                         <span>⌄</span>
                     </button>
 
-<div class="model-menu" id="modelMenu" style="max-height: 300px; overflow-y: auto;">
+                    <div
+                        class="model-menu"
+                        id="modelMenu"
+                    >
 
                         <button
                             class="model-option active"
@@ -1995,24 +1980,7 @@ button:disabled {
                                     V4 Flash
                                 </small>
                             </span>
-                        </button>    <button class="model-option" data-model="still" data-label="Still">
-        <span class="model-option-icon">◆</span>
-        <span>
-            <strong>Still</strong>
-            <br>
-            <small>Still Model</small>
-        </span>
-    </button>
-
-    <button class="model-option" data-model="agent" data-label="Agent">
-        <span class="model-option-icon">◆</span>
-        <span>
-            <strong>Agent</strong>
-            <br>
-            <small>Agent Model</small>
-        </span>
-    </button>
-
+                        </button>
 
                         <button
                             class="model-option"
@@ -2129,7 +2097,7 @@ button:disabled {
         >
 
             <div
-                class="welcome animate-welcome"
+                class="welcome"
                 id="welcome"
             >
 
@@ -6690,7 +6658,5 @@ window.addEventListener(
    ========================================================= */
 
 })();
-
 </script>
-</body>
-</html>
+
