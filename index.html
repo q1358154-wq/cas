@@ -5816,15 +5816,31 @@ async function saveToNotion() {
         }
 
                 toast(
+    state.language === "zh"
+        ? "对话已保存到 Notion"
+        : "Saved to Notion"
+);
+
+if (data.url) {
+
+    const openNotion =
+        confirm(
             state.language === "zh"
-                ? `Notion 保存成功\nPage ID: ${
-                    data.pageId ||
-                    "未返回"
-                }`
-                : `Saved to Notion\nPage ID: ${
-                    data.pageId ||
-                    "Not returned"
-                }`
+                ? "对话已保存到 Notion。\n\n是否打开刚刚保存的 Notion 页面？"
+                : "Conversation saved to Notion.\n\nOpen the saved Notion page?"
+        );
+
+    if (openNotion) {
+
+        window.open(
+            data.url,
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+    }
+
+}
         );
 
         /*
