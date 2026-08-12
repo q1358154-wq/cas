@@ -2,13 +2,24 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+>
+
 <meta name="theme-color" content="#020617">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <title>CQS AI</title>
 
 <style>
+/* =========================================================
+   CQS AI GLOBAL
+   Frontend Full Version
+   ========================================================= */
+
 :root {
     --bg: #020617;
     --bg-soft: #07111f;
@@ -57,7 +68,16 @@ body {
     min-height: 100%;
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
 }
 
 body {
@@ -87,24 +107,55 @@ button:disabled {
     min-height: 100dvh;
     display: flex;
     overflow: hidden;
-    background: radial-gradient(circle at 50% -10%, rgba(56,189,248,.09), transparent 36%), radial-gradient(circle at 100% 100%, rgba(129,140,248,.06), transparent 32%), var(--bg);
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(56,189,248,.09),
+            transparent 36%
+        ),
+        radial-gradient(
+            circle at 100% 100%,
+            rgba(129,140,248,.06),
+            transparent 32%
+        ),
+        var(--bg);
 }
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
 
 .sidebar {
     width: 285px;
     height: 100%;
     flex: 0 0 285px;
+
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, rgba(2,6,23,.98), rgba(3,10,20,.96));
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(2,6,23,.98),
+            rgba(3,10,20,.96)
+        );
+
     border-right: 1px solid var(--border);
+
     position: relative;
     z-index: 30;
-    transition: transform .25s ease, width .25s ease;
+
+    transition:
+        transform .25s ease,
+        width .25s ease;
 }
 
 .sidebar-header {
-    padding: calc(16px + var(--safe-top)) 16px 12px;
+    padding:
+        calc(16px + var(--safe-top))
+        16px
+        12px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -120,11 +171,22 @@ button:disabled {
     width: 36px;
     height: 36px;
     border-radius: 12px;
+
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, rgba(56,189,248,.22), rgba(129,140,248,.18));
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(56,189,248,.22),
+            rgba(129,140,248,.18)
+        );
+
     border: 1px solid rgba(56,189,248,.18);
-    box-shadow: 0 0 24px rgba(56,189,248,.08);
+
+    box-shadow:
+        0 0 24px rgba(56,189,248,.08);
+
     font-weight: 800;
     font-size: 14px;
 }
@@ -156,18 +218,35 @@ button:disabled {
     border-radius: 10px;
 }
 
+/* =========================================================
+   NEW CHAT
+   ========================================================= */
+
 .new-chat {
     margin: 8px 14px 14px;
     height: 44px;
+
     border-radius: 13px;
+
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+
     color: white;
-    background: linear-gradient(135deg, rgba(56,189,248,.16), rgba(129,140,248,.14));
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(56,189,248,.16),
+            rgba(129,140,248,.14)
+        );
+
     border: 1px solid rgba(56,189,248,.16);
-    transition: transform .18s ease, background .18s ease;
+
+    transition:
+        transform .18s ease,
+        background .18s ease;
 }
 
 .new-chat:active {
@@ -175,7 +254,12 @@ button:disabled {
 }
 
 .new-chat:hover {
-    background: linear-gradient(135deg, rgba(56,189,248,.22), rgba(129,140,248,.2));
+    background:
+        linear-gradient(
+            135deg,
+            rgba(56,189,248,.22),
+            rgba(129,140,248,.2)
+        );
 }
 
 .new-chat-icon {
@@ -190,12 +274,19 @@ button:disabled {
     text-transform: uppercase;
 }
 
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
 .history {
     flex: 1;
     overflow-y: auto;
     padding: 0 10px 10px;
+
     scrollbar-width: thin;
-    scrollbar-color: rgba(148,163,184,.16) transparent;
+    scrollbar-color:
+        rgba(148,163,184,.16)
+        transparent;
 }
 
 .history::-webkit-scrollbar {
@@ -211,14 +302,21 @@ button:disabled {
     width: 100%;
     padding: 11px 10px;
     margin-bottom: 4px;
+
     border-radius: 11px;
+
     background: transparent;
     color: var(--muted);
+
     text-align: left;
+
     display: flex;
     align-items: center;
     gap: 9px;
-    transition: background .15s ease, color .15s ease;
+
+    transition:
+        background .15s ease,
+        color .15s ease;
 }
 
 .history-item:hover {
@@ -240,9 +338,11 @@ button:disabled {
 .history-title {
     min-width: 0;
     flex: 1;
+
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+
     font-size: 13px;
 }
 
@@ -257,9 +357,18 @@ button:disabled {
     opacity: 1;
 }
 
+/* =========================================================
+   SIDEBAR FOOTER
+   ========================================================= */
+
 .sidebar-footer {
-    padding: 10px 12px calc(12px + var(--safe-bottom));
+    padding:
+        10px
+        12px
+        calc(12px + var(--safe-bottom));
+
     border-top: 1px solid var(--border);
+
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
@@ -267,15 +376,21 @@ button:disabled {
 
 .sidebar-tool {
     height: 42px;
+
     border-radius: 11px;
+
     background: rgba(255,255,255,.025);
     border: 1px solid rgba(255,255,255,.05);
+
     color: var(--muted);
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     gap: 3px;
+
     font-size: 10px;
 }
 
@@ -288,26 +403,46 @@ button:disabled {
     background: rgba(255,255,255,.055);
 }
 
+/* =========================================================
+   MAIN
+   ========================================================= */
+
 .main {
     min-width: 0;
     flex: 1;
     height: 100%;
+
     display: flex;
     flex-direction: column;
+
     position: relative;
 }
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
 
 .topbar {
     height: 64px;
     flex: 0 0 64px;
-    padding: var(--safe-top) 16px 0;
+
+    padding:
+        var(--safe-top)
+        16px
+        0;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     border-bottom: 1px solid var(--border);
-    background: rgba(2,6,23,.72);
+
+    background:
+        rgba(2,6,23,.72);
+
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+
     position: relative;
     z-index: 20;
 }
@@ -322,9 +457,12 @@ button:disabled {
 .mobile-menu {
     width: 36px;
     height: 36px;
+
     border-radius: 10px;
+
     color: var(--muted);
     background: transparent;
+
     display: none;
 }
 
@@ -347,11 +485,15 @@ button:disabled {
 .top-btn {
     width: 36px;
     height: 36px;
+
     display: grid;
     place-items: center;
+
     border-radius: 10px;
+
     color: var(--muted);
     background: transparent;
+
     border: 1px solid transparent;
 }
 
@@ -361,6 +503,10 @@ button:disabled {
     border-color: var(--border);
 }
 
+/* =========================================================
+   MODEL SELECT
+   ========================================================= */
+
 .model-select {
     position: relative;
 }
@@ -368,15 +514,23 @@ button:disabled {
 .model-button {
     min-width: 145px;
     height: 36px;
+
     padding: 0 10px;
+
     border-radius: 10px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+
     color: var(--text);
-    background: rgba(255,255,255,.035);
+
+    background:
+        rgba(255,255,255,.035);
+
     border: 1px solid var(--border);
+
     font-size: 12px;
 }
 
@@ -388,12 +542,21 @@ button:disabled {
     position: absolute;
     right: 0;
     top: calc(100% + 8px);
+
     width: 220px;
+
     padding: 7px;
+
     border-radius: 14px;
-    background: rgba(8,18,32,.98);
+
+    background:
+        rgba(8,18,32,.98);
+
     border: 1px solid var(--border);
-    box-shadow: 0 20px 50px rgba(0,0,0,.4);
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.4);
+
     display: none;
 }
 
@@ -404,10 +567,14 @@ button:disabled {
 .model-option {
     width: 100%;
     padding: 10px;
+
     border-radius: 9px;
+
     background: transparent;
     color: var(--muted);
+
     text-align: left;
+
     display: flex;
     align-items: center;
     gap: 9px;
@@ -424,14 +591,27 @@ button:disabled {
     text-align: center;
 }
 
+/* =========================================================
+   CHAT
+   ========================================================= */
+
 .chat {
     flex: 1;
     min-height: 0;
+
     overflow-y: auto;
-    padding: 24px 20px 170px;
+
+    padding:
+        24px
+        20px
+        170px;
+
     scroll-behavior: smooth;
+
     scrollbar-width: thin;
-    scrollbar-color: rgba(148,163,184,.16) transparent;
+    scrollbar-color:
+        rgba(148,163,184,.16)
+        transparent;
 }
 
 .chat::-webkit-scrollbar {
@@ -443,57 +623,97 @@ button:disabled {
     border-radius: 999px;
 }
 
+/* =========================================================
+   WELCOME
+   ========================================================= */
+
 .welcome {
     width: min(760px, 100%);
     min-height: 65vh;
+
     margin: 0 auto;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     text-align: center;
+
     animation: welcomeIn .65s ease both;
 }
 
 @keyframes welcomeIn {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .welcome-logo {
     width: 74px;
     height: 74px;
+
     border-radius: 24px;
+
     display: grid;
     place-items: center;
+
     font-weight: 900;
     font-size: 23px;
-    background: linear-gradient(135deg, rgba(56,189,248,.18), rgba(129,140,248,.18));
-    border: 1px solid rgba(56,189,248,.18);
-    box-shadow: 0 0 60px rgba(56,189,248,.08);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(56,189,248,.18),
+            rgba(129,140,248,.18)
+        );
+
+    border:
+        1px solid
+        rgba(56,189,248,.18);
+
+    box-shadow:
+        0 0 60px rgba(56,189,248,.08);
 }
 
 .welcome-title {
     margin-top: 22px;
+
     font-size: clamp(28px, 5vw, 42px);
     font-weight: 800;
+
     letter-spacing: -.8px;
 }
 
 .welcome-title .letter {
     display: inline-block;
     opacity: 0;
-    animation: letterIn .35s ease forwards;
+    animation:
+        letterIn .35s ease forwards;
 }
 
 @keyframes letterIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .welcome-description {
     max-width: 560px;
     margin-top: 13px;
+
     color: var(--muted);
     line-height: 1.7;
     font-size: 13px;
@@ -501,6 +721,7 @@ button:disabled {
 
 .welcome-actions {
     margin-top: 28px;
+
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -509,10 +730,16 @@ button:disabled {
 
 .quick-action {
     padding: 9px 13px;
+
     border-radius: 999px;
+
     color: var(--muted);
-    background: rgba(255,255,255,.035);
+
+    background:
+        rgba(255,255,255,.035);
+
     border: 1px solid var(--border);
+
     font-size: 12px;
 }
 
@@ -521,17 +748,32 @@ button:disabled {
     background: rgba(255,255,255,.06);
 }
 
+/* =========================================================
+   MESSAGE
+   ========================================================= */
+
 .message {
     width: min(860px, 100%);
     margin: 0 auto 24px;
+
     display: flex;
     gap: 12px;
+
     animation: messageIn .22s ease both;
 }
 
+/* =========================================================
+   出场动画样式 (新增/修改)
+   ========================================================= */
 @keyframes fadeInDown {
-    0% { opacity: 0; transform: translateY(-30px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .animate-welcome {
@@ -539,29 +781,45 @@ button:disabled {
 }
 
 @keyframes messageIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .avatar {
     width: 34px;
     height: 34px;
+
     flex: 0 0 34px;
+
     border-radius: 11px;
+
     display: grid;
     place-items: center;
+
     font-size: 13px;
     font-weight: 800;
-    background: rgba(255,255,255,.04);
+
+    background:
+        rgba(255,255,255,.04);
+
     border: 1px solid var(--border);
 }
 
 .message.user .avatar {
-    background: rgba(56,189,248,.1);
+    background:
+        rgba(56,189,248,.1);
 }
 
 .message.assistant .avatar {
-    background: rgba(129,140,248,.1);
+    background:
+        rgba(129,140,248,.1);
 }
 
 .message-body {
@@ -573,21 +831,33 @@ button:disabled {
     display: flex;
     align-items: center;
     gap: 7px;
+
     margin: 3px 0 7px;
+
     font-size: 11px;
     color: var(--muted-2);
 }
 
 .message-content {
     max-width: 100%;
+
     padding: 12px 14px;
+
     border-radius: 15px;
+
     color: #e5e7eb;
+
     font-size: 14px;
     line-height: 1.75;
+
     word-break: break-word;
-    background: var(--assistant-bg);
-    border: 1px solid rgba(148,163,184,.08);
+
+    background:
+        var(--assistant-bg);
+
+    border:
+        1px solid
+        rgba(148,163,184,.08);
 }
 
 .message.user .message-content {
@@ -605,15 +875,23 @@ button:disabled {
 
 .message-content pre {
     overflow-x: auto;
+
     padding: 13px;
+
     border-radius: 11px;
+
     background: #020617;
+
     border: 1px solid var(--border);
+
     font-size: 12px;
 }
 
 .message-content code {
-    font-family: "SFMono-Regular", Consolas, monospace;
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
 }
 
 .message-content :not(pre) > code {
@@ -624,6 +902,7 @@ button:disabled {
 
 .message-actions {
     margin-top: 7px;
+
     display: flex;
     gap: 5px;
 }
@@ -631,7 +910,9 @@ button:disabled {
 .message-action {
     width: 29px;
     height: 29px;
+
     border-radius: 8px;
+
     color: var(--muted-2);
     background: transparent;
 }
@@ -641,44 +922,77 @@ button:disabled {
     background: rgba(255,255,255,.05);
 }
 
+/* =========================================================
+   THINKING
+   ========================================================= */
+
 .thinking-box {
     margin-bottom: 10px;
+
     border-radius: 13px;
-    background: rgba(129,140,248,.045);
-    border: 1px solid rgba(129,140,248,.1);
+
+    background:
+        rgba(129,140,248,.045);
+
+    border:
+        1px solid
+        rgba(129,140,248,.1);
+
     overflow: hidden;
 }
 
 .thinking-header {
     width: 100%;
+
     min-height: 40px;
+
     padding: 8px 11px;
+
     display: flex;
     align-items: center;
     gap: 8px;
+
     color: #c4b5fd;
+
     background: transparent;
+
     text-align: left;
+
     font-size: 12px;
 }
 
 .thinking-icon {
-    animation: thinkingPulse 1.2s ease-in-out infinite;
+    animation:
+        thinkingPulse 1.2s ease-in-out infinite;
 }
 
 @keyframes thinkingPulse {
-    0%,100% { opacity: .45; transform: scale(.92); }
-    50% { opacity: 1; transform: scale(1); }
+    0%,100% {
+        opacity: .45;
+        transform: scale(.92);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .thinking-content {
     display: none;
-    padding: 0 12px 12px;
+
+    padding:
+        0 12px
+        12px;
+
     color: #8b91aa;
+
     font-size: 12px;
     line-height: 1.6;
+
     max-height: 220px;
     overflow-y: auto;
+
     white-space: pre-wrap;
 }
 
@@ -694,38 +1008,78 @@ button:disabled {
 .thinking-dots span {
     width: 4px;
     height: 4px;
+
     border-radius: 50%;
+
     background: currentColor;
-    animation: dotPulse 1s infinite;
+
+    animation:
+        dotPulse 1s infinite;
 }
 
-.thinking-dots span:nth-child(2) { animation-delay: .15s; }
-.thinking-dots span:nth-child(3) { animation-delay: .3s; }
+.thinking-dots span:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.thinking-dots span:nth-child(3) {
+    animation-delay: .3s;
+}
 
 @keyframes dotPulse {
-    0%,100% { opacity: .25; }
-    50% { opacity: 1; }
+    0%,100% {
+        opacity: .25;
+    }
+
+    50% {
+        opacity: 1;
+    }
 }
+
+/* =========================================================
+   INPUT AREA
+   ========================================================= */
 
 .composer-wrap {
     position: absolute;
+
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 12px 18px calc(16px + var(--safe-bottom));
-    background: linear-gradient(180deg, transparent, rgba(2,6,23,.96) 30%);
+
+    padding:
+        12px
+        18px
+        calc(16px + var(--safe-bottom));
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(2,6,23,.96) 30%
+        );
+
     z-index: 15;
 }
 
 .composer {
     width: min(860px, 100%);
     margin: 0 auto;
+
     border-radius: 19px;
-    background: rgba(8,18,32,.94);
-    border: 1px solid rgba(148,163,184,.16);
-    box-shadow: 0 18px 55px rgba(0,0,0,.35);
+
+    background:
+        rgba(8,18,32,.94);
+
+    border:
+        1px solid
+        rgba(148,163,184,.16);
+
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.35);
+
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+
     overflow: hidden;
 }
 
@@ -736,15 +1090,27 @@ button:disabled {
 
 .textarea {
     flex: 1;
+
     width: 100%;
+
     min-height: 48px;
     max-height: 180px;
-    padding: 14px 14px 11px 16px;
+
+    padding:
+        14px
+        14px
+        11px
+        16px;
+
     resize: none;
+
     background: transparent;
+
     color: white;
+
     border: 0;
     outline: 0;
+
     font-size: 14px;
     line-height: 1.55;
 }
@@ -755,7 +1121,13 @@ button:disabled {
 
 .composer-bottom {
     min-height: 44px;
-    padding: 0 8px 8px 9px;
+
+    padding:
+        0
+        8px
+        8px
+        9px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -770,11 +1142,16 @@ button:disabled {
 .tool-btn {
     width: 34px;
     height: 34px;
+
     display: grid;
     place-items: center;
+
     border-radius: 9px;
+
     color: var(--muted);
+
     background: transparent;
+
     font-size: 17px;
 }
 
@@ -786,13 +1163,27 @@ button:disabled {
 .send-btn {
     width: 38px;
     height: 38px;
+
     display: grid;
     place-items: center;
+
     border-radius: 12px;
+
     color: #fff;
-    background: linear-gradient(135deg, #0ea5e9, #6366f1);
-    box-shadow: 0 7px 22px rgba(14,165,233,.15);
-    transition: transform .16s ease, filter .16s ease;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0ea5e9,
+            #6366f1
+        );
+
+    box-shadow:
+        0 7px 22px rgba(14,165,233,.15);
+
+    transition:
+        transform .16s ease,
+        filter .16s ease;
 }
 
 .send-btn:hover {
@@ -806,6 +1197,7 @@ button:disabled {
 .send-btn svg {
     width: 19px;
     height: 19px;
+
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
@@ -814,15 +1206,27 @@ button:disabled {
 }
 
 .stop-btn {
-    background: rgba(251,113,133,.14);
+    background:
+        rgba(251,113,133,.14);
+
     color: #fb7185;
-    border: 1px solid rgba(251,113,133,.16);
+
+    border:
+        1px solid
+        rgba(251,113,133,.16);
 }
+
+/* =========================================================
+   ATTACHMENT PREVIEW
+   ========================================================= */
 
 .attachments {
     display: none;
+
     padding: 7px 9px 0;
+
     gap: 6px;
+
     flex-wrap: wrap;
 }
 
@@ -832,14 +1236,21 @@ button:disabled {
 
 .attachment {
     max-width: 190px;
+
     padding: 6px 8px;
+
     display: flex;
     align-items: center;
     gap: 6px;
+
     border-radius: 8px;
+
     background: rgba(255,255,255,.045);
+
     border: 1px solid var(--border);
+
     color: var(--muted);
+
     font-size: 11px;
 }
 
@@ -849,14 +1260,23 @@ button:disabled {
     text-overflow: ellipsis;
 }
 
+/* =========================================================
+   STATUS
+   ========================================================= */
+
 .status-line {
     width: min(860px, 100%);
+
     margin: 6px auto 0;
+
     min-height: 16px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     color: var(--muted-2);
+
     font-size: 10px;
 }
 
@@ -869,26 +1289,44 @@ button:disabled {
 .status-dot {
     width: 5px;
     height: 5px;
+
     border-radius: 50%;
+
     background: var(--success);
-    box-shadow: 0 0 8px rgba(52,211,153,.55);
+
+    box-shadow:
+        0 0 8px rgba(52,211,153,.55);
 }
 
 .status-dot.busy {
     background: #fbbf24;
-    box-shadow: 0 0 8px rgba(251,191,36,.5);
+
+    box-shadow:
+        0 0 8px rgba(251,191,36,.5);
 }
+
+/* =========================================================
+   MODAL
+   ========================================================= */
 
 .overlay {
     position: fixed;
+
     inset: 0;
+
     z-index: 100;
-    background: rgba(0,0,0,.58);
+
+    background:
+        rgba(0,0,0,.58);
+
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+
     display: none;
+
     align-items: center;
     justify-content: center;
+
     padding: 20px;
 }
 
@@ -898,26 +1336,48 @@ button:disabled {
 
 .modal {
     width: min(560px, 100%);
+
     max-height: min(720px, 90vh);
+
     overflow-y: auto;
+
     border-radius: 20px;
-    background: #081220;
-    border: 1px solid rgba(148,163,184,.16);
-    box-shadow: 0 30px 100px rgba(0,0,0,.5);
-    animation: modalIn .2s ease both;
+
+    background:
+        #081220;
+
+    border:
+        1px solid
+        rgba(148,163,184,.16);
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.5);
+
+    animation:
+        modalIn .2s ease both;
 }
 
 @keyframes modalIn {
-    from { opacity: 0; transform: translateY(10px) scale(.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .modal-header {
     min-height: 60px;
+
     padding: 0 17px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     border-bottom: 1px solid var(--border);
 }
 
@@ -929,9 +1389,12 @@ button:disabled {
 .modal-close {
     width: 34px;
     height: 34px;
+
     display: grid;
     place-items: center;
+
     border-radius: 9px;
+
     color: var(--muted);
     background: transparent;
 }
@@ -942,10 +1405,12 @@ button:disabled {
 
 .setting-row {
     padding: 12px 0;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
+
     border-bottom: 1px solid rgba(255,255,255,.05);
 }
 
@@ -966,47 +1431,82 @@ button:disabled {
 
 .select {
     min-width: 150px;
+
     padding: 8px 10px;
+
     border-radius: 9px;
-    background: rgba(255,255,255,.045);
+
+    background:
+        rgba(255,255,255,.045);
+
     border: 1px solid var(--border);
+
     color: white;
+
     outline: 0;
 }
 
 .primary-btn {
     width: 100%;
     height: 42px;
+
     margin-top: 14px;
+
     border-radius: 11px;
+
     color: white;
-    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+
+    background:
+        linear-gradient(
+            135deg,
+            #0ea5e9,
+            #6366f1
+        );
 }
+
+/* =========================================================
+   LANGUAGE GRID
+   ========================================================= */
 
 .language-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 8px;
 }
 
 .language-option {
     min-height: 54px;
+
     padding: 8px 10px;
+
     border-radius: 11px;
+
     display: flex;
     align-items: center;
     gap: 9px;
+
     color: var(--muted);
-    background: rgba(255,255,255,.025);
+
+    background:
+        rgba(255,255,255,.025);
+
     border: 1px solid var(--border);
+
     text-align: left;
 }
 
 .language-option:hover,
 .language-option.active {
     color: white;
-    border-color: rgba(56,189,248,.18);
-    background: rgba(56,189,248,.07);
+
+    border-color:
+        rgba(56,189,248,.18);
+
+    background:
+        rgba(56,189,248,.07);
 }
 
 .language-flag {
@@ -1023,82 +1523,155 @@ button:disabled {
     margin-top: 2px;
 }
 
+/* =========================================================
+   SHARE
+   ========================================================= */
+
 .share-url {
     width: 100%;
+
     min-height: 80px;
+
     resize: none;
+
     padding: 11px;
+
     border-radius: 10px;
-    background: rgba(255,255,255,.035);
+
+    background:
+        rgba(255,255,255,.035);
+
     color: white;
+
     border: 1px solid var(--border);
+
     outline: 0;
+
     font-size: 11px;
 }
 
+/* =========================================================
+   TOAST
+   ========================================================= */
+
 .toast-container {
     position: fixed;
+
     left: 50%;
     bottom: calc(100px + var(--safe-bottom));
+
     transform: translateX(-50%);
+
     z-index: 300;
+
     display: flex;
     flex-direction: column;
     align-items: center;
+
     gap: 7px;
+
     pointer-events: none;
 }
 
 .toast {
     padding: 9px 13px;
+
     border-radius: 10px;
+
     color: white;
-    background: rgba(15,23,42,.96);
-    border: 1px solid rgba(148,163,184,.15);
-    box-shadow: 0 12px 35px rgba(0,0,0,.3);
+
+    background:
+        rgba(15,23,42,.96);
+
+    border:
+        1px solid
+        rgba(148,163,184,.15);
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.3);
+
     font-size: 12px;
-    animation: toastIn .2s ease both;
+
+    animation:
+        toastIn .2s ease both;
 }
 
 @keyframes toastIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
+/* =========================================================
+   FILE INPUT
+   ========================================================= */
 
 .hidden-input {
     display: none;
 }
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 820px) {
+
     .sidebar {
         position: fixed;
-        inset: 0 auto 0 0;
+        inset:
+            0 auto 0 0;
+
         width: min(310px, 86vw);
-        transform: translateX(-102%);
-        box-shadow: 20px 0 70px rgba(0,0,0,.4);
+
+        transform:
+            translateX(-102%);
+
+        box-shadow:
+            20px 0 70px rgba(0,0,0,.4);
     }
+
     .sidebar.open {
-        transform: translateX(0);
+        transform:
+            translateX(0);
     }
+
     .sidebar-close {
         display: grid;
     }
+
     .mobile-menu {
         display: grid;
     }
+
     .model-button {
         min-width: 112px;
     }
+
     .chat {
-        padding: 18px 12px 165px;
+        padding:
+            18px
+            12px
+            165px;
     }
+
     .composer-wrap {
-        padding: 8px 10px calc(10px + var(--safe-bottom));
+        padding:
+            8px
+            10px
+            calc(10px + var(--safe-bottom));
     }
+
     .message {
         gap: 8px;
         margin-bottom: 20px;
     }
+
     .avatar {
         width: 30px;
         height: 30px;
@@ -1106,63 +1679,82 @@ button:disabled {
         border-radius: 9px;
         font-size: 11px;
     }
+
     .message-content {
         font-size: 13px;
         line-height: 1.7;
     }
+
     .topbar {
         padding-left: 10px;
         padding-right: 10px;
     }
+
     .top-btn:nth-child(2) {
         display: none;
     }
 }
 
 @media (max-width: 500px) {
+
     .page-title-sub {
         display: none;
     }
+
     .model-button {
         min-width: 100px;
         max-width: 115px;
     }
+
     .model-button small {
         display: none;
     }
+
     .welcome {
         min-height: 58vh;
     }
+
     .welcome-logo {
         width: 64px;
         height: 64px;
         border-radius: 21px;
     }
+
     .welcome-title {
         font-size: 28px;
     }
+
     .welcome-description {
         font-size: 12px;
         padding: 0 12px;
     }
+
     .welcome-actions {
         padding: 0 10px;
     }
+
     .quick-action {
         font-size: 11px;
     }
+
     .language-grid {
         grid-template-columns: 1fr;
     }
+
     .setting-row {
         align-items: flex-start;
         flex-direction: column;
         gap: 9px;
     }
+
     .select {
         width: 100%;
     }
 }
+
+/* =========================================================
+   RECORDING
+   ========================================================= */
 
 .recording {
     color: #fb7185 !important;
@@ -1174,20 +1766,40 @@ button:disabled {
     height: 6px;
     border-radius: 50%;
     background: #fb7185;
-    animation: recordPulse 1s infinite;
+
+    animation:
+        recordPulse 1s infinite;
 }
 
 @keyframes recordPulse {
-    0%,100% { opacity: .35; transform: scale(.8); }
-    50% { opacity: 1; transform: scale(1.2); }
+    0%,100% {
+        opacity: .35;
+        transform: scale(.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
 }
+
+/* =========================================================
+   EMPTY HISTORY
+   ========================================================= */
 
 .empty-history {
     padding: 30px 15px;
+
     text-align: center;
+
     color: var(--muted-2);
+
     font-size: 11px;
 }
+
+/* =========================================================
+   MARKDOWN BASIC
+   ========================================================= */
 
 .md-bold {
     font-weight: 700;
@@ -1215,1154 +1827,4870 @@ button:disabled {
 <body>
 
 <div class="app">
-    <!-- SIDEBAR -->
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
     <aside class="sidebar" id="sidebar">
+
         <div class="sidebar-header">
+
             <div class="brand">
-                <div class="brand-logo">C</div>
-                <div class="brand-text">
-                    <div class="brand-title">CQS AI</div>
-                    <div class="brand-subtitle">GLOBAL INTELLIGENCE</div>
+
+                <div class="brand-logo">
+                    C
                 </div>
+
+                <div class="brand-text">
+                    <div class="brand-title">
+                        CQS AI
+                    </div>
+
+                    <div class="brand-subtitle">
+                        GLOBAL INTELLIGENCE
+                    </div>
+                </div>
+
             </div>
-            <button class="sidebar-close" id="sidebarClose" aria-label="Close">×</button>
+
+            <button
+                class="sidebar-close"
+                id="sidebarClose"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
         </div>
-        <button class="new-chat" id="newChatBtn">
+
+        <button
+            class="new-chat"
+            id="newChatBtn"
+        >
             <span class="new-chat-icon">＋</span>
             <span data-i18n="newChat">新建对话</span>
         </button>
-        <div class="sidebar-section-title" data-i18n="history">HISTORY</div>
-        <div class="history" id="historyList"></div>
+
+        <div
+            class="sidebar-section-title"
+            data-i18n="history"
+        >
+            HISTORY
+        </div>
+
+        <div
+            class="history"
+            id="historyList"
+        ></div>
+
         <div class="sidebar-footer">
-            <button class="sidebar-tool" id="languageBtn">
+
+            <button
+                class="sidebar-tool"
+                id="languageBtn"
+            >
                 <span>🌐</span>
                 <span data-i18n="language">语言</span>
             </button>
-            <button class="sidebar-tool" id="notionBtn">
+
+            <button
+                class="sidebar-tool"
+                id="notionBtn"
+            >
                 <span>📝</span>
                 <span>Notion</span>
             </button>
-            <button class="sidebar-tool" id="settingsBtn">
+
+            <button
+                class="sidebar-tool"
+                id="settingsBtn"
+            >
                 <span>⚙️</span>
                 <span data-i18n="settings">设置</span>
             </button>
+
         </div>
+
     </aside>
 
-    <!-- MAIN -->
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
     <main class="main">
+
         <!-- TOPBAR -->
+
         <header class="topbar">
+
             <div class="topbar-left">
-                <button class="mobile-menu" id="mobileMenu" aria-label="Menu">☰</button>
+
+                <button
+                    class="mobile-menu"
+                    id="mobileMenu"
+                    aria-label="Menu"
+                >
+                    ☰
+                </button>
+
                 <div class="page-title">
-                    <div class="page-title-main" id="pageTitle">CQS AI</div>
-                    <div class="page-title-sub" id="pageSubtitle">Online</div>
+
+                    <div
+                        class="page-title-main"
+                        id="pageTitle"
+                    >
+                        CQS AI
+                    </div>
+
+                    <div
+                        class="page-title-sub"
+                        id="pageSubtitle"
+                    >
+                        Online
+                    </div>
+
                 </div>
+
             </div>
+
+
             <div class="topbar-right">
+
                 <div class="model-select">
-                    <button class="model-button" id="modelButton">
-                        <span id="modelName">DeepSeek</span>
-                        <small id="modelVersion">V4</small>
+
+                    <button
+                        class="model-button"
+                        id="modelButton"
+                    >
+                        <span id="modelName">
+                            DeepSeek
+                        </span>
+
+                        <small id="modelVersion">
+                            V4
+                        </small>
+
                         <span>⌄</span>
                     </button>
-                    <div class="model-menu" id="modelMenu" style="max-height: 300px; overflow-y: auto;">
-                        <button class="model-option active" data-model="deepseek-v4-flash" data-label="DeepSeek">
-                            <span class="model-option-icon">◈</span>
-                            <span><strong>DeepSeek</strong><br><small>V4 Flash</small></span>
+
+<div class="model-menu" id="modelMenu" style="max-height: 300px; overflow-y: auto;">
+
+                        <button
+                            class="model-option active"
+                            data-model="deepseek-v4-flash"
+                            data-label="DeepSeek"
+                        >
+                            <span class="model-option-icon">
+                                ◈
+                            </span>
+
+                            <span>
+                                <strong>
+                                    DeepSeek
+                                </strong>
+                                <br>
+                                <small>
+                                    V4 Flash
+                                </small>
+                            </span>
+                        </button>    <button class="model-option" data-model="still" data-label="Still">
+        <span class="model-option-icon">◆</span>
+        <span>
+            <strong>Still</strong>
+            <br>
+            <small>Still Model</small>
+        </span>
+    </button>
+
+    <button class="model-option" data-model="agent" data-label="Agent">
+        <span class="model-option-icon">◆</span>
+        <span>
+            <strong>Agent</strong>
+            <br>
+            <small>Agent Model</small>
+        </span>
+    </button>
+
+
+                        <button
+                            class="model-option"
+                            data-model="deepseek-v4-pro"
+                            data-label="DeepSeek Pro"
+                        >
+                            <span class="model-option-icon">
+                                ◇
+                            </span>
+
+                            <span>
+                                <strong>
+                                    DeepSeek Pro
+                                </strong>
+                                <br>
+                                <small>
+                                    V4 Pro
+                                </small>
+                            </span>
                         </button>
-                        <button class="model-option" data-model="still" data-label="Still">
-                            <span class="model-option-icon">◆</span>
-                            <span><strong>Still</strong><br><small>Still Model</small></span>
+
+                        <button
+                            class="model-option"
+                            data-model="openai"
+                            data-label="OpenAI"
+                        >
+                            <span class="model-option-icon">
+                                ◎
+                            </span>
+
+                            <span>
+                                <strong>
+                                    OpenAI
+                                </strong>
+                                <br>
+                                <small>
+                                    API Ready
+                                </small>
+                            </span>
                         </button>
-                        <button class="model-option" data-model="agent" data-label="Agent">
-                            <span class="model-option-icon">◆</span>
-                            <span><strong>Agent</strong><br><small>Agent Model</small></span>
+
+                        <button
+                            class="model-option"
+                            data-model="claude"
+                            data-label="Claude"
+                        >
+                            <span class="model-option-icon">
+                                ◉
+                            </span>
+
+                            <span>
+                                <strong>
+                                    Claude
+                                </strong>
+                                <br>
+                                <small>
+                                    API Ready
+                                </small>
+                            </span>
                         </button>
-                        <button class="model-option" data-model="deepseek-v4-pro" data-label="DeepSeek Pro">
-                            <span class="model-option-icon">◇</span>
-                            <span><strong>DeepSeek Pro</strong><br><small>V4 Pro</small></span>
+
+                        <button
+                            class="model-option"
+                            data-model="gemini"
+                            data-label="Gemini"
+                        >
+                            <span class="model-option-icon">
+                                ✦
+                            </span>
+
+                            <span>
+                                <strong>
+                                    Gemini
+                                </strong>
+                                <br>
+                                <small>
+                                    API Ready
+                                </small>
+                            </span>
                         </button>
-                        <button class="model-option" data-model="openai" data-label="OpenAI">
-                            <span class="model-option-icon">◎</span>
-                            <span><strong>OpenAI</strong><br><small>API Ready</small></span>
-                        </button>
-                        <button class="model-option" data-model="claude" data-label="Claude">
-                            <span class="model-option-icon">◉</span>
-                            <span><strong>Claude</strong><br><small>API Ready</small></span>
-                        </button>
-                        <button class="model-option" data-model="gemini" data-label="Gemini">
-                            <span class="model-option-icon">✦</span>
-                            <span><strong>Gemini</strong><br><small>API Ready</small></span>
-                        </button>
+
                     </div>
+
                 </div>
-                <button class="top-btn" id="shareBtn" title="Share">↗</button>
-                <button class="top-btn" id="exportBtn" title="Export">↓</button>
+
+                <button
+                    class="top-btn"
+                    id="shareBtn"
+                    title="Share"
+                >
+                    ↗
+                </button>
+
+                <button
+                    class="top-btn"
+                    id="exportBtn"
+                    title="Export"
+                >
+                    ↓
+                </button>
+
             </div>
+
         </header>
 
-        <!-- CHAT -->
-        <section class="chat" id="chat">
-            <div class="welcome animate-welcome" id="welcome">
-                <div class="welcome-logo">CQS</div>
-                <div class="welcome-title" id="welcomeTitle">CQS AI</div>
-                <div class="welcome-description" id="welcomeDescription">
-                    Intelligent conversation powered by CQS AI. Ask questions, explore ideas and build something new.
+
+        <!-- =================================================
+             CHAT
+             ================================================= -->
+
+        <section
+            class="chat"
+            id="chat"
+        >
+
+            <div
+                class="welcome animate-welcome"
+                id="welcome"
+            >
+
+                <div class="welcome-logo">
+                    CQS
                 </div>
+
+                <div
+                    class="welcome-title"
+                    id="welcomeTitle"
+                >
+                    CQS AI
+                </div>
+
+                <div
+                    class="welcome-description"
+                    id="welcomeDescription"
+                >
+                    Intelligent conversation powered by CQS AI.
+                    Ask questions, explore ideas and build
+                    something new.
+                </div>
+
                 <div class="welcome-actions">
-                    <button class="quick-action" data-prompt="请介绍一下你自己">✨ <span data-i18n="quickAbout">介绍自己</span></button>
-                    <button class="quick-action" data-prompt="帮我分析一个复杂问题">🧠 <span data-i18n="quickThink">深度思考</span></button>
-                    <button class="quick-action" data-prompt="帮我写一段代码">💻 <span data-i18n="quickCode">写代码</span></button>
-                    <button class="quick-action" data-prompt="帮我制定一个计划">📋 <span data-i18n="quickPlan">制定计划</span></button>
+
+                    <button
+                        class="quick-action"
+                        data-prompt="请介绍一下你自己"
+                    >
+                        ✨ <span data-i18n="quickAbout">介绍自己</span>
+                    </button>
+
+                    <button
+                        class="quick-action"
+                        data-prompt="帮我分析一个复杂问题"
+                    >
+                        🧠 <span data-i18n="quickThink">深度思考</span>
+                    </button>
+
+                    <button
+                        class="quick-action"
+                        data-prompt="帮我写一段代码"
+                    >
+                        💻 <span data-i18n="quickCode">写代码</span>
+                    </button>
+
+                    <button
+                        class="quick-action"
+                        data-prompt="帮我制定一个计划"
+                    >
+                        📋 <span data-i18n="quickPlan">制定计划</span>
+                    </button>
+
                 </div>
+
             </div>
+
             <div id="messages"></div>
+
         </section>
 
-        <!-- COMPOSER -->
+
+        <!-- =================================================
+             COMPOSER
+             ================================================= -->
+
         <div class="composer-wrap">
+
             <div class="composer">
-                <div class="attachments" id="attachments"></div>
+
+                <div
+                    class="attachments"
+                    id="attachments"
+                ></div>
+
                 <div class="composer-top">
-                    <textarea id="input" class="textarea" rows="1" maxlength="12000" autocomplete="off" data-placeholder="messagePlaceholder" placeholder="给 CQS AI 发送消息..."></textarea>
+
+                    <textarea
+                        id="input"
+                        class="textarea"
+                        rows="1"
+                        maxlength="12000"
+                        autocomplete="off"
+                        data-placeholder="messagePlaceholder"
+                        placeholder="给 CQS AI 发送消息..."
+                    ></textarea>
+
                 </div>
+
                 <div class="composer-bottom">
+
                     <div class="composer-tools">
-                        <button class="tool-btn" id="fileBtn" title="Upload">📎</button>
-                        <button class="tool-btn" id="voiceBtn" title="Voice">🎙️</button>
-                        <button class="tool-btn" id="soundBtn" title="Sound">🔊</button>
-                        <input type="file" id="fileInput" class="hidden-input" multiple>
+
+                        <button
+                            class="tool-btn"
+                            id="fileBtn"
+                            title="Upload"
+                        >
+                            📎
+                        </button>
+
+                        <button
+                            class="tool-btn"
+                            id="voiceBtn"
+                            title="Voice"
+                        >
+                            🎙️
+                        </button>
+
+                        <button
+                            class="tool-btn"
+                            id="soundBtn"
+                            title="Sound"
+                        >
+                            🔊
+                        </button>
+
+                        <input
+                            type="file"
+                            id="fileInput"
+                            class="hidden-input"
+                            multiple
+                        >
+
                     </div>
-                    <button class="send-btn" id="sendBtn" aria-label="Send" title="Send">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M22 2 11 13"></path>
-                            <path d="m22 2-7 20-4-9-9-4Z"></path>
+
+                    <button
+                        class="send-btn"
+                        id="sendBtn"
+                        aria-label="Send"
+                        title="Send"
+                    >
+
+                        <!-- 纸飞机 -->
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M22 2 11 13"
+                            ></path>
+
+                            <path
+                                d="m22 2-7 20-4-9-9-4Z"
+                            ></path>
                         </svg>
+
                     </button>
+
                 </div>
+
             </div>
+
             <div class="status-line">
+
                 <div class="status-left">
-                    <span class="status-dot" id="statusDot"></span>
-                    <span id="statusText">Online</span>
+
+                    <span
+                        class="status-dot"
+                        id="statusDot"
+                    ></span>
+
+                    <span id="statusText">
+                        Online
+                    </span>
+
                 </div>
-                <span>CQS AI</span>
+
+                <span>
+                    CQS AI
+                </span>
+
             </div>
+
         </div>
+
     </main>
+
 </div>
 
-<!-- MODALS -->
-<div class="overlay" id="languageOverlay">
+
+<!-- =========================================================
+     LANGUAGE MODAL
+     ========================================================= -->
+
+<div
+    class="overlay"
+    id="languageOverlay"
+>
+
     <div class="modal">
+
         <div class="modal-header">
-            <div class="modal-title" data-i18n="selectLanguage">选择语言</div>
-            <button class="modal-close" data-close="languageOverlay">×</button>
+
+            <div
+                class="modal-title"
+                data-i18n="selectLanguage"
+            >
+                选择语言
+            </div>
+
+            <button
+                class="modal-close"
+                data-close="languageOverlay"
+            >
+                ×
+            </button>
+
         </div>
+
         <div class="modal-body">
+
             <div class="language-grid">
-                <button class="language-option active" data-language="zh"><span class="language-flag">🇨🇳</span><span><div class="language-name">简体中文</div><div class="language-native">Chinese</div></span></button>
-                <button class="language-option" data-language="en"><span class="language-flag">🇺🇸</span><span><div class="language-name">English</div><div class="language-native">English</div></span></button>
-                <button class="language-option" data-language="ja"><span class="language-flag">🇯🇵</span><span><div class="language-name">日本語</div><div class="language-native">Japanese</div></span></button>
-                <button class="language-option" data-language="ko"><span class="language-flag">🇰🇷</span><span><div class="language-name">한국어</div><div class="language-native">Korean</div></span></button>
-                <button class="language-option" data-language="fr"><span class="language-flag">🇫🇷</span><span><div class="language-name">Français</div><div class="language-native">French</div></span></button>
-                <button class="language-option" data-language="de"><span class="language-flag">🇩🇪</span><span><div class="language-name">Deutsch</div><div class="language-native">German</div></span></button>
-                <button class="language-option" data-language="es"><span class="language-flag">🇪🇸</span><span><div class="language-name">Español</div><div class="language-native">Spanish</div></span></button>
-                <button class="language-option" data-language="ru"><span class="language-flag">🇷🇺</span><span><div class="language-name">Русский</div><div class="language-native">Russian</div></span></button>
+
+                <button
+                    class="language-option active"
+                    data-language="zh"
+                >
+                    <span class="language-flag">
+                        🇨🇳
+                    </span>
+
+                    <span>
+                        <div class="language-name">
+                            简体中文
+                        </div>
+
+                        <div class="language-native">
+                            Chinese
+                        </div>
+                    </span>
+                </button>
+
+                <button
+                    class="language-option"
+                    data-language="en"
+                >
+                    <span class="language-flag">
+                        🇺🇸
+                    </span>
+
+                    <span>
+                        <div class="language-name">
+                            English
+                        </div>
+
+                        <div class="language-native">
+                            English
+                        </div>
+                    </span>
+                </button>
+
+                <button
+                    class="language-option"
+                    data-language="ja"
+                >
+                    <span class="language-flag">
+                        🇯🇵
+                    </span>
+
+                    <span>
+                        <div class="language-name">
+                            日本語
+                        </div>
+
+                        <div class="language-native">
+                            Japanese
+                        </div>
+                    </span>
+                </button>
+
+                <button
+                    class="language-option"
+                    data-language="ko"
+                >
+                    <span class="language-flag">
+                        🇰🇷
+                    </span>
+
+                    <span>
+                        <div class="language-name">
+                            한국어
+                        </div>
+
+                        <div class="language-native">
+                            Korean
+                        </div>
+                    </span>
+                </button>
+
+                <button
+                    class="language-option"
+                    data-language="fr"
+                >
+                    <span class="language-flag">
+                        🇫🇷
+                    </span>
+
+                    <span>
+                        <div class="language-name">
+                            Français
+                        </div>
+
+                        <div class="language-native">
+                            French
+                        </div>
+                    </span>
+                </button>
+
+                <button
+                    class="language-option"
+                    data-language="de"
+                >
+                    <span class="language-flag">
+                        🇩🇪
+                    </span>
+
+                    <span>
+                        <div class="language-name">
+                            Deutsch
+                        </div>
+
+                        <div class="language-native">
+                            German
+                        </div>
+                    </span>
+                </button>
+
+                <button
+                    class="language-option"
+                    data-language="es"
+                >
+                    <span class="language-flag">
+                        🇪🇸
+                    </span>
+
+                    <span>
+                        <div class="language-name">
+                            Español
+                        </div>
+
+                        <div class="language-native">
+                            Spanish
+                        </div>
+                    </span>
+                </button>
+
+                <button
+                    class="language-option"
+                    data-language="ru"
+                >
+                    <span class="language-flag">
+                        🇷🇺
+                    </span>
+
+                    <span>
+                        <div class="language-name">
+                            Русский
+                        </div>
+
+                        <div class="language-native">
+                            Russian
+                        </div>
+                    </span>
+                </button>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
 
-<div class="overlay" id="settingsOverlay">
+
+<!-- =========================================================
+     SETTINGS MODAL
+     ========================================================= -->
+
+<div
+    class="overlay"
+    id="settingsOverlay"
+>
+
     <div class="modal">
+
         <div class="modal-header">
-            <div class="modal-title" data-i18n="settings">设置</div>
-            <button class="modal-close" data-close="settingsOverlay">×</button>
+
+            <div
+                class="modal-title"
+                data-i18n="settings"
+            >
+                设置
+            </div>
+
+            <button
+                class="modal-close"
+                data-close="settingsOverlay"
+            >
+                ×
+            </button>
+
         </div>
+
         <div class="modal-body">
+
             <div class="setting-row">
+
                 <div>
-                    <div class="setting-name" data-i18n="soundSetting">气泡音</div>
-                    <div class="setting-desc" data-i18n="soundDesc">输入、输出和 Thinking 状态音效</div>
+                    <div
+                        class="setting-name"
+                        data-i18n="soundSetting"
+                    >
+                        气泡音
+                    </div>
+
+                    <div
+                        class="setting-desc"
+                        data-i18n="soundDesc"
+                    >
+                        输入、输出和 Thinking 状态音效
+                    </div>
                 </div>
-                <button class="top-btn" id="soundSettingBtn">🔊</button>
+
+                <button
+                    class="top-btn"
+                    id="soundSettingBtn"
+                >
+                    🔊
+                </button>
+
             </div>
+
+
             <div class="setting-row">
+
                 <div>
-                    <div class="setting-name" data-i18n="language">语言</div>
-                    <div class="setting-desc" id="currentLanguageText">简体中文</div>
+                    <div
+                        class="setting-name"
+                        data-i18n="language"
+                    >
+                        语言
+                    </div>
+
+                    <div
+                        class="setting-desc"
+                        id="currentLanguageText"
+                    >
+                        简体中文
+                    </div>
                 </div>
-                <button class="top-btn" id="settingLanguageBtn">🌐</button>
+
+                <button
+                    class="top-btn"
+                    id="settingLanguageBtn"
+                >
+                    🌐
+                </button>
+
             </div>
+
+
             <div class="setting-row">
+
                 <div>
-                    <div class="setting-name">CQS AI</div>
-                    <div class="setting-desc">Global AI Console</div>
+                    <div
+                        class="setting-name"
+                    >
+                        CQS AI
+                    </div>
+
+                    <div
+                        class="setting-desc"
+                    >
+                        Global AI Console
+                    </div>
                 </div>
-                <span style="color:#34d399;font-size:11px;">Online</span>
+
+                <span
+                    style="
+                        color:#34d399;
+                        font-size:11px;
+                    "
+                >
+                    Online
+                </span>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
 
-<div class="overlay" id="notionOverlay">
+
+<!-- =========================================================
+     NOTION MODAL
+     ========================================================= -->
+
+<div
+    class="overlay"
+    id="notionOverlay"
+>
+
     <div class="modal">
+
         <div class="modal-header">
-            <div class="modal-title">Notion</div>
-            <button class="modal-close" data-close="notionOverlay">×</button>
+
+            <div class="modal-title">
+                Notion
+            </div>
+
+            <button
+                class="modal-close"
+                data-close="notionOverlay"
+            >
+                ×
+            </button>
+
         </div>
+
         <div class="modal-body">
-            <div style="color:#94a3b8;font-size:12px;line-height:1.7;">将当前 CQS AI 对话保存到已经部署好的 Notion Secure Gateway。</div>
-            <button class="primary-btn" id="saveNotionBtn">📝 保存当前对话到 Notion</button>
+
+            <div
+                style="
+                    color:#94a3b8;
+                    font-size:12px;
+                    line-height:1.7;
+                "
+            >
+                将当前 CQS AI 对话保存到已经部署好的
+                Notion Secure Gateway。
+            </div>
+
+            <button
+                class="primary-btn"
+                id="saveNotionBtn"
+            >
+                📝 保存当前对话到 Notion
+            </button>
+
         </div>
+
     </div>
+
 </div>
 
-<div class="overlay" id="shareOverlay">
+
+<!-- =========================================================
+     SHARE MODAL
+     ========================================================= -->
+
+<div
+    class="overlay"
+    id="shareOverlay"
+>
+
     <div class="modal">
+
         <div class="modal-header">
-            <div class="modal-title" data-i18n="share">分享对话</div>
-            <button class="modal-close" data-close="shareOverlay">×</button>
+
+            <div
+                class="modal-title"
+                data-i18n="share"
+            >
+                分享对话
+            </div>
+
+            <button
+                class="modal-close"
+                data-close="shareOverlay"
+            >
+                ×
+            </button>
+
         </div>
+
         <div class="modal-body">
-            <textarea class="share-url" id="shareText" readonly></textarea>
-            <button class="primary-btn" id="copyShareBtn" data-i18n="copy">复制</button>
+
+            <textarea
+                class="share-url"
+                id="shareText"
+                readonly
+            ></textarea>
+
+            <button
+                class="primary-btn"
+                id="copyShareBtn"
+                data-i18n="copy"
+            >
+                复制
+            </button>
+
         </div>
+
     </div>
+
 </div>
 
-<div class="overlay" id="exportOverlay">
+
+<!-- =========================================================
+     EXPORT MODAL
+     ========================================================= -->
+
+<div
+    class="overlay"
+    id="exportOverlay"
+>
+
     <div class="modal">
+
         <div class="modal-header">
-            <div class="modal-title" data-i18n="export">导出对话</div>
-            <button class="modal-close" data-close="exportOverlay">×</button>
+
+            <div
+                class="modal-title"
+                data-i18n="export"
+            >
+                导出对话
+            </div>
+
+            <button
+                class="modal-close"
+                data-close="exportOverlay"
+            >
+                ×
+            </button>
+
         </div>
+
         <div class="modal-body">
-            <button class="primary-btn" id="exportTxtBtn">📄 TXT</button>
-            <button class="primary-btn" id="exportJsonBtn">{} JSON</button>
+
+            <button
+                class="primary-btn"
+                id="exportTxtBtn"
+            >
+                📄 TXT
+            </button>
+
+            <button
+                class="primary-btn"
+                id="exportJsonBtn"
+            >
+                {} JSON
+            </button>
+
         </div>
+
     </div>
+
 </div>
 
-<div class="toast-container" id="toastContainer"></div>
+
+<!-- =========================================================
+     TOAST
+     ========================================================= -->
+
+<div
+    class="toast-container"
+    id="toastContainer"
+></div>
+
 
 <script>
+/* =========================================================
+   CQS AI GLOBAL
+   Frontend Application
+   ========================================================= */
+
 (() => {
+
 "use strict";
 
+/* =========================================================
+   STATE
+   ========================================================= */
+
 const state = {
+
     conversations: [],
+
     currentConversationId: null,
+
     messages: [],
+
     isStreaming: false,
+
     abortController: null,
-    selectedModel: localStorage.getItem("cqs_model") || "deepseek-v4-flash",
-    language: localStorage.getItem("cqs_language") || "zh",
-    soundEnabled: localStorage.getItem("cqs_sound") !== "false",
+
+    selectedModel:
+        localStorage.getItem(
+            "cqs_model"
+        ) || "deepseek-v4-flash",
+
+    language:
+        localStorage.getItem(
+            "cqs_language"
+        ) || "zh",
+
+    soundEnabled:
+        localStorage.getItem(
+            "cqs_sound"
+        ) !== "false",
+
     attachments: [],
+
     recognition: null,
+
     isRecording: false,
+
     streamReasoning: "",
+
     streamAnswer: ""
+
 };
 
-const $ = (id) => document.getElementById(id);
-const sidebar = $("sidebar");
-const chat = $("chat");
-const messagesEl = $("messages");
-const welcome = $("welcome");
-const input = $("input");
-const sendBtn = $("sendBtn");
-const fileInput = $("fileInput");
-const attachmentsEl = $("attachments");
-const historyList = $("historyList");
-const modelButton = $("modelButton");
-const modelMenu = $("modelMenu");
-const modelName = $("modelName");
-const statusDot = $("statusDot");
-const statusText = $("statusText");
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const $ = (id) =>
+    document.getElementById(id);
+
+const sidebar =
+    $("sidebar");
+
+const chat =
+    $("chat");
+
+const messagesEl =
+    $("messages");
+
+const welcome =
+    $("welcome");
+
+const input =
+    $("input");
+
+const sendBtn =
+    $("sendBtn");
+
+const fileInput =
+    $("fileInput");
+
+const attachmentsEl =
+    $("attachments");
+
+const historyList =
+    $("historyList");
+
+const modelButton =
+    $("modelButton");
+
+const modelMenu =
+    $("modelMenu");
+
+const modelName =
+    $("modelName");
+
+const statusDot =
+    $("statusDot");
+
+const statusText =
+    $("statusText");
+
+
+/* =========================================================
+   STORAGE
+   ========================================================= */
 
 function loadConversations() {
+
     try {
-        const raw = localStorage.getItem("cqs_conversations");
-        if (!raw) { state.conversations = []; return; }
-        const parsed = JSON.parse(raw);
-        state.conversations = Array.isArray(parsed) ? parsed : [];
+
+        const raw =
+            localStorage.getItem(
+                "cqs_conversations"
+            );
+
+        if (!raw) {
+            state.conversations = [];
+            return;
+        }
+
+        const parsed =
+            JSON.parse(raw);
+
+        state.conversations =
+            Array.isArray(parsed)
+                ? parsed
+                : [];
+
     } catch {
+
         state.conversations = [];
+
     }
+
 }
 
 function saveConversations() {
+
     try {
-        localStorage.setItem("cqs_conversations", JSON.stringify(state.conversations));
+
+        localStorage.setItem(
+            "cqs_conversations",
+            JSON.stringify(
+                state.conversations
+            )
+        );
+
     } catch {}
+
 }
+
+
+/* =========================================================
+   IDS
+   ========================================================= */
 
 function createId() {
-    return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
+
+    return (
+        Date.now().toString(36) +
+        Math.random()
+            .toString(36)
+            .substring(2, 9)
+    );
+
 }
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
 
 function toast(message) {
-    const container = $("toastContainer");
-    const item = document.createElement("div");
-    item.className = "toast";
-    item.textContent = message;
-    container.appendChild(item);
+
+    const container =
+        $("toastContainer");
+
+    const item =
+        document.createElement(
+            "div"
+        );
+
+    item.className =
+        "toast";
+
+    item.textContent =
+        message;
+
+    container.appendChild(
+        item
+    );
+
     setTimeout(() => {
+
         item.style.opacity = "0";
-        setTimeout(() => item.remove(), 200);
+
+        setTimeout(() => {
+
+            item.remove();
+
+        }, 200);
+
     }, 2400);
+
 }
+
+
+/* =========================================================
+   LANGUAGE
+   ========================================================= */
 
 const translations = {
+
     zh: {
-        newChat: "新建对话", history: "历史对话", language: "语言", settings: "设置",
-        selectLanguage: "选择语言", quickAbout: "介绍自己", quickThink: "深度思考",
-        quickCode: "写代码", quickPlan: "制定计划", messagePlaceholder: "给 CQS AI 发送消息...",
-        share: "分享对话", copy: "复制", export: "导出对话", soundSetting: "气泡音",
-        soundDesc: "输入、输出和 Thinking 状态音效"
+
+        newChat:
+            "新建对话",
+
+        history:
+            "历史对话",
+
+        language:
+            "语言",
+
+        settings:
+            "设置",
+
+        selectLanguage:
+            "选择语言",
+
+        quickAbout:
+            "介绍自己",
+
+        quickThink:
+            "深度思考",
+
+        quickCode:
+            "写代码",
+
+        quickPlan:
+            "制定计划",
+
+        messagePlaceholder:
+            "给 CQS AI 发送消息...",
+
+        share:
+            "分享对话",
+
+        copy:
+            "复制",
+
+        export:
+            "导出对话",
+
+        soundSetting:
+            "气泡音",
+
+        soundDesc:
+            "输入、输出和 Thinking 状态音效"
+
     },
+
     en: {
-        newChat: "New Chat", history: "History", language: "Language", settings: "Settings",
-        selectLanguage: "Select Language", quickAbout: "About", quickThink: "Think",
-        quickCode: "Code", quickPlan: "Plan", messagePlaceholder: "Message CQS AI...",
-        share: "Share", copy: "Copy", export: "Export", soundSetting: "Bubble Sound",
-        soundDesc: "Input, output and thinking sounds"
+
+        newChat:
+            "New Chat",
+
+        history:
+            "History",
+
+        language:
+            "Language",
+
+        settings:
+            "Settings",
+
+        selectLanguage:
+            "Select Language",
+
+        quickAbout:
+            "About",
+
+        quickThink:
+            "Think",
+
+        quickCode:
+            "Code",
+
+        quickPlan:
+            "Plan",
+
+        messagePlaceholder:
+            "Message CQS AI...",
+
+        share:
+            "Share",
+
+        copy:
+            "Copy",
+
+        export:
+            "Export",
+
+        soundSetting:
+            "Bubble Sound",
+
+        soundDesc:
+            "Input, output and thinking sounds"
+
     },
+
     ja: {
-        newChat: "新しい会話", history: "履歴", language: "言語", settings: "設定",
-        selectLanguage: "言語を選択", quickAbout: "自己紹介", quickThink: "深く考える",
-        quickCode: "コード", quickPlan: "計画", messagePlaceholder: "CQS AI にメッセージ...",
-        share: "共有", copy: "コピー", export: "エクスポート", soundSetting: "バブル音",
-        soundDesc: "入力・出力・思考音"
+
+        newChat:
+            "新しい会話",
+
+        history:
+            "履歴",
+
+        language:
+            "言語",
+
+        settings:
+            "設定",
+
+        selectLanguage:
+            "言語を選択",
+
+        quickAbout:
+            "自己紹介",
+
+        quickThink:
+            "深く考える",
+
+        quickCode:
+            "コード",
+
+        quickPlan:
+            "計画",
+
+        messagePlaceholder:
+            "CQS AI にメッセージ...",
+
+        share:
+            "共有",
+
+        copy:
+            "コピー",
+
+        export:
+            "エクスポート",
+
+        soundSetting:
+            "バブル音",
+
+        soundDesc:
+            "入力・出力・思考音"
+
     },
+
     ko: {
-        newChat: "새 대화", history: "기록", language: "언어", settings: "설정",
-        selectLanguage: "언어 선택", quickAbout: "소개", quickThink: "깊이 생각",
-        quickCode: "코드", quickPlan: "계획", messagePlaceholder: "CQS AI에게 메시지...",
-        share: "공유", copy: "복사", export: "내보내기", soundSetting: "버블 사운드",
-        soundDesc: "입력, 출력 및 사고 사운드"
+
+        newChat:
+            "새 대화",
+
+        history:
+            "기록",
+
+        language:
+            "언어",
+
+        settings:
+            "설정",
+
+        selectLanguage:
+            "언어 선택",
+
+        quickAbout:
+            "소개",
+
+        quickThink:
+            "깊이 생각",
+
+        quickCode:
+            "코드",
+
+        quickPlan:
+            "계획",
+
+        messagePlaceholder:
+            "CQS AI에게 메시지...",
+
+        share:
+            "공유",
+
+        copy:
+            "복사",
+
+        export:
+            "내보내기",
+
+        soundSetting:
+            "버블 사운드",
+
+        soundDesc:
+            "입력, 출력 및 사고 사운드"
+
     },
+
     fr: {
-        newChat: "Nouvelle discussion", history: "Historique", language: "Langue", settings: "Paramètres",
-        selectLanguage: "Choisir la langue", quickAbout: "À propos", quickThink: "Réflexion",
-        quickCode: "Code", quickPlan: "Plan", messagePlaceholder: "Message à CQS AI...",
-        share: "Partager", copy: "Copier", export: "Exporter", soundSetting: "Son bulle",
-        soundDesc: "Sons d'entrée, sortie et réflexion"
+
+        newChat:
+            "Nouvelle discussion",
+
+        history:
+            "Historique",
+
+        language:
+            "Langue",
+
+        settings:
+            "Paramètres",
+
+        selectLanguage:
+            "Choisir la langue",
+
+        quickAbout:
+            "À propos",
+
+        quickThink:
+            "Réflexion",
+
+        quickCode:
+            "Code",
+
+        quickPlan:
+            "Plan",
+
+        messagePlaceholder:
+            "Message à CQS AI...",
+
+        share:
+            "Partager",
+
+        copy:
+            "Copier",
+
+        export:
+            "Exporter",
+
+        soundSetting:
+            "Son bulle",
+
+        soundDesc:
+            "Sons d'entrée, sortie et réflexion"
+
     },
+
     de: {
-        newChat: "Neuer Chat", history: "Verlauf", language: "Sprache", settings: "Einstellungen",
-        selectLanguage: "Sprache auswählen", quickAbout: "Über mich", quickThink: "Denken",
-        quickCode: "Code", quickPlan: "Plan", messagePlaceholder: "Nachricht an CQS AI...",
-        share: "Teilen", copy: "Kopieren", export: "Exportieren", soundSetting: "Blasenton",
-        soundDesc: "Eingabe-, Ausgabe- und Denkgeräusche"
+
+        newChat:
+            "Neuer Chat",
+
+        history:
+            "Verlauf",
+
+        language:
+            "Sprache",
+
+        settings:
+            "Einstellungen",
+
+        selectLanguage:
+            "Sprache auswählen",
+
+        quickAbout:
+            "Über mich",
+
+        quickThink:
+            "Denken",
+
+        quickCode:
+            "Code",
+
+        quickPlan:
+            "Plan",
+
+        messagePlaceholder:
+            "Nachricht an CQS AI...",
+
+        share:
+            "Teilen",
+
+        copy:
+            "Kopieren",
+
+        export:
+            "Exportieren",
+
+        soundSetting:
+            "Blasenton",
+
+        soundDesc:
+            "Eingabe-, Ausgabe- und Denkgeräusche"
+
     },
+
     es: {
-        newChat: "Nuevo chat", history: "Historial", language: "Idioma", settings: "Configuración",
-        selectLanguage: "Seleccionar idioma", quickAbout: "Presentación", quickThink: "Pensar",
-        quickCode: "Código", quickPlan: "Plan", messagePlaceholder: "Mensaje para CQS AI...",
-        share: "Compartir", copy: "Copiar", export: "Exportar", soundSetting: "Sonido burbuja",
-        soundDesc: "Sonidos de entrada, salida y pensamiento"
+
+        newChat:
+            "Nuevo chat",
+
+        history:
+            "Historial",
+
+        language:
+            "Idioma",
+
+        settings:
+            "Configuración",
+
+        selectLanguage:
+            "Seleccionar idioma",
+
+        quickAbout:
+            "Presentación",
+
+        quickThink:
+            "Pensar",
+
+        quickCode:
+            "Código",
+
+        quickPlan:
+            "Plan",
+
+        messagePlaceholder:
+            "Mensaje para CQS AI...",
+
+        share:
+            "Compartir",
+
+        copy:
+            "Copiar",
+
+        export:
+            "Exportar",
+
+        soundSetting:
+            "Sonido burbuja",
+
+        soundDesc:
+            "Sonidos de entrada, salida y pensamiento"
+
     },
+
     ru: {
-        newChat: "Новый чат", history: "История", language: "Язык", settings: "Настройки",
-        selectLanguage: "Выберите язык", quickAbout: "О себе", quickThink: "Размышление",
-        quickCode: "Код", quickPlan: "План", messagePlaceholder: "Сообщение CQS AI...",
-        share: "Поделиться", copy: "Копировать", export: "Экспорт", soundSetting: "Звук пузырька",
-        soundDesc: "Звуки ввода, вывода и размышления"
+
+        newChat:
+            "Новый чат",
+
+        history:
+            "История",
+
+        language:
+            "Язык",
+
+        settings:
+            "Настройки",
+
+        selectLanguage:
+            "Выберите язык",
+
+        quickAbout:
+            "О себе",
+
+        quickThink:
+            "Размышление",
+
+        quickCode:
+            "Код",
+
+        quickPlan:
+            "План",
+
+        messagePlaceholder:
+            "Сообщение CQS AI...",
+
+        share:
+            "Поделиться",
+
+        copy:
+            "Копировать",
+
+        export:
+            "Экспорт",
+
+        soundSetting:
+            "Звук пузырька",
+
+        soundDesc:
+            "Звуки ввода, вывода и размышления"
+
     }
+
 };
 
+
 function t(key) {
-    return translations[state.language]?.[key] || translations.zh[key] || key;
+
+    return (
+        translations[state.language]?.[key] ||
+        translations.zh[key] ||
+        key
+    );
+
 }
+
 
 function applyLanguage() {
-    document.querySelectorAll("[data-i18n]").forEach(el => {
-        el.textContent = t(el.dataset.i18n);
-    });
-    input.placeholder = t(input.dataset.placeholder);
-    const names = { zh: "简体中文", en: "English", ja: "日本語", ko: "한국어", fr: "Français", de: "Deutsch", es: "Español", ru: "Русский" };
-    $("currentLanguageText").textContent = names[state.language];
-    document.querySelectorAll(".language-option").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.language === state.language);
-    });
+
+    document
+        .querySelectorAll(
+            "[data-i18n]"
+        )
+        .forEach(el => {
+
+            const key =
+                el.dataset.i18n;
+
+            el.textContent =
+                t(key);
+
+        });
+
+    const placeholderKey =
+        input.dataset.placeholder;
+
+    input.placeholder =
+        t(placeholderKey);
+
+    const names = {
+
+        zh: "简体中文",
+
+        en: "English",
+
+        ja: "日本語",
+
+        ko: "한국어",
+
+        fr: "Français",
+
+        de: "Deutsch",
+
+        es: "Español",
+
+        ru: "Русский"
+
+    };
+
+    $("currentLanguageText")
+        .textContent =
+        names[state.language];
+
+    document
+        .querySelectorAll(
+            ".language-option"
+        )
+        .forEach(btn => {
+
+            btn.classList.toggle(
+                "active",
+                btn.dataset.language ===
+                state.language
+            );
+
+        });
+
 }
+
+
+/* =========================================================
+   AUDIO ENGINE
+   ========================================================= */
 
 let audioContext = null;
+
 function getAudioContext() {
+
     if (!audioContext) {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return null;
-        audioContext = new AudioCtx();
+
+        const AudioCtx =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        if (!AudioCtx) {
+            return null;
+        }
+
+        audioContext =
+            new AudioCtx();
+
     }
-    if (audioContext.state === "suspended") {
-        audioContext.resume().catch(() => {});
+
+    if (
+        audioContext.state ===
+        "suspended"
+    ) {
+
+        audioContext.resume()
+            .catch(() => {});
+
     }
+
     return audioContext;
+
 }
 
-function bubbleSound(type = "output") {
-    if (!state.soundEnabled) return;
-    const ctx = getAudioContext();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const oscillator = ctx.createOscillator();
-    const gain = ctx.createGain();
-    oscillator.type = "sine";
-    let frequency = type === "input" ? 420 : (type === "output" ? 580 : 330);
-    oscillator.frequency.setValueAtTime(frequency, now);
-    oscillator.frequency.exponentialRampToValueAtTime(frequency * 1.32, now + .12);
-    gain.gain.setValueAtTime(.0001, now);
-    gain.gain.exponentialRampToValueAtTime(.055, now + .015);
-    gain.gain.exponentialRampToValueAtTime(.0001, now + .16);
+
+function bubbleSound(
+    type = "output"
+) {
+
+    if (!state.soundEnabled) {
+        return;
+    }
+
+    const ctx =
+        getAudioContext();
+
+    if (!ctx) {
+        return;
+    }
+
+    const now =
+        ctx.currentTime;
+
+    const oscillator =
+        ctx.createOscillator();
+
+    const gain =
+        ctx.createGain();
+
+    oscillator.type =
+        type === "thinking"
+            ? "sine"
+            : "sine";
+
+    let frequency = 540;
+
+    if (type === "input") {
+        frequency = 420;
+    }
+
+    if (type === "output") {
+        frequency = 580;
+    }
+
+    if (type === "thinking") {
+        frequency = 330;
+    }
+
+    oscillator.frequency.setValueAtTime(
+        frequency,
+        now
+    );
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+        frequency * 1.32,
+        now + .12
+    );
+
+    gain.gain.setValueAtTime(
+        .0001,
+        now
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .055,
+        now + .015
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .0001,
+        now + .16
+    );
+
     oscillator.connect(gain);
     gain.connect(ctx.destination);
+
     oscillator.start(now);
     oscillator.stop(now + .18);
+
 }
 
-let lastInputSound = 0, lastOutputSound = 0, lastThinkingSound = 0;
+
+let lastInputSound = 0;
+let lastOutputSound = 0;
+let lastThinkingSound = 0;
+
 function throttledSound(type) {
-    const now = Date.now();
-    if (type === "input" && now - lastInputSound < 650) return;
-    if (type === "output" && now - lastOutputSound < 700) return;
-    if (type === "thinking" && now - lastThinkingSound < 1100) return;
-    if (type === "input") lastInputSound = now;
-    if (type === "output") lastOutputSound = now;
-    if (type === "thinking") lastThinkingSound = now;
+
+    const now =
+        Date.now();
+
+    if (type === "input") {
+
+        if (
+            now -
+            lastInputSound <
+            650
+        ) {
+            return;
+        }
+
+        lastInputSound =
+            now;
+
+    }
+
+    if (type === "output") {
+
+        if (
+            now -
+            lastOutputSound <
+            700
+        ) {
+            return;
+        }
+
+        lastOutputSound =
+            now;
+
+    }
+
+    if (type === "thinking") {
+
+        if (
+            now -
+            lastThinkingSound <
+            1100
+        ) {
+            return;
+        }
+
+        lastThinkingSound =
+            now;
+
+    }
+
     bubbleSound(type);
+
 }
 
-function setStatus(text, busy = false) {
-    statusText.textContent = text;
-    statusDot.classList.toggle("busy", busy);
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function setStatus(
+    text,
+    busy = false
+) {
+
+    statusText.textContent =
+        text;
+
+    statusDot.classList.toggle(
+        "busy",
+        busy
+    );
+
 }
+
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
 
 function renderHistory() {
+
     historyList.innerHTML = "";
-    if (state.conversations.length === 0) {
-        const empty = document.createElement("div");
-        empty.className = "empty-history";
-        empty.textContent = state.language === "zh" ? "暂无历史对话" : "No conversations";
-        historyList.appendChild(empty);
+
+    if (
+        state.conversations.length === 0
+    ) {
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+        empty.className =
+            "empty-history";
+
+        empty.textContent =
+            state.language === "zh"
+                ? "暂无历史对话"
+                : "No conversations";
+
+        historyList.appendChild(
+            empty
+        );
+
         return;
     }
-    const sorted = [...state.conversations].sort((a,b) => b.updatedAt - a.updatedAt);
-    sorted.forEach(conversation => {
-        const item = document.createElement("button");
-        item.className = "history-item";
-        if (conversation.id === state.currentConversationId) item.classList.add("active");
-        const icon = document.createElement("span");
-        icon.className = "history-icon";
-        icon.textContent = "◌";
-        const title = document.createElement("span");
-        title.className = "history-title";
-        title.textContent = conversation.title || "CQS AI";
-        const del = document.createElement("button");
-        del.className = "history-delete";
-        del.textContent = "×";
-        del.addEventListener("click", event => {
-            event.stopPropagation();
-            deleteConversation(conversation.id);
-        });
-        item.appendChild(icon);
-        item.appendChild(title);
-        item.appendChild(del);
-        item.addEventListener("click", () => {
-            loadConversation(conversation.id);
-            closeSidebar();
-        });
-        historyList.appendChild(item);
-    });
+
+    const sorted =
+        [...state.conversations]
+            .sort(
+                (a,b) =>
+                    b.updatedAt -
+                    a.updatedAt
+            );
+
+    sorted.forEach(
+        conversation => {
+
+            const item =
+                document.createElement(
+                    "button"
+                );
+
+            item.className =
+                "history-item";
+
+            if (
+                conversation.id ===
+                state.currentConversationId
+            ) {
+
+                item.classList.add(
+                    "active"
+                );
+
+            }
+
+            const icon =
+                document.createElement(
+                    "span"
+                );
+
+            icon.className =
+                "history-icon";
+
+            icon.textContent =
+                "◌";
+
+            const title =
+                document.createElement(
+                    "span"
+                );
+
+            title.className =
+                "history-title";
+
+            title.textContent =
+                conversation.title ||
+                "CQS AI";
+
+            const del =
+                document.createElement(
+                    "button"
+                );
+
+            del.className =
+                "history-delete";
+
+            del.textContent =
+                "×";
+
+            del.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    deleteConversation(
+                        conversation.id
+                    );
+
+                }
+            );
+
+            item.appendChild(
+                icon
+            );
+
+            item.appendChild(
+                title
+            );
+
+            item.appendChild(
+                del
+            );
+
+            item.addEventListener(
+                "click",
+                () => {
+
+                    loadConversation(
+                        conversation.id
+                    );
+
+                    closeSidebar();
+
+                }
+            );
+
+            historyList.appendChild(
+                item
+            );
+
+        }
+    );
+
 }
+
 
 function saveCurrentConversation() {
-    if (!state.currentConversationId) return;
-    const conversation = state.conversations.find(c => c.id === state.currentConversationId);
-    if (!conversation) return;
-    conversation.messages = state.messages;
-    conversation.updatedAt = Date.now();
-    if (state.messages.length > 0) {
-        const firstUser = state.messages.find(m => m.role === "user");
-        if (firstUser) {
-            conversation.title = firstUser.content.replace(/\s+/g, " ").substring(0, 35);
-        }
-    }
-    saveConversations();
-    renderHistory();
-}
 
-function createConversation() {
-    const id = createId();
-    const conversation = {
-        id, title: state.language === "zh" ? "新对话" : "New Chat",
-        messages: [], createdAt: Date.now(), updatedAt: Date.now()
-    };
-    state.conversations.push(conversation);
-    state.currentConversationId = id;
-    state.messages = [];
-    saveConversations();
-    renderHistory();
-    renderMessages();
-}
-
-function loadConversation(id) {
-    const conversation = state.conversations.find(c => c.id === id);
-    if (!conversation) return;
-    state.currentConversationId = id;
-    state.messages = Array.isArray(conversation.messages) ? conversation.messages : [];
-    renderHistory();
-    renderMessages();
-}
-
-function deleteConversation(id) {
-    state.conversations = state.conversations.filter(c => c.id !== id);
-    if (state.currentConversationId === id) {
-        state.currentConversationId = null;
-        state.messages = [];
-        renderMessages();
-    }
-    saveConversations();
-    renderHistory();
-}
-
-function escapeHTML(value) {
-    return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
-
-function formatMarkdown(text) {
-    let html = escapeHTML(text);
-    html = html.replace(/```([\s\S]*?)```/g, (_, code) => "<pre><code>" + code.trim() + "</code></pre>");
-    html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
-    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-    html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
-    html = html.replace(/^>\s?(.*)$/gm, '<div class="md-quote">$1</div>');
-    html = html.replace(/^[-*]\s+(.*)$/gm, '<div>• $1</div>');
-    html = html.replace(/\n\n/g, "</p><p>");
-    html = html.replace(/\n/g, "<br>");
-    return "<p>" + html + "</p>";
-}
-
-function renderMessages() {
-    messagesEl.innerHTML = "";
-    if (state.messages.length === 0) {
-        welcome.style.display = "flex";
+    if (
+        !state.currentConversationId
+    ) {
         return;
     }
-    welcome.style.display = "none";
-    state.messages.forEach(message => {
-        const wrapper = createMessageElement(message);
-        messagesEl.appendChild(wrapper);
-    });
-    scrollToBottom();
-}
 
-function createMessageElement(message) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "message " + message.role;
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.textContent = message.role === "user" ? "U" : "C";
-    const body = document.createElement("div");
-    body.className = "message-body";
-    const meta = document.createElement("div");
-    meta.className = "message-meta";
-    meta.textContent = message.role === "user" ? "You" : "CQS AI";
-    const content = document.createElement("div");
-    content.className = "message-content";
-    content.innerHTML = formatMarkdown(message.content || "");
-    body.appendChild(meta);
-    body.appendChild(content);
+    const conversation =
+        state.conversations.find(
+            c =>
+                c.id ===
+                state.currentConversationId
+        );
 
-    if (message.role === "assistant") {
-        const actions = document.createElement("div");
-        actions.className = "message-actions";
-        const copy = document.createElement("button");
-        copy.className = "message-action";
-        copy.textContent = "⧉";
-        copy.title = "Copy";
-        copy.addEventListener("click", () => copyText(message.content || ""));
-        actions.appendChild(copy);
-        body.appendChild(actions);
+    if (!conversation) {
+        return;
     }
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(body);
-    return wrapper;
+
+    conversation.messages =
+        state.messages;
+
+    conversation.updatedAt =
+        Date.now();
+
+    if (
+        state.messages.length > 0
+    ) {
+
+        const firstUser =
+            state.messages.find(
+                m =>
+                    m.role ===
+                    "user"
+            );
+
+        if (firstUser) {
+
+            conversation.title =
+                firstUser.content
+                    .replace(/\s+/g, " ")
+                    .substring(0, 35);
+
+        }
+
+    }
+
+    saveConversations();
+    renderHistory();
+
 }
+
+
+function createConversation() {
+
+    const id =
+        createId();
+
+    const conversation = {
+
+        id,
+
+        title:
+            state.language === "zh"
+                ? "新对话"
+                : "New Chat",
+
+        messages: [],
+
+        createdAt:
+            Date.now(),
+
+        updatedAt:
+            Date.now()
+
+    };
+
+    state.conversations.push(
+        conversation
+    );
+
+    state.currentConversationId =
+        id;
+
+    state.messages = [];
+
+    saveConversations();
+
+    renderHistory();
+
+    renderMessages();
+
+}
+
+
+function loadConversation(id) {
+
+    const conversation =
+        state.conversations.find(
+            c => c.id === id
+        );
+
+    if (!conversation) {
+        return;
+    }
+
+    state.currentConversationId =
+        id;
+
+    state.messages =
+        Array.isArray(
+            conversation.messages
+        )
+            ? conversation.messages
+            : [];
+
+    renderHistory();
+    renderMessages();
+
+}
+
+
+function deleteConversation(id) {
+
+    state.conversations =
+        state.conversations.filter(
+            c => c.id !== id
+        );
+
+    if (
+        state.currentConversationId === id
+    ) {
+
+        state.currentConversationId =
+            null;
+
+        state.messages = [];
+
+        renderMessages();
+
+    }
+
+    saveConversations();
+    renderHistory();
+
+}
+
+
+/* =========================================================
+   RENDER MESSAGES
+   ========================================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+function formatMarkdown(text) {
+
+    let html =
+        escapeHTML(
+            text
+        );
+
+    html =
+        html.replace(
+            /```([\s\S]*?)```/g,
+            (_, code) =>
+                "<pre><code>" +
+                code.trim() +
+                "</code></pre>"
+        );
+
+    html =
+        html.replace(
+            /`([^`]+)`/g,
+            "<code>$1</code>"
+        );
+
+    html =
+        html.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
+
+    html =
+        html.replace(
+            /\*(.*?)\*/g,
+            "<em>$1</em>"
+        );
+
+    html =
+        html.replace(
+            /^>\s?(.*)$/gm,
+            '<div class="md-quote">$1</div>'
+        );
+
+    html =
+        html.replace(
+            /^[-*]\s+(.*)$/gm,
+            '<div>• $1</div>'
+        );
+
+    html =
+        html.replace(
+            /\n\n/g,
+            "</p><p>"
+        );
+
+    html =
+        html.replace(
+            /\n/g,
+            "<br>"
+        );
+
+    return "<p>" + html + "</p>";
+
+}
+
+
+function renderMessages() {
+
+    messagesEl.innerHTML = "";
+
+    if (
+        state.messages.length === 0
+    ) {
+
+        welcome.style.display =
+            "flex";
+
+        return;
+
+    }
+
+    welcome.style.display =
+        "none";
+
+    state.messages.forEach(
+        message => {
+
+            const wrapper =
+                createMessageElement(
+                    message
+                );
+
+            messagesEl.appendChild(
+                wrapper
+            );
+
+        }
+    );
+
+    scrollToBottom();
+
+}
+
+
+function createMessageElement(
+    message
+) {
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        "message " +
+        message.role;
+
+    const avatar =
+        document.createElement(
+            "div"
+        );
+
+    avatar.className =
+        "avatar";
+
+    avatar.textContent =
+        message.role === "user"
+            ? "U"
+            : "C";
+
+    const body =
+        document.createElement(
+            "div"
+        );
+
+    body.className =
+        "message-body";
+
+    const meta =
+        document.createElement(
+            "div"
+        );
+
+    meta.className =
+        "message-meta";
+
+    meta.textContent =
+        message.role === "user"
+            ? "You"
+            : "CQS AI";
+
+    const content =
+        document.createElement(
+            "div"
+        );
+
+    content.className =
+        "message-content";
+
+    content.innerHTML =
+        formatMarkdown(
+            message.content || ""
+        );
+
+    body.appendChild(
+        meta
+    );
+
+    body.appendChild(
+        content
+    );
+
+    if (
+        message.role ===
+        "assistant"
+    ) {
+
+        const actions =
+            document.createElement(
+                "div"
+            );
+
+        actions.className =
+            "message-actions";
+
+        const copy =
+            document.createElement(
+                "button"
+            );
+
+        copy.className =
+            "message-action";
+
+        copy.textContent =
+            "⧉";
+
+        copy.title =
+            "Copy";
+
+        copy.addEventListener(
+            "click",
+            () => {
+
+                copyText(
+                    message.content || ""
+                );
+
+            }
+        );
+
+        actions.appendChild(
+            copy
+        );
+
+        body.appendChild(
+            actions
+        );
+
+    }
+
+    wrapper.appendChild(
+        avatar
+    );
+
+    wrapper.appendChild(
+        body
+    );
+
+    return wrapper;
+
+}
+
+
+/* =========================================================
+   STREAM MESSAGE
+   ========================================================= */
 
 function createStreamingMessage() {
-    const wrapper = document.createElement("div");
-    wrapper.className = "message assistant";
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.textContent = "C";
-    const body = document.createElement("div");
-    body.className = "message-body";
-    const meta = document.createElement("div");
-    meta.className = "message-meta";
-    meta.textContent = "CQS AI";
-    const thinking = document.createElement("div");
-    thinking.className = "thinking-box";
-    const thinkingHeader = document.createElement("button");
-    thinkingHeader.className = "thinking-header";
-    thinkingHeader.innerHTML = `<span class="thinking-icon">🧠</span><span>Thinking</span><span class="thinking-dots"><span></span><span></span><span></span></span>`;
-    const thinkingContent = document.createElement("div");
-    thinkingContent.className = "thinking-content";
-    thinkingHeader.addEventListener("click", () => thinking.classList.toggle("open"));
-    thinking.appendChild(thinkingHeader);
-    thinking.appendChild(thinkingContent);
-    const content = document.createElement("div");
-    content.className = "message-content";
-    content.innerHTML = "<p></p>";
-    body.appendChild(meta);
-    body.appendChild(thinking);
-    body.appendChild(content);
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(body);
-    messagesEl.appendChild(wrapper);
-    return { wrapper, thinking, thinkingContent, content };
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        "message assistant";
+
+    const avatar =
+        document.createElement(
+            "div"
+        );
+
+    avatar.className =
+        "avatar";
+
+    avatar.textContent =
+        "C";
+
+    const body =
+        document.createElement(
+            "div"
+        );
+
+    body.className =
+        "message-body";
+
+    const meta =
+        document.createElement(
+            "div"
+        );
+
+    meta.className =
+        "message-meta";
+
+    meta.textContent =
+        "CQS AI";
+
+    const thinking =
+        document.createElement(
+            "div"
+        );
+
+    thinking.className =
+        "thinking-box";
+
+    const thinkingHeader =
+        document.createElement(
+            "button"
+        );
+
+    thinkingHeader.className =
+        "thinking-header";
+
+    thinkingHeader.innerHTML =
+        `
+        <span class="thinking-icon">🧠</span>
+        <span>Thinking</span>
+        <span class="thinking-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
+        `;
+
+    const thinkingContent =
+        document.createElement(
+            "div"
+        );
+
+    thinkingContent.className =
+        "thinking-content";
+
+    thinkingHeader.addEventListener(
+        "click",
+        () => {
+
+            thinking.classList.toggle(
+                "open"
+            );
+
+        }
+    );
+
+    thinking.appendChild(
+        thinkingHeader
+    );
+
+    thinking.appendChild(
+        thinkingContent
+    );
+
+    const content =
+        document.createElement(
+            "div"
+        );
+
+    content.className =
+        "message-content";
+
+    content.innerHTML =
+        "<p></p>";
+
+    body.appendChild(
+        meta
+    );
+
+    body.appendChild(
+        thinking
+    );
+
+    body.appendChild(
+        content
+    );
+
+    wrapper.appendChild(
+        avatar
+    );
+
+    wrapper.appendChild(
+        body
+    );
+
+    messagesEl.appendChild(
+        wrapper
+    );
+
+    return {
+
+        wrapper,
+
+        thinking,
+
+        thinkingContent,
+
+        content
+
+    };
+
 }
+
+
+/* =========================================================
+   SCROLL
+   ========================================================= */
 
 function scrollToBottom() {
-    requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
+
+    requestAnimationFrame(
+        () => {
+
+            chat.scrollTop =
+                chat.scrollHeight;
+
+        }
+    );
+
 }
+
+
+/* =========================================================
+   SEND MESSAGE
+   ========================================================= */
 
 async function sendMessage() {
-    if (state.isStreaming) return;
-    const text = input.value.trim();
-    if (!text && state.attachments.length === 0) return;
-    if (!state.currentConversationId) createConversation();
-    throttledSound("input");
-    const userContent = text || state.attachments.map(f => `[File: ${f.name}]`).join("\n");
-    state.messages.push({ role: "user", content: userContent });
+
+    if (
+        state.isStreaming
+    ) {
+        return;
+    }
+
+    const text =
+        input.value.trim();
+
+    if (
+        !text &&
+        state.attachments.length === 0
+    ) {
+        return;
+    }
+
+    if (
+        !state.currentConversationId
+    ) {
+
+        createConversation();
+
+    }
+
+    throttledSound(
+        "input"
+    );
+
+    const userContent =
+        text ||
+        state.attachments
+            .map(
+                f =>
+                    `[File: ${f.name}]`
+            )
+            .join("\n");
+
+    state.messages.push({
+
+        role: "user",
+
+        content:
+            userContent
+
+    });
+
     saveCurrentConversation();
+
     input.value = "";
+
     autoResize();
+
     clearAttachments();
+
     renderMessages();
-    state.isStreaming = true;
-    state.streamReasoning = "";
-    state.streamAnswer = "";
-    setStatus("Thinking...", true);
-    sendBtn.classList.add("stop-btn");
-    sendBtn.innerHTML = `<span style="width:12px;height:12px;border-radius:3px;background:currentColor;display:block;"></span>`;
-    const streamUI = createStreamingMessage();
-    state.abortController = new AbortController();
+
+    state.isStreaming =
+        true;
+
+    state.streamReasoning =
+        "";
+
+    state.streamAnswer =
+        "";
+
+    setStatus(
+        "Thinking...",
+        true
+    );
+
+    sendBtn.classList.add(
+        "stop-btn"
+    );
+
+    sendBtn.innerHTML =
+        `
+        <span
+            style="
+                width:12px;
+                height:12px;
+                border-radius:3px;
+                background:currentColor;
+                display:block;
+            "
+        ></span>
+        `;
+
+    const streamUI =
+        createStreamingMessage();
+
+    state.abortController =
+        new AbortController();
 
     try {
-        await streamChat(streamUI);
+
+        await streamChat(
+            streamUI
+        );
+
     } catch (error) {
-        if (error?.name === "AbortError") {
-            toast(state.language === "zh" ? "已停止生成" : "Generation stopped");
+
+        if (
+            error?.name ===
+            "AbortError"
+        ) {
+
+            toast(
+                state.language === "zh"
+                    ? "已停止生成"
+                    : "Generation stopped"
+            );
+
         } else {
+
             console.error(error);
-            streamUI.content.innerHTML = `<p>${state.language === "zh" ? "请求失败，请稍后重试。" : "Request failed. Please try again."}</p>`;
-            toast(error?.message || "Request failed");
+
+            streamUI.content.innerHTML =
+                `
+                <p>
+                    ${
+                        state.language === "zh"
+                            ? "请求失败，请稍后重试。"
+                            : "Request failed. Please try again."
+                    }
+                </p>
+                `;
+
+            toast(
+                error?.message ||
+                "Request failed"
+            );
+
         }
+
     } finally {
-        state.isStreaming = false;
-        state.abortController = null;
-        setStatus("Online", false);
-        sendBtn.classList.remove("stop-btn");
-        sendBtn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"></path><path d="m22 2-7 20-4-9-9-4Z"></path></svg>`;
+
+        state.isStreaming =
+            false;
+
+        state.abortController =
+            null;
+
+        setStatus(
+            "Online",
+            false
+        );
+
+        sendBtn.classList.remove(
+            "stop-btn"
+        );
+
+        sendBtn.innerHTML =
+            `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <path d="M22 2 11 13"></path>
+                <path d="m22 2-7 20-4-9-9-4Z"></path>
+            </svg>
+            `;
+
         saveCurrentConversation();
+
     }
+
 }
 
-async function streamChat(streamUI) {
-    const payload = { messages: state.messages, conversationId: state.currentConversationId, systemPrompt: buildSystemPrompt() };
-    const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-        body: JSON.stringify(payload),
-        signal: state.abortController.signal
-    });
-    if (!response.ok) {
-        let message = `HTTP ${response.status}`;
-        try { const data = await response.json(); message = data?.error || message; } catch {}
-        throw new Error(message);
+
+/* =========================================================
+   STREAM CHAT
+   ========================================================= */
+
+async function streamChat(
+    streamUI
+) {
+
+    const payload = {
+
+        messages:
+            state.messages,
+
+        conversationId:
+            state.currentConversationId,
+
+        systemPrompt:
+            buildSystemPrompt()
+
+    };
+
+    const response =
+        await fetch(
+            "/api/chat",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "Accept":
+                        "text/event-stream"
+                },
+
+                body:
+                    JSON.stringify(
+                        payload
+                    ),
+
+                signal:
+                    state.abortController
+                        .signal
+            }
+        );
+
+    if (
+        !response.ok
+    ) {
+
+        let message =
+            `HTTP ${response.status}`;
+
+        try {
+
+            const data =
+                await response.json();
+
+            message =
+                data?.error ||
+                message;
+
+        } catch {}
+
+        throw new Error(
+            message
+        );
+
     }
-    if (!response.body) throw new Error("No streaming body");
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8");
+
+    if (
+        !response.body
+    ) {
+
+        throw new Error(
+            "No streaming body"
+        );
+
+    }
+
+    const reader =
+        response.body.getReader();
+
+    const decoder =
+        new TextDecoder(
+            "utf-8"
+        );
+
     let buffer = "";
 
     while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const events = buffer.split(/\r?\n\r?\n/);
-        buffer = events.pop() || "";
-        for (const event of events) { processSSEEvent(event, streamUI); }
+
+        const {
+            value,
+            done
+        } =
+            await reader.read();
+
+        if (done) {
+            break;
+        }
+
+        buffer +=
+            decoder.decode(
+                value,
+                {
+                    stream: true
+                }
+            );
+
+        const events =
+            buffer.split(
+                /\r?\n\r?\n/
+            );
+
+        buffer =
+            events.pop() || "";
+
+        for (
+            const event
+            of events
+        ) {
+
+            processSSEEvent(
+                event,
+                streamUI
+            );
+
+        }
+
     }
-    buffer += decoder.decode();
-    if (buffer.trim()) processSSEEvent(buffer, streamUI);
-    if (!state.streamAnswer) state.streamAnswer = "...";
-    state.messages.push({ role: "assistant", content: state.streamAnswer });
+
+    buffer +=
+        decoder.decode();
+
+    if (
+        buffer.trim()
+    ) {
+
+        processSSEEvent(
+            buffer,
+            streamUI
+        );
+
+    }
+
+    if (
+        !state.streamAnswer
+    ) {
+
+        state.streamAnswer =
+            "...";
+
+    }
+
+    state.messages.push({
+
+        role: "assistant",
+
+        content:
+            state.streamAnswer
+
+    });
+
     saveCurrentConversation();
+
 }
 
-function processSSEEvent(event, streamUI) {
-    const lines = event.split(/\r?\n/);
-    const dataLines = lines.filter(line => line.startsWith("data:")).map(line => line.slice(5).trim());
-    if (dataLines.length === 0) return;
-    const data = dataLines.join("\n");
-    if (!data || data === "[DONE]") return;
+
+/* =========================================================
+   SSE EVENT
+   ========================================================= */
+
+function processSSEEvent(
+    event,
+    streamUI
+) {
+
+    const lines =
+        event.split(
+            /\r?\n/
+        );
+
+    const dataLines =
+        lines
+            .filter(
+                line =>
+                    line.startsWith(
+                        "data:"
+                    )
+            )
+            .map(
+                line =>
+                    line
+                        .slice(5)
+                        .trim()
+            );
+
+    if (
+        dataLines.length === 0
+    ) {
+        return;
+    }
+
+    const data =
+        dataLines.join("\n");
+
+    if (
+        !data ||
+        data === "[DONE]"
+    ) {
+        return;
+    }
+
     let packet;
-    try { packet = JSON.parse(data); } catch { return; }
 
-    if (packet.type === "reasoning") {
-        state.streamReasoning += packet.content || "";
-        streamUI.thinkingContent.textContent = state.streamReasoning;
-        streamUI.thinking.classList.add("open");
-        throttledSound("thinking");
-        scrollToBottom();
+    try {
+
+        packet =
+            JSON.parse(
+                data
+            );
+
+    } catch {
+
         return;
+
     }
-    if (packet.type === "delta") {
-        if (!state.streamAnswer) throttledSound("output");
-        state.streamAnswer += packet.content || "";
-        streamUI.content.innerHTML = formatMarkdown(state.streamAnswer);
+
+    if (
+        packet.type ===
+        "reasoning"
+    ) {
+
+        state.streamReasoning +=
+            packet.content || "";
+
+        streamUI.thinkingContent
+            .textContent =
+            state.streamReasoning;
+
+        streamUI.thinking.classList.add(
+            "open"
+        );
+
+        throttledSound(
+            "thinking"
+        );
+
         scrollToBottom();
+
         return;
+
     }
-    if (packet.type === "error") throw new Error(packet.error || "AI request failed");
-    if (packet.type === "done") {
-        streamUI.thinking.querySelector(".thinking-dots")?.remove();
-        setStatus("Online", false);
+
+    if (
+        packet.type ===
+        "delta"
+    ) {
+
+        if (
+            !state.streamAnswer
+        ) {
+
+            throttledSound(
+                "output"
+            );
+
+        }
+
+        state.streamAnswer +=
+            packet.content || "";
+
+        streamUI.content.innerHTML =
+            formatMarkdown(
+                state.streamAnswer
+            );
+
+        scrollToBottom();
+
+        return;
+
     }
+
+    if (
+        packet.type ===
+        "error"
+    ) {
+
+        throw new Error(
+            packet.error ||
+            "AI request failed"
+        );
+
+    }
+
+    if (
+        packet.type ===
+        "usage"
+    ) {
+
+        return;
+
+    }
+
+    if (
+        packet.type ===
+        "done"
+    ) {
+
+        streamUI.thinking
+            .querySelector(
+                ".thinking-dots"
+            )
+            ?.remove();
+
+        setStatus(
+            "Online",
+            false
+        );
+
+    }
+
 }
+
+
+/* =========================================================
+   SYSTEM PROMPT
+   ========================================================= */
 
 function buildSystemPrompt() {
-    const languageName = { zh: "Simplified Chinese", en: "English", ja: "Japanese", ko: "Korean", fr: "French", de: "German", es: "Spanish", ru: "Russian" }[state.language];
-    return `You are CQS AI.\n\nRespond naturally and helpfully.\n\nPreferred response language:\n${languageName}\n\nModel:\n${state.selectedModel}\n\nCQS AI is a global AI interface.\nMaintain concise, clear and useful responses.`.trim();
+
+    const languageName = {
+
+        zh:
+            "Simplified Chinese",
+
+        en:
+            "English",
+
+        ja:
+            "Japanese",
+
+        ko:
+            "Korean",
+
+        fr:
+            "French",
+
+        de:
+            "German",
+
+        es:
+            "Spanish",
+
+        ru:
+            "Russian"
+
+    }[state.language];
+
+    return `
+You are CQS AI.
+
+Respond naturally and helpfully.
+
+Preferred response language:
+${languageName}
+
+Model:
+${state.selectedModel}
+
+CQS AI is a global AI interface.
+Maintain concise, clear and useful responses.
+    `.trim();
+
 }
+
+
+/* =========================================================
+   STOP
+   ========================================================= */
 
 function stopGeneration() {
-    if (state.abortController) state.abortController.abort();
+
+    if (
+        state.abortController
+    ) {
+
+        state.abortController.abort();
+
+    }
+
 }
 
-$("newChatBtn").addEventListener("click", () => {
-    createConversation();
-    input.focus();
-    closeSidebar();
-});
 
-input.addEventListener("input", () => {
-    autoResize();
-    if (input.value.trim()) throttledSound("input");
-});
+/* =========================================================
+   NEW CHAT
+   ========================================================= */
 
-input.addEventListener("keydown", event => {
-    if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        sendMessage();
+$("newChatBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            createConversation();
+
+            input.focus();
+
+            closeSidebar();
+
+        }
+    );
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+input.addEventListener(
+    "input",
+    () => {
+
+        autoResize();
+
+        if (
+            input.value.trim()
+        ) {
+
+            throttledSound(
+                "input"
+            );
+
+        }
+
     }
-});
+);
+
+
+input.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+);
+
 
 function autoResize() {
-    input.style.height = "auto";
-    input.style.height = Math.min(input.scrollHeight, 180) + "px";
+
+    input.style.height =
+        "auto";
+
+    input.style.height =
+        Math.min(
+            input.scrollHeight,
+            180
+        ) + "px";
+
 }
 
-sendBtn.addEventListener("click", () => {
-    if (state.isStreaming) stopGeneration();
-    else sendMessage();
-});
 
-$("fileBtn").addEventListener("click", () => fileInput.click());
+/* =========================================================
+   SEND BUTTON
+   ========================================================= */
 
-fileInput.addEventListener("change", event => {
-    const files = Array.from(event.target.files || []);
-    state.attachments.push(...files);
-    renderAttachments();
-    fileInput.value = "";
-});
+sendBtn.addEventListener(
+    "click",
+    () => {
+
+        if (
+            state.isStreaming
+        ) {
+
+            stopGeneration();
+
+        } else {
+
+            sendMessage();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   FILES
+   ========================================================= */
+
+$("fileBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            fileInput.click();
+
+        }
+    );
+
+
+fileInput.addEventListener(
+    "change",
+    event => {
+
+        const files =
+            Array.from(
+                event.target.files || []
+            );
+
+        state.attachments.push(
+            ...files
+        );
+
+        renderAttachments();
+
+        fileInput.value =
+            "";
+
+    }
+);
+
 
 function renderAttachments() {
-    attachmentsEl.innerHTML = "";
-    if (state.attachments.length === 0) {
-        attachmentsEl.classList.remove("show");
+
+    attachmentsEl.innerHTML =
+        "";
+
+    if (
+        state.attachments.length ===
+        0
+    ) {
+
+        attachmentsEl.classList.remove(
+            "show"
+        );
+
         return;
+
     }
-    attachmentsEl.classList.add("show");
-    state.attachments.forEach((file, index) => {
-        const item = document.createElement("div");
-        item.className = "attachment";
-        item.innerHTML = `<span>📎</span><span class="attachment-name">${escapeHTML(file.name)}</span><button type="button" style="background:none;color:#64748b;">×</button>`;
-        item.querySelector("button").addEventListener("click", () => {
-            state.attachments.splice(index, 1);
-            renderAttachments();
-        });
-        attachmentsEl.appendChild(item);
-    });
+
+    attachmentsEl.classList.add(
+        "show"
+    );
+
+    state.attachments.forEach(
+        (file, index) => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+            item.className =
+                "attachment";
+
+            item.innerHTML =
+                `
+                <span>📎</span>
+                <span class="attachment-name">
+                    ${escapeHTML(file.name)}
+                </span>
+                <button
+                    type="button"
+                    style="
+                        background:none;
+                        color:#64748b;
+                    "
+                >
+                    ×
+                </button>
+                `;
+
+            item
+                .querySelector("button")
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        state.attachments.splice(
+                            index,
+                            1
+                        );
+
+                        renderAttachments();
+
+                    }
+                );
+
+            attachmentsEl.appendChild(
+                item
+            );
+
+        }
+    );
+
 }
+
 
 function clearAttachments() {
+
     state.attachments = [];
+
     renderAttachments();
+
 }
 
-$("voiceBtn").addEventListener("click", () => {
-    if (state.isRecording) stopVoice();
-    else startVoice();
-});
+
+/* =========================================================
+   VOICE
+   ========================================================= */
+
+$("voiceBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if (
+                state.isRecording
+            ) {
+
+                stopVoice();
+
+            } else {
+
+                startVoice();
+
+            }
+
+        }
+    );
+
 
 function startVoice() {
-    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Recognition) {
-        toast(state.language === "zh" ? "当前浏览器不支持语音识别" : "Speech recognition is not supported");
-        return;
-    }
-    getAudioContext();
-    const recognition = new Recognition();
-    recognition.lang = { zh: "zh-CN", en: "en-US", ja: "ja-JP", ko: "ko-KR", fr: "fr-FR", de: "de-DE", es: "es-ES", ru: "ru-RU" }[state.language] || "zh-CN";
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    state.recognition = recognition;
-    state.isRecording = true;
-    $("voiceBtn").classList.add("recording");
-    $("voiceBtn").innerHTML = '<span class="recording-dot"></span>';
-    throttledSound("input");
-    let finalText = "";
 
-    recognition.onresult = event => {
-        let interim = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-            const result = event.results[i];
-            const transcript = result[0].transcript;
-            if (result.isFinal) finalText += transcript;
-            else interim += transcript;
-        }
-        input.value = finalText + interim;
-        autoResize();
-    };
-    recognition.onerror = () => stopVoice();
-    recognition.onend = () => {
-        if (state.isRecording) { try { recognition.start(); } catch {} }
-    };
-    try { recognition.start(); } catch { stopVoice(); }
+    const Recognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!Recognition) {
+
+        toast(
+            state.language === "zh"
+                ? "当前浏览器不支持语音识别"
+                : "Speech recognition is not supported"
+        );
+
+        return;
+
+    }
+
+    getAudioContext();
+
+    const recognition =
+        new Recognition();
+
+    recognition.lang =
+        {
+            zh: "zh-CN",
+            en: "en-US",
+            ja: "ja-JP",
+            ko: "ko-KR",
+            fr: "fr-FR",
+            de: "de-DE",
+            es: "es-ES",
+            ru: "ru-RU"
+        }[state.language] ||
+        "zh-CN";
+
+    recognition.continuous =
+        true;
+
+    recognition.interimResults =
+        true;
+
+    state.recognition =
+        recognition;
+
+    state.isRecording =
+        true;
+
+    $("voiceBtn")
+        .classList.add(
+            "recording"
+        );
+
+    $("voiceBtn")
+        .innerHTML =
+        '<span class="recording-dot"></span>';
+
+    throttledSound(
+        "input"
+    );
+
+    let finalText =
+        "";
+
+    recognition.onresult =
+        event => {
+
+            let interim =
+                "";
+
+            for (
+                let i =
+                    event.resultIndex;
+                i <
+                    event.results.length;
+                i++
+            ) {
+
+                const result =
+                    event.results[i];
+
+                const transcript =
+                    result[0]
+                        .transcript;
+
+                if (
+                    result.isFinal
+                ) {
+
+                    finalText +=
+                        transcript;
+
+                } else {
+
+                    interim +=
+                        transcript;
+
+                }
+
+            }
+
+            input.value =
+                finalText +
+                interim;
+
+            autoResize();
+
+        };
+
+    recognition.onerror =
+        error => {
+
+            console.warn(
+                "Speech recognition:",
+                error
+            );
+
+            stopVoice();
+
+        };
+
+    recognition.onend =
+        () => {
+
+            if (
+                state.isRecording
+            ) {
+
+                try {
+
+                    recognition.start();
+
+                } catch {}
+
+            }
+
+        };
+
+    try {
+
+        recognition.start();
+
+    } catch {
+
+        stopVoice();
+
+    }
+
 }
+
 
 function stopVoice() {
-    state.isRecording = false;
-    if (state.recognition) { try { state.recognition.stop(); } catch {} }
-    state.recognition = null;
-    $("voiceBtn").classList.remove("recording");
-    $("voiceBtn").textContent = "🎙️";
+
+    state.isRecording =
+        false;
+
+    if (
+        state.recognition
+    ) {
+
+        try {
+
+            state.recognition.stop();
+
+        } catch {}
+
+    }
+
+    state.recognition =
+        null;
+
+    $("voiceBtn")
+        .classList.remove(
+            "recording"
+        );
+
+    $("voiceBtn")
+        .textContent =
+        "🎙️";
+
 }
+
+
+/* =========================================================
+   SOUND BUTTON
+   ========================================================= */
 
 function updateSoundButtons() {
-    const icon = state.soundEnabled ? "🔊" : "🔇";
-    $("soundBtn").textContent = icon;
-    $("soundSettingBtn").textContent = icon;
+
+    const icon =
+        state.soundEnabled
+            ? "🔊"
+            : "🔇";
+
+    $("soundBtn")
+        .textContent =
+        icon;
+
+    $("soundSettingBtn")
+        .textContent =
+        icon;
+
 }
 
-$("soundBtn").addEventListener("click", () => {
-    state.soundEnabled = !state.soundEnabled;
-    localStorage.setItem("cqs_sound", String(state.soundEnabled));
-    updateSoundButtons();
-    if (state.soundEnabled) bubbleSound("output");
-});
 
-$("soundSettingBtn").addEventListener("click", () => {
-    state.soundEnabled = !state.soundEnabled;
-    localStorage.setItem("cqs_sound", String(state.soundEnabled));
-    updateSoundButtons();
-});
+$("soundBtn")
+    .addEventListener(
+        "click",
+        () => {
 
-modelButton.addEventListener("click", event => {
-    event.stopPropagation();
-    modelMenu.classList.toggle("show");
-});
+            state.soundEnabled =
+                !state.soundEnabled;
 
-document.querySelectorAll(".model-option").forEach(option => {
-    option.addEventListener("click", () => {
-        state.selectedModel = option.dataset.model;
-        localStorage.setItem("cqs_model", state.selectedModel);
-        modelName.textContent = option.dataset.label;
-        document.querySelectorAll(".model-option").forEach(x => x.classList.remove("active"));
-        option.classList.add("active");
-        modelMenu.classList.remove("show");
-        if (state.selectedModel !== "deepseek-v4-flash") {
-            toast("该模型入口已预留，当前网关仍使用 DeepSeek。");
+            localStorage.setItem(
+                "cqs_sound",
+                String(
+                    state.soundEnabled
+                )
+            );
+
+            updateSoundButtons();
+
+            if (
+                state.soundEnabled
+            ) {
+
+                bubbleSound(
+                    "output"
+                );
+
+            }
+
         }
-    });
-});
+    );
 
-$("languageBtn").addEventListener("click", () => openModal("languageOverlay"));
-$("settingLanguageBtn").addEventListener("click", () => {
-    closeModal("settingsOverlay");
-    openModal("languageOverlay");
-});
 
-document.querySelectorAll(".language-option").forEach(option => {
-    option.addEventListener("click", () => {
-        state.language = option.dataset.language;
-        localStorage.setItem("cqs_language", state.language);
-        applyLanguage();
-        closeModal("languageOverlay");
-        renderHistory();
-        toast("Language updated");
-    });
-});
+$("soundSettingBtn")
+    .addEventListener(
+        "click",
+        () => {
 
-function openModal(id) { $(id).classList.add("show"); }
-function closeModal(id) { $(id).classList.remove("show"); }
+            state.soundEnabled =
+                !state.soundEnabled;
 
-document.querySelectorAll("[data-close]").forEach(button => {
-    button.addEventListener("click", () => closeModal(button.dataset.close));
-});
+            localStorage.setItem(
+                "cqs_sound",
+                String(
+                    state.soundEnabled
+                )
+            );
 
-document.querySelectorAll(".overlay").forEach(overlay => {
-    overlay.addEventListener("click", event => {
-        if (event.target === overlay) overlay.classList.remove("show");
-    });
-});
+            updateSoundButtons();
 
-$("settingsBtn").addEventListener("click", () => openModal("settingsOverlay"));
-$("notionBtn").addEventListener("click", () => openModal("notionOverlay"));
-$("saveNotionBtn").addEventListener("click", saveToNotion);
+        }
+    );
+
+
+/* =========================================================
+   MODEL
+   ========================================================= */
+
+modelButton.addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+        modelMenu.classList.toggle(
+            "show"
+        );
+
+    }
+);
+
+
+document
+    .querySelectorAll(
+        ".model-option"
+    )
+    .forEach(
+        option => {
+
+            option.addEventListener(
+                "click",
+                () => {
+
+                    state.selectedModel =
+                        option.dataset.model;
+
+                    localStorage.setItem(
+                        "cqs_model",
+                        state.selectedModel
+                    );
+
+                    modelName.textContent =
+                        option.dataset.label;
+
+                    document
+                        .querySelectorAll(
+                            ".model-option"
+                        )
+                        .forEach(
+                            x =>
+                                x.classList.remove(
+                                    "active"
+                                )
+                        );
+
+                    option.classList.add(
+                        "active"
+                    );
+
+                    modelMenu.classList.remove(
+                        "show"
+                    );
+
+                    if (
+                        state.selectedModel !==
+                        "deepseek-v4-flash"
+                    ) {
+
+                        toast(
+                            "该模型入口已预留，当前网关仍使用 DeepSeek。"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   LANGUAGE
+   ========================================================= */
+
+$("languageBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            openModal(
+                "languageOverlay"
+            );
+
+        }
+    );
+
+
+$("settingLanguageBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            closeModal(
+                "settingsOverlay"
+            );
+
+            openModal(
+                "languageOverlay"
+            );
+
+        }
+    );
+
+
+document
+    .querySelectorAll(
+        ".language-option"
+    )
+    .forEach(
+        option => {
+
+            option.addEventListener(
+                "click",
+                () => {
+
+                    state.language =
+                        option.dataset.language;
+
+                    localStorage.setItem(
+                        "cqs_language",
+                        state.language
+                    );
+
+                    applyLanguage();
+
+                    closeModal(
+                        "languageOverlay"
+                    );
+
+                    renderHistory();
+
+                    toast(
+                        "Language updated"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+function openModal(id) {
+
+    $(id)
+        .classList.add(
+            "show"
+        );
+
+}
+
+
+function closeModal(id) {
+
+    $(id)
+        .classList.remove(
+            "show"
+        );
+
+}
+
+
+document
+    .querySelectorAll(
+        "[data-close]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    closeModal(
+                        button.dataset.close
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+document
+    .querySelectorAll(
+        ".overlay"
+    )
+    .forEach(
+        overlay => {
+
+            overlay.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target ===
+                        overlay
+                    ) {
+
+                        overlay.classList.remove(
+                            "show"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+$("settingsBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            openModal(
+                "settingsOverlay"
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   NOTION
+   ========================================================= */
+
+$("notionBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            openModal(
+                "notionOverlay"
+            );
+
+        }
+    );
+
+
+$("saveNotionBtn")
+    .addEventListener(
+        "click",
+        saveToNotion
+    );
+
 
 async function saveToNotion() {
-    if (state.messages.length === 0) {
-        toast(state.language === "zh" ? "当前没有可保存的对话" : "No conversation to save");
+
+    if (
+        state.messages.length ===
+        0
+    ) {
+
+        toast(
+            state.language === "zh"
+                ? "当前没有可保存的对话"
+                : "No conversation to save"
+        );
+
         return;
+
     }
-    const button = $("saveNotionBtn");
-    const original = button.textContent;
-    button.disabled = true;
-    button.textContent = "Saving...";
+
+    const button =
+        $("saveNotionBtn");
+
+    const original =
+        button.textContent;
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Saving...";
 
     try {
-        const conversation = state.conversations.find(c => c.id === state.currentConversationId);
-        const title = conversation?.title || "CQS AI Conversation";
-        const response = await fetch("/api/notion", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ conversationId: state.currentConversationId, title, messages: state.messages })
-        });
-        const data = await response.json();
-        if (!response.ok || !data.success) throw new Error(data?.error || "Notion save failed");
-        toast(state.language === "zh" ? "对话已保存到 Notion" : "Saved to Notion");
-        if (data.url) window.open(data.url, "_blank", "noopener");
+
+        const conversation =
+            state.conversations.find(
+                c =>
+                    c.id ===
+                    state.currentConversationId
+            );
+
+        const title =
+            conversation?.title ||
+            "CQS AI Conversation";
+
+        const response =
+            await fetch(
+                "/api/notion",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            conversationId:
+                                state.currentConversationId,
+
+                            title,
+
+                            messages:
+                                state.messages
+
+                        })
+
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data?.error ||
+                "Notion save failed"
+            );
+
+        }
+
+        toast(
+            state.language === "zh"
+                ? "对话已保存到 Notion"
+                : "Saved to Notion"
+        );
+
+        if (
+            data.url
+        ) {
+
+            window.open(
+                data.url,
+                "_blank",
+                "noopener"
+            );
+
+        }
+
     } catch (error) {
-        console.error(error);
-        toast(error?.message || "Notion save failed");
+
+        console.error(
+            error
+        );
+
+        toast(
+            error?.message ||
+            "Notion save failed"
+        );
+
     } finally {
-        button.disabled = false;
-        button.textContent = original;
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            original;
+
     }
+
 }
 
-$("exportBtn").addEventListener("click", () => {
-    if (state.messages.length === 0) { toast("没有可导出的对话"); return; }
-    openModal("exportOverlay");
-});
 
-$("exportTxtBtn").addEventListener("click", () => { exportTXT(); closeModal("exportOverlay"); });
-$("exportJsonBtn").addEventListener("click", () => { exportJSON(); closeModal("exportOverlay"); });
+/* =========================================================
+   EXPORT
+   ========================================================= */
 
-function downloadFile(content, filename, type) {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
+$("exportBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if (
+                state.messages.length ===
+                0
+            ) {
+
+                toast(
+                    "没有可导出的对话"
+                );
+
+                return;
+
+            }
+
+            openModal(
+                "exportOverlay"
+            );
+
+        }
+    );
+
+
+$("exportTxtBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            exportTXT();
+
+            closeModal(
+                "exportOverlay"
+            );
+
+        }
+    );
+
+
+$("exportJsonBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            exportJSON();
+
+            closeModal(
+                "exportOverlay"
+            );
+
+        }
+    );
+
+
+function downloadFile(
+    content,
+    filename,
+    type
+) {
+
+    const blob =
+        new Blob(
+            [content],
+            {
+                type
+            }
+        );
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+    link.href =
+        url;
+
+    link.download =
+        filename;
+
+    document.body.appendChild(
+        link
+    );
+
     link.click();
+
     link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    setTimeout(
+        () =>
+            URL.revokeObjectURL(
+                url
+            ),
+        1000
+    );
+
 }
+
 
 function exportTXT() {
-    const conversation = state.conversations.find(c => c.id === state.currentConversationId);
-    const title = conversation?.title || "CQS AI Conversation";
-    const lines = ["CQS AI", title, ""];
-    state.messages.forEach(message => {
-        lines.push(message.role === "user" ? "USER" : "CQS AI");
-        lines.push(message.content);
-        lines.push("");
-    });
-    downloadFile(lines.join("\n"), "cqs-ai-conversation.txt", "text/plain;charset=utf-8");
-    toast("TXT exported");
+
+    const conversation =
+        state.conversations.find(
+            c =>
+                c.id ===
+                state.currentConversationId
+        );
+
+    const title =
+        conversation?.title ||
+        "CQS AI Conversation";
+
+    const lines = [];
+
+    lines.push(
+        "CQS AI"
+    );
+
+    lines.push(
+        title
+    );
+
+    lines.push(
+        ""
+    );
+
+    state.messages.forEach(
+        message => {
+
+            lines.push(
+                message.role ===
+                "user"
+                    ? "USER"
+                    : "CQS AI"
+            );
+
+            lines.push(
+                message.content
+            );
+
+            lines.push(
+                ""
+            );
+
+        }
+    );
+
+    downloadFile(
+        lines.join("\n"),
+        "cqs-ai-conversation.txt",
+        "text/plain;charset=utf-8"
+    );
+
+    toast(
+        "TXT exported"
+    );
+
 }
+
 
 function exportJSON() {
-    downloadFile(JSON.stringify({
-        conversationId: state.currentConversationId,
-        messages: state.messages,
-        exportedAt: new Date().toISOString()
-    }, null, 2), "cqs-ai-conversation.json", "application/json;charset=utf-8");
-    toast("JSON exported");
+
+    downloadFile(
+        JSON.stringify(
+            {
+                conversationId:
+                    state.currentConversationId,
+
+                messages:
+                    state.messages,
+
+                exportedAt:
+                    new Date().toISOString()
+
+            },
+            null,
+            2
+        ),
+        "cqs-ai-conversation.json",
+        "application/json;charset=utf-8"
+    );
+
+    toast(
+        "JSON exported"
+    );
+
 }
 
-$("shareBtn").addEventListener("click", openShare);
+
+/* =========================================================
+   SHARE
+   ========================================================= */
+
+$("shareBtn")
+    .addEventListener(
+        "click",
+        openShare
+    );
+
 
 function openShare() {
-    if (state.messages.length === 0) { toast("没有可分享的对话"); return; }
-    const data = { id: state.currentConversationId, messages: state.messages };
-    const encoded = encodeBase64Unicode(JSON.stringify(data));
-    const url = window.location.origin + window.location.pathname + "#share=" + encodeURIComponent(encoded);
-    $("shareText").value = url;
-    openModal("shareOverlay");
-}
 
-$("copyShareBtn").addEventListener("click", async () => { await copyText($("shareText").value); });
+    if (
+        state.messages.length ===
+        0
+    ) {
 
-function encodeBase64Unicode(value) {
-    const bytes = new TextEncoder().encode(value);
-    let binary = "";
-    bytes.forEach(byte => { binary += String.fromCharCode(byte); });
-    return btoa(binary);
-}
+        toast(
+            "没有可分享的对话"
+        );
 
-async function copyText(text) {
-    try {
-        if (navigator.clipboard) {
-            await navigator.clipboard.writeText(text);
-        } else {
-            const area = document.createElement("textarea");
-            area.value = text;
-            document.body.appendChild(area);
-            area.select();
-            document.execCommand("copy");
-            area.remove();
-        }
-        toast(state.language === "zh" ? "已复制" : "Copied");
-    } catch {
-        toast("Copy failed");
+        return;
+
     }
+
+    const data = {
+
+        id:
+            state.currentConversationId,
+
+        messages:
+            state.messages
+
+    };
+
+    const encoded =
+        encodeBase64Unicode(
+            JSON.stringify(
+                data
+            )
+        );
+
+    const url =
+        window.location.origin +
+        window.location.pathname +
+        "#share=" +
+        encodeURIComponent(
+            encoded
+        );
+
+    $("shareText")
+        .value =
+        url;
+
+    openModal(
+        "shareOverlay"
+    );
+
 }
 
-document.querySelectorAll(".quick-action").forEach(button => {
-    button.addEventListener("click", () => {
-        input.value = button.dataset.prompt;
-        autoResize();
-        input.focus();
-        throttledSound("input");
-    });
-});
 
-$("mobileMenu").addEventListener("click", () => sidebar.classList.add("open"));
-$("sidebarClose").addEventListener("click", closeSidebar);
+$("copyShareBtn")
+    .addEventListener(
+        "click",
+        async () => {
+
+            await copyText(
+                $("shareText").value
+            );
+
+        }
+    );
+
+
+function encodeBase64Unicode(
+    value
+) {
+
+    const bytes =
+        new TextEncoder()
+            .encode(
+                value
+            );
+
+    let binary = "";
+
+    bytes.forEach(
+        byte => {
+
+            binary +=
+                String.fromCharCode(
+                    byte
+                );
+
+        }
+    );
+
+    return btoa(
+        binary
+    );
+
+}
+
+
+/* =========================================================
+   CLIPBOARD
+   ========================================================= */
+
+async function copyText(
+    text
+) {
+
+    try {
+
+        if (
+            navigator.clipboard
+        ) {
+
+            await navigator.clipboard.writeText(
+                text
+            );
+
+        } else {
+
+            const area =
+                document.createElement(
+                    "textarea"
+                );
+
+            area.value =
+                text;
+
+            document.body.appendChild(
+                area
+            );
+
+            area.select();
+
+            document.execCommand(
+                "copy"
+            );
+
+            area.remove();
+
+        }
+
+        toast(
+            state.language === "zh"
+                ? "已复制"
+                : "Copied"
+        );
+
+    } catch {
+
+        toast(
+            "Copy failed"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+document
+    .querySelectorAll(
+        ".quick-action"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    input.value =
+                        button.dataset.prompt;
+
+                    autoResize();
+
+                    input.focus();
+
+                    throttledSound(
+                        "input"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   MOBILE SIDEBAR
+   ========================================================= */
+
+$("mobileMenu")
+    .addEventListener(
+        "click",
+        () => {
+
+            sidebar.classList.add(
+                "open"
+            );
+
+        }
+    );
+
+
+$("sidebarClose")
+    .addEventListener(
+        "click",
+        closeSidebar
+    );
+
 
 function closeSidebar() {
-    sidebar.classList.remove("open");
+
+    sidebar.classList.remove(
+        "open"
+    );
+
 }
 
-document.addEventListener("click", event => {
-    if (!event.target.closest(".model-select")) modelMenu.classList.remove("show");
-});
 
-document.addEventListener("keydown", event => {
-    if (event.key !== "Escape") return;
-    document.querySelectorAll(".overlay.show").forEach(overlay => overlay.classList.remove("show"));
-    modelMenu.classList.remove("show");
-    closeSidebar();
-});
+/* =========================================================
+   OUTSIDE CLICK
+   ========================================================= */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        if (
+            !event.target.closest(
+                ".model-select"
+            )
+        ) {
+
+            modelMenu.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   KEYBOARD ESC
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key !==
+            "Escape"
+        ) {
+            return;
+        }
+
+        document
+            .querySelectorAll(
+                ".overlay.show"
+            )
+            .forEach(
+                overlay =>
+                    overlay.classList.remove(
+                        "show"
+                    )
+            );
+
+        modelMenu.classList.remove(
+            "show"
+        );
+
+        closeSidebar();
+
+    }
+);
+
+
+/* =========================================================
+   WINDOW RESIZE
+   ========================================================= */
 
 function updateViewportHeight() {
-    const height = window.visualViewport?.height || window.innerHeight;
-    document.documentElement.style.setProperty("--vh", height + "px");
+
+    const height =
+        window.visualViewport
+            ?.height ||
+        window.innerHeight;
+
+    document.documentElement
+        .style
+        .setProperty(
+            "--vh",
+            height + "px"
+        );
+
 }
 
-window.addEventListener("resize", updateViewportHeight);
-window.visualViewport?.addEventListener("resize", updateViewportHeight);
+
+window.addEventListener(
+    "resize",
+    updateViewportHeight
+);
+
+window.visualViewport?.addEventListener(
+    "resize",
+    updateViewportHeight
+);
+
+
+/* =========================================================
+   INITIAL MODEL
+   ========================================================= */
 
 function initModel() {
-    const option = document.querySelector(`.model-option[data-model="${CSS.escape(state.selectedModel)}"]`);
-    if (option) {
-        modelName.textContent = option.dataset.label;
-        document.querySelectorAll(".model-option").forEach(x => x.classList.remove("active"));
-        option.classList.add("active");
+
+    const option =
+        document.querySelector(
+            `.model-option[data-model="${CSS.escape(
+                state.selectedModel
+            )}"]`
+        );
+
+    if (
+        option
+    ) {
+
+        modelName.textContent =
+            option.dataset.label;
+
+        document
+            .querySelectorAll(
+                ".model-option"
+            )
+            .forEach(
+                x =>
+                    x.classList.remove(
+                        "active"
+                    )
+            );
+
+        option.classList.add(
+            "active"
+        );
+
     }
+
 }
+
+
+/* =========================================================
+   WELCOME LETTER ANIMATION
+   ========================================================= */
 
 function initWelcomeAnimation() {
-    const title = $("welcomeTitle");
-    const text = title.textContent;
-    title.innerHTML = "";
-    [...text].forEach((char, index) => {
-        const span = document.createElement("span");
-        span.className = "letter";
-        span.textContent = char === " " ? "\u00a0" : char;
-        span.style.animationDelay = `${index * 90}ms`;
-        title.appendChild(span);
-    });
+
+    const title =
+        $("welcomeTitle");
+
+    const text =
+        title.textContent;
+
+    title.innerHTML =
+        "";
+
+    [...text].forEach(
+        (char, index) => {
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+            span.className =
+                "letter";
+
+            span.textContent =
+                char === " "
+                    ? "\u00a0"
+                    : char;
+
+            span.style.animationDelay =
+                `${index * 90}ms`;
+
+            title.appendChild(
+                span
+            );
+
+        }
+    );
+
 }
+
+
+/* =========================================================
+   SHARE LOAD
+   ========================================================= */
 
 function loadSharedConversation() {
-    if (!window.location.hash.startsWith("#share=")) return false;
-    try {
-        const encoded = decodeURIComponent(window.location.hash.substring(7));
-        const binary = atob(encoded);
-        const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
-        const json = new TextDecoder().decode(bytes);
-        const data = JSON.parse(json);
-        if (Array.isArray(data.messages)) {
-            state.messages = data.messages;
-            state.currentConversationId = createId();
-            const conversation = {
-                id: state.currentConversationId,
-                title: "Shared CQS AI Conversation",
-                messages: state.messages,
-                createdAt: Date.now(),
-                updatedAt: Date.now()
-            };
-            state.conversations.push(conversation);
-            saveConversations();
-            renderHistory();
-            renderMessages();
-            return true;
-        }
-    } catch (error) {
-        console.warn("Invalid share data", error);
+
+    if (
+        !window.location.hash.startsWith(
+            "#share="
+        )
+    ) {
+        return false;
     }
+
+    try {
+
+        const encoded =
+            decodeURIComponent(
+                window.location.hash
+                    .substring(7)
+            );
+
+        const binary =
+            atob(
+                encoded
+            );
+
+        const bytes =
+            Uint8Array.from(
+                binary,
+                char =>
+                    char.charCodeAt(0)
+            );
+
+        const json =
+            new TextDecoder()
+                .decode(
+                    bytes
+                );
+
+        const data =
+            JSON.parse(
+                json
+            );
+
+        if (
+            Array.isArray(
+                data.messages
+            )
+        ) {
+
+            state.messages =
+                data.messages;
+
+            state.currentConversationId =
+                createId();
+
+            const conversation = {
+
+                id:
+                    state.currentConversationId,
+
+                title:
+                    "Shared CQS AI Conversation",
+
+                messages:
+                    state.messages,
+
+                createdAt:
+                    Date.now(),
+
+                updatedAt:
+                    Date.now()
+
+            };
+
+            state.conversations.push(
+                conversation
+            );
+
+            saveConversations();
+
+            renderHistory();
+
+            renderMessages();
+
+            return true;
+
+        }
+
+    } catch (
+        error
+    ) {
+
+        console.warn(
+            "Invalid share data",
+            error
+        );
+
+    }
+
     return false;
+
 }
 
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
 function init() {
+
     updateViewportHeight();
+
     loadConversations();
+
     initModel();
+
     applyLanguage();
+
     updateSoundButtons();
+
     initWelcomeAnimation();
+
     renderHistory();
-    const shared = loadSharedConversation();
-    if (!shared && state.conversations.length > 0) {
-        const latest = [...state.conversations].sort((a,b) => b.updatedAt - a.updatedAt)[0];
-        if (latest && latest.messages?.length) {
-            state.currentConversationId = latest.id;
-            state.messages = latest.messages;
+
+    const shared =
+        loadSharedConversation();
+
+    if (
+        !shared &&
+        state.conversations.length >
+            0
+    ) {
+
+        const latest =
+            [...state.conversations]
+                .sort(
+                    (a,b) =>
+                        b.updatedAt -
+                        a.updatedAt
+                )[0];
+
+        if (
+            latest &&
+            latest.messages?.length
+        ) {
+
+            state.currentConversationId =
+                latest.id;
+
+            state.messages =
+                latest.messages;
+
             renderHistory();
+
             renderMessages();
+
         }
+
     }
-    setStatus("Online", false);
+
+    setStatus(
+        "Online",
+        false
+    );
+
 }
 
 init();
 
-document.addEventListener("pointerdown", () => {
-    if (state.soundEnabled) {
-        const ctx = getAudioContext();
-        if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
-    }
-}, { once: true });
 
-window.addEventListener("beforeunload", () => {
-    saveCurrentConversation();
-});
+/* =========================================================
+   AUDIO UNLOCK
+   ========================================================= */
+
+document.addEventListener(
+    "pointerdown",
+    () => {
+
+        if (
+            state.soundEnabled
+        ) {
+
+            const ctx =
+                getAudioContext();
+
+            if (
+                ctx &&
+                ctx.state ===
+                "suspended"
+            ) {
+
+                ctx.resume()
+                    .catch(
+                        () => {}
+                    );
+
+            }
+
+        }
+
+    },
+    {
+        once: true
+    }
+);
+
+
+/* =========================================================
+   BEFORE UNLOAD
+   ========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        saveCurrentConversation();
+
+    }
+);
+
+
+/* =========================================================
+   END
+   ========================================================= */
 
 })();
-</script>
 
+</script>
 </body>
 </html>
