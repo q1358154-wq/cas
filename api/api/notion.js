@@ -1,22 +1,4 @@
-// =========================================================
-// CQS AI GLOBAL
-// Notion Secure Gateway
-// /api/notion.js
-//
-// 功能：
-// 1. 创建 Notion 页面
-// 2. 保存 CQS AI 对话
-// 3. 保存 conversationId
-// 4. 保存用户消息
-// 5. 保存 AI 回复
-// 6. 返回真实 Notion Page ID / URL
-// =========================================================
-
 export default async function handler(req, res) {
-
-    // ---------------------------------------------------------
-    // Method
-    // ---------------------------------------------------------
 
     if (req.method !== "POST") {
 
@@ -34,29 +16,9 @@ export default async function handler(req, res) {
     }
 
 
-    // ---------------------------------------------------------
-    // Security Headers
-    // ---------------------------------------------------------
-
-    res.setHeader(
-        "X-Content-Type-Options",
-        "nosniff"
-    );
-
-    res.setHeader(
-        "X-Frame-Options",
-        "SAMEORIGIN"
-    );
-
-    res.setHeader(
-        "Referrer-Policy",
-        "strict-origin-when-cross-origin"
-    );
-
-
-    // ---------------------------------------------------------
-    // Environment
-    // ---------------------------------------------------------
+    // =========================================================
+    // ENVIRONMENT
+    // =========================================================
 
     const notionToken =
         typeof process.env.NOTION_TOKEN === "string"
@@ -73,8 +35,9 @@ export default async function handler(req, res) {
 
         return res.status(500).json({
             success: false,
+            stage: "environment",
             error:
-                "服务器未配置 NOTION_TOKEN"
+                "NOTION_TOKEN 未配置"
         });
 
     }
@@ -84,85 +47,68 @@ export default async function handler(req, res) {
 
         return res.status(500).json({
             success: false,
+            stage: "environment",
             error:
-                "服务器未配置 NOTION_PARENT_PAGE_ID"
+                "NOTION_PARENT_PAGE_ID 未配置"
         });
 
     }
 
 
-    // ---------------------------------------------------------
-    // Normalize Notion Page ID
-    //
-    // Notion 页面 ID 可能来自：
-    //
-    // 1. 32 位无横杠 ID
-    // 2. UUID 格式 ID
-    // 3. Notion URL
-    // ---------------------------------------------------------
+    // =========================================================
+    // NORMALIZE PAGE ID
+    // =========================================================
 
     try {
 
+        // 如果误填了完整 Notion URL
         if (
-            parentPageId.startsWith(
-                "http://"
-            ) ||
-            parentPageId.startsWith(
-                "https://"
-            )
+            parentPageId.startsWith("http://") ||
+            parentPageId.startsWith("https://")
         ) {
 
             const url =
-                new URL(
-                    parentPageId
+                new URL(parentPageId);
+
+            const compactMatch =
+                url.pathname.match(
+                    /([0-9a-f]{32})/i
                 );
 
-            const path =
-                url.pathname;
-
-            const match =
-                path.match(
-                    /([0-9a-f]{32})$/i
+            const uuidMatch =
+                url.pathname.match(
+                    /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i
                 );
 
-            if (match) {
+            if (uuidMatch) {
 
                 parentPageId =
-                    match[1];
+                    uuidMatch[1];
 
-            } else {
+            } else if (compactMatch) {
 
-                const uuidMatch =
-                    path.match(
-                        /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i
-                    );
-
-                if (uuidMatch) {
-
-                    parentPageId =
-                        uuidMatch[1];
-
-                }
+                parentPageId =
+                    compactMatch[1];
 
             }
 
         }
 
 
-        // Remove everything except hexadecimal
-        // characters and existing UUID hyphens.
-
+        // 去掉空格
         parentPageId =
-            parentPageId
-                .replace(
-                    /[^0-9a-f-]/gi,
-                    ""
-                );
+            parentPageId.trim();
 
 
-        // Convert 32-character ID
-        // into UUID format.
+        // 去掉 UUID 中可能存在的非标准字符
+        parentPageId =
+            parentPageId.replace(
+                /[^0-9a-f-]/gi,
+                ""
+            );
 
+
+        // 去掉横杠后判断是不是 32 位 Notion ID
         const compactId =
             parentPageId.replace(
                 /-/g,
@@ -184,20 +130,17 @@ export default async function handler(req, res) {
 
         }
 
-
     } catch (error) {
-
-        console.error(
-            "[CQS Notion ID Parse Error]",
-            error
-        );
 
         return res.status(400).json({
 
             success: false,
 
+            stage:
+                "page_id_parse",
+
             error:
-                "NOTION_PARENT_PAGE_ID 格式无效",
+                "无法解析 NOTION_PARENT_PAGE_ID",
 
             detail:
                 error?.message ||
@@ -208,47 +151,256 @@ export default async function handler(req, res) {
     }
 
 
-    // ---------------------------------------------------------
-    // Final Page ID Validation
-    // ---------------------------------------------------------
+    // =========================================================
+    // PAGE ID FORMAT
+    // =========================================================
 
-    if (
-        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-            parentPageId
-        )
-    ) {
+    const validPageId =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+            .test(
+                parentPageId
+            );
+
+
+    if (!validPageId) {
 
         return res.status(400).json({
 
             success: false,
 
+            stage:
+                "page_id_format",
+
             error:
                 "NOTION_PARENT_PAGE_ID 格式无效",
 
-            received:
-                parentPageId,
+            receivedLength:
+                parentPageId.length,
 
-            hint:
-                "请填写 Notion 页面 ID，而不是 Integration Token。"
+            received:
+                parentPageId
 
         });
 
     }
 
 
-    // ---------------------------------------------------------
-    // Main
-    // ---------------------------------------------------------
+    // =========================================================
+    // CHECK TOKEN
+    // =========================================================
+
+    try {
+
+        const tokenResponse =
+            await fetch(
+                "https://api.notion.com/v1/users/me",
+                {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            `Bearer ${notionToken}`,
+
+                        "Notion-Version":
+                            "2022-06-28"
+
+                    }
+
+                }
+            );
+
+
+        const tokenText =
+            await tokenResponse.text();
+
+
+        let tokenData = null;
+
+
+        try {
+
+            tokenData =
+                tokenText
+                    ? JSON.parse(
+                        tokenText
+                    )
+                    : null;
+
+        } catch {}
+
+
+        if (
+            !tokenResponse.ok
+        ) {
+
+            return res.status(401).json({
+
+                success: false,
+
+                stage:
+                    "token",
+
+                error:
+                    "Notion Token 无效或没有权限",
+
+                notionStatus:
+                    tokenResponse.status,
+
+                notionCode:
+                    tokenData?.code ||
+                    null,
+
+                notionMessage:
+                    tokenData?.message ||
+                    tokenText ||
+                    null
+
+            });
+
+        }
+
+
+        console.log(
+            "[CQS Notion] Token OK"
+        );
+
+    } catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            stage:
+                "token_request",
+
+            error:
+                error?.message ||
+                "无法连接 Notion API"
+
+        });
+
+    }
+
+
+    // =========================================================
+    // CHECK PARENT PAGE
+    // =========================================================
+
+    try {
+
+        const pageResponse =
+            await fetch(
+                `https://api.notion.com/v1/pages/${parentPageId}`,
+                {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            `Bearer ${notionToken}`,
+
+                        "Notion-Version":
+                            "2022-06-28"
+
+                    }
+
+                }
+            );
+
+
+        const pageText =
+            await pageResponse.text();
+
+
+        let pageData = null;
+
+
+        try {
+
+            pageData =
+                pageText
+                    ? JSON.parse(
+                        pageText
+                    )
+                    : null;
+
+        } catch {}
+
+
+        if (
+            !pageResponse.ok
+        ) {
+
+            return res.status(
+                pageResponse.status
+            ).json({
+
+                success: false,
+
+                stage:
+                    "parent_page",
+
+                error:
+                    "Notion 找不到这个页面，或者 Integration 没有访问权限",
+
+                notionStatus:
+                    pageResponse.status,
+
+                notionCode:
+                    pageData?.code ||
+                    null,
+
+                notionMessage:
+                    pageData?.message ||
+                    pageText ||
+                    null,
+
+                pageId:
+                    parentPageId
+
+            });
+
+        }
+
+
+        console.log(
+            "[CQS Notion] Parent page OK",
+            {
+                pageId:
+                    parentPageId
+            }
+        );
+
+    } catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            stage:
+                "parent_page_request",
+
+            error:
+                error?.message ||
+                "检查 Notion 页面时发生错误"
+
+        });
+
+    }
+
+
+    // =========================================================
+    // BODY
+    // =========================================================
 
     try {
 
         const body =
             req.body || {};
 
-
-        // -----------------------------------------------------
-        // Conversation ID
-        // -----------------------------------------------------
 
         const conversationId =
             typeof body.conversationId === "string"
@@ -258,10 +410,6 @@ export default async function handler(req, res) {
                 : "";
 
 
-        // -----------------------------------------------------
-        // Title
-        // -----------------------------------------------------
-
         const title =
             typeof body.title === "string" &&
             body.title.trim()
@@ -270,10 +418,6 @@ export default async function handler(req, res) {
                     .substring(0, 200)
                 : "CQS AI 对话";
 
-
-        // -----------------------------------------------------
-        // Messages
-        // -----------------------------------------------------
 
         const messages =
             Array.isArray(body.messages)
@@ -289,6 +433,9 @@ export default async function handler(req, res) {
 
                 success: false,
 
+                stage:
+                    "messages",
+
                 error:
                     "没有可保存的对话内容"
 
@@ -297,9 +444,9 @@ export default async function handler(req, res) {
         }
 
 
-        // -----------------------------------------------------
-        // Clean Messages
-        // -----------------------------------------------------
+        // =====================================================
+        // CLEAN MESSAGES
+        // =====================================================
 
         const cleanMessages = [];
 
@@ -312,57 +459,41 @@ export default async function handler(req, res) {
                 !message ||
                 typeof message !== "object"
             ) {
-
                 continue;
-
             }
 
 
-            const role =
-                message.role;
+            if (
+                message.role !== "user" &&
+                message.role !== "assistant"
+            ) {
+                continue;
+            }
+
+
+            if (
+                typeof message.content !== "string"
+            ) {
+                continue;
+            }
+
 
             const content =
-                message.content;
+                message.content.trim();
 
 
-            if (
-                role !== "user" &&
-                role !== "assistant"
-            ) {
-
+            if (!content) {
                 continue;
-
-            }
-
-
-            if (
-                typeof content !== "string"
-            ) {
-
-                continue;
-
-            }
-
-
-            const cleanContent =
-                content.trim();
-
-
-            if (
-                !cleanContent
-            ) {
-
-                continue;
-
             }
 
 
             cleanMessages.push({
 
-                role,
+                role:
+                    message.role,
 
                 content:
-                    cleanContent.substring(
+                    content.substring(
                         0,
                         5000
                     )
@@ -380,32 +511,33 @@ export default async function handler(req, res) {
 
                 success: false,
 
+                stage:
+                    "messages",
+
                 error:
-                    "没有合法的对话内容"
+                    "没有合法的消息内容"
 
             });
 
         }
 
 
-        // -----------------------------------------------------
-        // Build Notion Blocks
-        // -----------------------------------------------------
+        // =====================================================
+        // BUILD BLOCKS
+        // =====================================================
 
         const children = [];
 
 
-        // Conversation ID
-
-        if (
-            conversationId
-        ) {
+        if (conversationId) {
 
             children.push({
 
-                object: "block",
+                object:
+                    "block",
 
-                type: "paragraph",
+                type:
+                    "paragraph",
 
                 paragraph: {
 
@@ -413,7 +545,8 @@ export default async function handler(req, res) {
 
                         {
 
-                            type: "text",
+                            type:
+                                "text",
 
                             text: {
 
@@ -433,23 +566,22 @@ export default async function handler(req, res) {
         }
 
 
-        // Divider
-
         children.push({
 
-            object: "block",
+            object:
+                "block",
 
-            type: "divider",
+            type:
+                "divider",
 
             divider: {}
 
         });
 
 
-        // Messages
-
         for (
-            const message of cleanMessages
+            const message
+            of cleanMessages
         ) {
 
             const label =
@@ -458,13 +590,13 @@ export default async function handler(req, res) {
                     : "CQS AI";
 
 
-            // Role heading
-
             children.push({
 
-                object: "block",
+                object:
+                    "block",
 
-                type: "heading_3",
+                type:
+                    "heading_3",
 
                 heading_3: {
 
@@ -472,7 +604,8 @@ export default async function handler(req, res) {
 
                         {
 
-                            type: "text",
+                            type:
+                                "text",
 
                             text: {
 
@@ -490,13 +623,13 @@ export default async function handler(req, res) {
             });
 
 
-            // Message content
-
             children.push({
 
-                object: "block",
+                object:
+                    "block",
 
-                type: "paragraph",
+                type:
+                    "paragraph",
 
                 paragraph: {
 
@@ -504,7 +637,8 @@ export default async function handler(req, res) {
 
                         {
 
-                            type: "text",
+                            type:
+                                "text",
 
                             text: {
 
@@ -524,10 +658,7 @@ export default async function handler(req, res) {
         }
 
 
-        // -----------------------------------------------------
-        // Notion API allows max 100 children per request
-        // -----------------------------------------------------
-
+        // Notion 单次最多 100 个 children
         const limitedChildren =
             children.slice(
                 0,
@@ -535,15 +666,16 @@ export default async function handler(req, res) {
             );
 
 
-        // -----------------------------------------------------
-        // Notion Request Body
-        // -----------------------------------------------------
+        // =====================================================
+        // CREATE PAGE
+        // =====================================================
 
         const notionBody = {
 
             parent: {
 
-                type: "page_id",
+                type:
+                    "page_id",
 
                 page_id:
                     parentPageId
@@ -558,7 +690,8 @@ export default async function handler(req, res) {
 
                         {
 
-                            type: "text",
+                            type:
+                                "text",
 
                             text: {
 
@@ -581,18 +714,11 @@ export default async function handler(req, res) {
         };
 
 
-        // -----------------------------------------------------
-        // Debug
-        // -----------------------------------------------------
-
         console.log(
             "[CQS Notion] Creating page",
             {
 
                 parentPageId,
-
-                parentPageIdLength:
-                    parentPageId.length,
 
                 title,
 
@@ -606,16 +732,13 @@ export default async function handler(req, res) {
         );
 
 
-        // -----------------------------------------------------
-        // Notion API
-        // -----------------------------------------------------
-
         const response =
             await fetch(
                 "https://api.notion.com/v1/pages",
                 {
 
-                    method: "POST",
+                    method:
+                        "POST",
 
                     headers: {
 
@@ -639,10 +762,6 @@ export default async function handler(req, res) {
             );
 
 
-        // -----------------------------------------------------
-        // Read Response
-        // -----------------------------------------------------
-
         const responseText =
             await response.text();
 
@@ -659,30 +778,19 @@ export default async function handler(req, res) {
                     )
                     : null;
 
-        } catch {
+        } catch {}
 
-            data = null;
-
-        }
-
-
-        // -----------------------------------------------------
-        // Notion API Error
-        // -----------------------------------------------------
 
         if (
             !response.ok
         ) {
 
             console.error(
-                "[CQS Notion API Error]",
+                "[CQS Notion CREATE ERROR]",
                 {
 
                     status:
                         response.status,
-
-                    statusText:
-                        response.statusText,
 
                     code:
                         data?.code ||
@@ -703,63 +811,51 @@ export default async function handler(req, res) {
                 response.status
             ).json({
 
-                success: false,
+                success:
+                    false,
+
+                stage:
+                    "create_page",
 
                 error:
                     data?.message ||
-                    `Notion API 请求失败 (${response.status})`,
+                    "Notion 创建页面失败",
 
-                code:
+                notionStatus:
+                    response.status,
+
+                notionCode:
                     data?.code ||
                     null,
 
-                status:
-                    response.status
+                notionMessage:
+                    data?.message ||
+                    null
 
             });
 
         }
 
 
-        // -----------------------------------------------------
-        // Success
-        // -----------------------------------------------------
-
-        const pageId =
-            data?.id ||
-            null;
-
-        const pageUrl =
-            data?.url ||
-            null;
-
-
-        console.log(
-            "[CQS Notion Success]",
-            {
-
-                pageId,
-
-                url:
-                    pageUrl,
-
-                conversationId
-
-            }
-        );
-
+        // =====================================================
+        // SUCCESS
+        // =====================================================
 
         return res.status(200).json({
 
-            success: true,
+            success:
+                true,
 
             message:
                 "对话已成功保存到 Notion",
 
-            pageId,
+            pageId:
+                data?.id ||
+                null,
 
             url:
-                pageUrl,
+                data?.url ||
+                null,
 
             conversationId:
                 conversationId ||
@@ -778,11 +874,15 @@ export default async function handler(req, res) {
 
         return res.status(500).json({
 
-            success: false,
+            success:
+                false,
+
+            stage:
+                "server",
 
             error:
                 error?.message ||
-                "保存到 Notion 时发生服务器错误"
+                "Notion 保存过程中发生服务器错误"
 
         });
 
