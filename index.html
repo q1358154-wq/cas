@@ -6741,7 +6741,6 @@ window.addEventListener(
     let manualIndex = 0;
     let isAuto = true;
 
-    // Theme Control Button (Bottom Left)
     const btn = document.createElement('button');
     btn.innerHTML = '🌊 Flowing';
     Object.assign(btn.style, {
@@ -6784,7 +6783,7 @@ window.addEventListener(
     }
     document.body.appendChild(btn);
 
-    // --- 4. Ambient Sound & Piano Dropdown (Bottom Left) ---
+    // --- 4. Ambient Sound (Updated stable links) ---
     const noiseSelect = document.createElement('select');
     noiseSelect.innerHTML = `
         <option value="">🎵 Ambience Off</option>
@@ -6812,13 +6811,13 @@ window.addEventListener(
     audioPlayer.loop = true;
     document.body.appendChild(audioPlayer);
 
-    // 音频直链（新增了精选的优雅钢琴伴奏）
+    // 采用更稳定、公共可用的音频源
     const noiseUrls = {
-        piano: 'https://actions.google.com/sounds/v1/ambiences/gentle_wind_and_chimes.ogg', // 舒缓温和的治愈系旋律
-        rain: 'https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg',
-        waves: 'https://actions.google.com/sounds/v1/water/waves_ocean_surfs.ogg',
-        fire: 'https://actions.google.com/sounds/v1/ambiences/indoor_fire_crackling.ogg',
-        cafe: 'https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg'
+        piano: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=gentle-piano-111164.mp3',
+        rain: 'https://cdn.pixabay.com/download/audio/2021/08/09/audio_4045f22302.mp3?filename=soft-rain-ambient-111154.mp3',
+        waves: 'https://cdn.pixabay.com/download/audio/2022/04/05/audio_1204a919f2.mp3?filename=ocean-waves-112906.mp3',
+        fire: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c97e74857b.mp3?filename=fireplace-crackling-8153.mp3',
+        cafe: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db321d7b42.mp3?filename=coffeeshop-ambience-110464.mp3'
     };
 
     noiseSelect.onchange = function() {
@@ -6828,7 +6827,10 @@ window.addEventListener(
             audioPlayer.src = '';
         } else if (noiseUrls[val]) {
             audioPlayer.src = noiseUrls[val];
-            audioPlayer.play().catch(e => console.log('Audio autoplay blocked or failed:', e));
+            audioPlayer.play().catch(e => {
+                console.log('Playback error:', e);
+                alert('Please click anywhere on the page first to enable audio.');
+            });
         }
     };
 
