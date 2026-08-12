@@ -6784,13 +6784,13 @@ window.addEventListener(
     }
     document.body.appendChild(btn);
 
-    // --- 4. Hybrid Sound Selector (Using high-quality real-world audio sources) ---
+    // --- 4. Hybrid Sound Selector (Featuring authentic crowded cafe / foreign coffee shop chatter) ---
     const noiseSelect = document.createElement('select');
     noiseSelect.innerHTML = `
         <option value="">🎵 Ambience Off</option>
         <option value="piano">🎹 Elegant Piano (Synth)</option>
         <option value="rain">🌧️ Soft Rain (Real)</option>
-        <option value="cafe">☕ Coffee Shop (Real)</option>
+        <option value="cafe">☕ Coffee Shop (Crowded Chatter)</option>
     `;
     Object.assign(noiseSelect.style, {
         position: 'fixed',
@@ -6810,10 +6810,10 @@ window.addEventListener(
     audioPlayer.loop = true;
     document.body.appendChild(audioPlayer);
 
-    // Use high-quality, stable real-world environment sound links
+    // Using an explicit, high-clarity Western/foreign coffee shop ambience source featuring group conversations and background murmurs
     const soundUrls = {
-        rain: 'https://archive.org/download/rain-sounds/rain-sound.mp3',
-        cafe: 'https://archive.org/download/coffee-shop-ambience/coffee-shop-ambience.mp3'
+        rain: 'https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg',
+        cafe: 'https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg'
     };
 
     let audioCtx = null;
@@ -6864,6 +6864,8 @@ window.addEventListener(
     document.body.appendChild(noiseSelect);
 })();
 </script>
+
+
 
 
 
