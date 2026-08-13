@@ -9255,7 +9255,179 @@ setInterval(
 
 })();
 
+</script><script>
+(function() {
+    // --- 1. Shortcut: Copy last message (Ctrl + Shift + C) ---
+    document.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.shiftKey && event.key === 'c') {
+            event.preventDefault();
+            if (typeof state !== 'undefined' && state.messages && state.messages.length > 0) {
+                const lastMessage = state.messages[state.messages.length - 1];
+                if (lastMessage && lastMessage.content) {
+                    navigator.clipboard.writeText(lastMessage.content).then(() => {
+                        console.log('Quick copy success: Last message copied');
+                    }).catch(err => {
+                        console.error('Quick copy failed: ', err);
+                    });
+                }
+            }
+        }
+    });
+
+    // --- 2. Dynamic Wave Gradient Animation ---
+    const styleElem = document.createElement('style');
+    styleElem.innerHTML = `
+        @keyframes waveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .auto-gradient-bg {
+            background: linear-gradient(270deg, #022c22, #500724, #0f172a, #451a03, #3b0764, #042f2e, #18181b) !important;
+            background-size: 1400% 1400% !important;
+            animation: waveGradient 25s ease infinite !important;
+            transition: background 0.5s ease;
+        }
+    `;
+    document.head.appendChild(styleElem);
+    document.body.classList.add('auto-gradient-bg');
+
+    // --- 3. 7 Color Themes (English) ---
+    const themes = [
+        { name: '🍀 Emerald', bg: '#022c22', text: '#ecfdf5' },
+        { name: '🌸 Rose Pink', bg: '#500724', text: '#fdf2f8' },
+        { name: '🌌 Cyber Blue', bg: '#0f172a', text: '#f8fafc' },
+        { name: '☀️ Amber Gold', bg: '#451a03', text: '#fef3c7' },
+        { name: '🍇 Dark Purple', bg: '#3b0764', text: '#f3e8ff' },
+        { name: '🌊 Cyan Teal', bg: '#042f2e', text: '#f0fdfa' },
+        { name: '🪨 Dark Gray', bg: '#18181b', text: '#f4f4f5' }
+    ];
+    let manualIndex = 0;
+    let isAuto = true;
+
+    const btn = document.createElement('button');
+    btn.innerHTML = '🌊 Flowing';
+    Object.assign(btn.style, {
+        position: 'fixed',
+        bottom: '10px',
+        left: '65px',
+        zIndex: '99999',
+        padding: '2px 6px',
+        borderRadius: '4px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backgroundColor: 'rgba(30, 41, 59, 0.6)',
+        color: '#ffffff',
+        cursor: 'pointer',
+        fontSize: '10px'
+    });
+
+    btn.onclick = function() {
+        if (isAuto) {
+            isAuto = false;
+            document.body.classList.remove('auto-gradient-bg');
+            manualIndex = 0;
+            applyManualTheme();
+        } else {
+            manualIndex++;
+            if (manualIndex >= themes.length) {
+                isAuto = true;
+                document.body.classList.add('auto-gradient-bg');
+                btn.innerHTML = '🌊 Flowing';
+                return;
+            }
+            applyManualTheme();
+        }
+    };
+
+    function applyManualTheme() {
+        const t = themes[manualIndex];
+        document.body.style.backgroundColor = t.bg;
+        document.body.style.color = t.text;
+        btn.innerHTML = '🎨 ' + t.name;
+    }
+    document.body.appendChild(btn);
+
+    // --- 4. Sound Selector (Real English Cafe + Rain + Synth Piano) ---
+    const noiseSelect = document.createElement('select');
+    noiseSelect.innerHTML = `
+        <option value="">🎵 Ambience Off</option>
+        <option value="piano">🎹 Elegant Piano (Synth)</option>
+        <option value="rain">🌧️ Soft Rain (Audio)</option>
+        <option value="cafe">☕ Overseas Cafe Chatter (Audio)</option>
+    `;
+    Object.assign(noiseSelect.style, {
+        position: 'fixed',
+        bottom: '10px',
+        left: '145px',
+        zIndex: '99999',
+        padding: '2px 4px',
+        borderRadius: '4px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backgroundColor: 'rgba(30, 41, 59, 0.8)',
+        color: '#ffffff',
+        fontSize: '10px',
+        cursor: 'pointer'
+    });
+
+    const audioPlayer = document.createElement('audio');
+    audioPlayer.loop = true;
+    document.body.appendChild(audioPlayer);
+
+    // 换成了带有明显海外咖啡馆人声交谈、杯盘碰撞的优质稳定音源
+    const soundUrls = {
+        rain: 'https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg',
+        cafe: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db321d7b42.mp3?filename=coffeeshop-ambience-110464.mp3'
+    };
+
+    let audioCtx = null;
+    let pianoInterval = null;
+
+    function stopEverything() {
+        audioPlayer.pause();
+        audioPlayer.src = '';
+        if (pianoInterval) { clearInterval(pianoInterval); pianoInterval = null; }
+        if (audioCtx) { audioCtx.close(); audioCtx = null; }
+    }
+
+    noiseSelect.onchange = function() {
+        const val = noiseSelect.value;
+        stopEverything();
+
+        if (!val) return;
+
+        if (val === 'rain' || val === 'cafe') {
+            audioPlayer.src = soundUrls[val];
+            audioPlayer.play().catch(e => console.log('Audio error:', e));
+        } 
+        else if (val === 'piano') {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+            pianoInterval = setInterval(() => {
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sine';
+                const freq = notes[Math.floor(Math.random() * notes.length)];
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 2.5);
+            }, 1200);
+        }
+    };
+
+    document.body.appendChild(noiseSelect);
+})();
 </script>
+
 
 </body>
 </html>
