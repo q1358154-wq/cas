@@ -6674,31 +6674,22 @@ async function sendMessage(
 
     const value =
         (
-            text
-            !== null
+            text !== null
             ? text
             : input.value
-        )
-        .trim();
+        ).trim();
 
     if (!value)
         return;
 
-    if (
-        state.isStreaming
-    )
+    if (state.isStreaming)
         return;
 
-    if (
-        !state.currentConversationId
-    ) {
-
+    if (!state.currentConversationId) {
         createConversation();
-
     }
 
-    input.value =
-        "";
+    input.value = "";
 
     autoResize();
 
@@ -6712,144 +6703,502 @@ async function sendMessage(
         value
     );
 
-    state.isStreaming =
-        true;
+    state.isStreaming = true;
 
-    setBusy(
-        true
-    );
+    setBusy(true);
 
-    const thinking =
-        `
+    const thinkingText = `
 CQS CORE INITIALIZING...
 MODEL: ${$("modelName").textContent}
-PROVIDER: ${state.provider}
+PROVIDER: ${state.provider || "deepseek"}
 SPATIAL CHANNEL: ACTIVE
 ANALYZING USER REQUEST...
 `;
 
-    await delay(
-        500
-    );
+    try {
 
-    const response =
-        generateDemoResponse(
-            value
+        const assistantMessage = {
+
+            id:
+                "m_"
+                + Date.now(),
+
+            role:
+                "assistant",
+
+            content:
+                "",
+
+            thinking:
+                thinkingText,
+
+            time:
+                Date.now()
+
+        };
+
+        state.messages.push(
+            assistantMessage
         );
 
-    await streamAssistant(
-        response,
-        thinking
-    );
-
-    state.isStreaming =
-        false;
-
-    setBusy(
-        false
-    );
-
-}
-
-
-async function streamAssistant(
-    text,
-    thinking
-) {
-
-    const message = {
-
-        id:
-            "m_"
-            + Date.now(),
-
-        role:
-            "assistant",
-
-        content:
-            "",
-
-        thinking,
-
-        time:
-            Date.now()
-
-    };
-
-    state.messages.push(
-        message
-    );
-
-    const conversation =
-        state.conversations
-            .find(
+        const conversation =
+            state.conversations.find(
                 x =>
                     x.id
                     === state.currentConversationId
             );
 
-    if (conversation) {
+        if (conversation) {
 
-        conversation.messages =
-            state.messages;
-
-    }
-
-    renderMessages();
-
-    await delay(
-        250
-    );
-
-    message.thinking =
-        "分析完成。";
-
-    const chars =
-        Array.from(
-            text
-        );
-
-    for (
-        let i = 0;
-        i < chars.length;
-        i++
-    ) {
-
-        message.content +=
-            chars[i];
-
-        if (
-            i % 2 === 0
-        ) {
-
-            renderMessages();
+            conversation.messages =
+                state.messages;
 
         }
 
-        await delay(
-            18
+        renderMessages();
+
+        const response =
+            await fetch(
+                "/api/chat",
+                {
+                    method:
+                        "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "text/event-stream"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            provider:
+                                state.provider
+                                || "deepseek",
+
+                            model:
+                                state.selectedModel,
+
+                            messages:
+                                state.messages
+                                    .filter(
+                                        message =>
+                                            message.role
+                                            === "user"
+                                            ||
+                                            message.role
+                                            === "assistant"
+                                    )
+                                    .map(
+                                        message => ({
+                                            role:
+                                                message.role,
+
+                                            content:
+                                                message.content
+                                        })
+                                    ),
+
+                            conversationId:
+                                state.currentConversationId
+
+                        })
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                `CQS Gateway HTTP ${response.status}`
+            );
+
+        }
+
+        if (!response.body) {
+
+            throw new Error(
+                "CQS Gateway 没有返回 Streaming 数据"
+            );
+
+        }
+
+        const reader =
+            response.body.getReader();
+
+        const decoder =
+            new TextDecoder(
+                "utf-8"
+            );
+
+        let buffer = "";
+
+        let finished =
+            false;
+
+        while (!finished) {
+
+            const {
+                value: chunk,
+                done
+            } =
+                await reader.read();
+
+            if (done)
+                break;
+
+            if (chunk) {
+
+                buffer +=
+                    decoder.decode(
+                        chunk,
+                        {
+                            stream:
+                                true
+                        }
+                    );
+
+            }
+
+            const events =
+                buffer.split(
+                    /\r?\n\r?\n/
+                );
+
+            buffer =
+                events.pop()
+                || "";
+
+            for (
+                const event
+                of events
+            ) {
+
+                if (!event.trim())
+                    continue;
+
+                const lines =
+                    event
+                        .split(/\r?\n/);
+
+                const dataLines =
+                    lines
+                        .filter(
+                            line =>
+                                line.startsWith(
+                                    "data:"
+                                )
+                        )
+                        .map(
+                            line =>
+                                line
+                                    .slice(5)
+                                    .trim()
+                        );
+
+                if (
+                    !dataLines.length
+                )
+                    continue;
+
+                const data =
+                    dataLines.join(
+                        "\n"
+                    );
+
+                if (!data)
+                    continue;
+
+                if (
+                    data === "[DONE]"
+                ) {
+
+                    finished =
+                        true;
+
+                    break;
+
+                }
+
+                let packet;
+
+                try {
+
+                    packet =
+                        JSON.parse(
+                            data
+                        );
+
+                } catch {
+
+                    continue;
+
+                }
+
+                /* =========================
+                   ERROR
+                   ========================= */
+
+                if (
+                    packet.type
+                    === "error"
+                ) {
+
+                    throw new Error(
+                        packet.error
+                        ||
+                        "CQS AI Gateway Error"
+                    );
+
+                }
+
+
+                /* =========================
+                   THINKING
+                   ========================= */
+
+                if (
+                    packet.type
+                    === "reasoning"
+                    &&
+                    typeof packet.content
+                    === "string"
+                ) {
+
+                    assistantMessage.thinking +=
+                        packet.content;
+
+                    renderMessages();
+
+                }
+
+
+                /* =========================
+                   CONTENT
+                   ========================= */
+
+                if (
+                    packet.type
+                    === "delta"
+                    &&
+                    typeof packet.content
+                    === "string"
+                ) {
+
+                    assistantMessage.content +=
+                        packet.content;
+
+                    renderMessages();
+
+                }
+
+
+                /* =========================
+                   USAGE
+                   ========================= */
+
+                if (
+                    packet.type
+                    === "usage"
+                ) {
+
+                    assistantMessage.usage =
+                        packet.usage;
+
+                }
+
+
+                /* =========================
+                   DONE
+                   ========================= */
+
+                if (
+                    packet.type
+                    === "done"
+                ) {
+
+                    finished =
+                        true;
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+        buffer +=
+            decoder.decode();
+
+        if (
+            buffer.trim()
+        ) {
+
+            const events =
+                buffer.split(
+                    /\r?\n\r?\n/
+                );
+
+            for (
+                const event
+                of events
+            ) {
+
+                if (!event.trim())
+                    continue;
+
+                const lines =
+                    event
+                        .split(/\r?\n/);
+
+                const dataLines =
+                    lines
+                        .filter(
+                            line =>
+                                line.startsWith(
+                                    "data:"
+                                )
+                        )
+                        .map(
+                            line =>
+                                line
+                                    .slice(5)
+                                    .trim()
+                        );
+
+                if (
+                    !dataLines.length
+                )
+                    continue;
+
+                const data =
+                    dataLines.join(
+                        "\n"
+                    );
+
+                if (
+                    data === "[DONE]"
+                )
+                    continue;
+
+                let packet;
+
+                try {
+
+                    packet =
+                        JSON.parse(
+                            data
+                        );
+
+                } catch {
+
+                    continue;
+
+                }
+
+                if (
+                    packet.type
+                    === "reasoning"
+                ) {
+
+                    assistantMessage.thinking +=
+                        packet.content
+                        || "";
+
+                }
+
+                if (
+                    packet.type
+                    === "delta"
+                ) {
+
+                    assistantMessage.content +=
+                        packet.content
+                        || "";
+
+                }
+
+                if (
+                    packet.type
+                    === "usage"
+                ) {
+
+                    assistantMessage.usage =
+                        packet.usage;
+
+                }
+
+            }
+
+        }
+
+        if (conversation) {
+
+            conversation.messages =
+                state.messages;
+
+        }
+
+        saveHistory();
+
+        renderMessages();
+
+        playSound(
+            950,
+            .05
         );
 
+    } catch (error) {
+
+        console.error(
+            "[CQS AI Frontend Error]",
+            error
+        );
+
+        const message =
+            state.messages[
+                state.messages.length - 1
+            ];
+
+        if (
+            message
+            &&
+            message.role
+            === "assistant"
+        ) {
+
+            message.content +=
+                `\n\n[CQS AI ERROR]\n${
+                    error?.message
+                    || "AI 请求失败"
+                }`;
+
+        }
+
+        renderMessages();
+
+        toast(
+            error?.message
+            || "CQS AI 请求失败"
+        );
+
+    } finally {
+
+        state.isStreaming =
+            false;
+
+        setBusy(
+            false
+        );
+
+        saveHistory();
+
     }
-
-    if (conversation) {
-
-        conversation.messages =
-            state.messages;
-
-    }
-
-    saveHistory();
-
-    renderMessages();
-
-    playSound(
-        950,
-        .05
-    );
 
 }
-
 
 /* =========================================================
    DEMO RESPONSE
