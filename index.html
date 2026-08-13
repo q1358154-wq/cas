@@ -9256,153 +9256,1940 @@ setInterval(
 })();
 
 </script><script>
-(function() {
-    // --- 1. Shortcut: Copy last message (Ctrl + Shift + C) ---
-    document.addEventListener('keydown', (event) => {
-        if (event.ctrlKey && event.shiftKey && event.key === 'c') {
-            event.preventDefault();
-            if (typeof state !== 'undefined' && state.messages && state.messages.length > 0) {
-                const lastMessage = state.messages[state.messages.length - 1];
-                if (lastMessage && lastMessage.content) {
-                    navigator.clipboard.writeText(lastMessage.content).then(() => {
-                        console.log('Quick copy success: Last message copied');
-                    }).catch(err => {
-                        console.error('Quick copy failed: ', err);
-                    });
-                }
+(function () {
+    "use strict";
+
+    /*
+     * =========================================================
+     * CQS AI — TITAN STYLE POST MODULE
+     * =========================================================
+     *
+     * 直接追加到 CQS AI 原文件最后即可。
+     *
+     * 不需要：
+     * <!DOCTYPE html>
+     * <html>
+     * <head>
+     * <body>
+     *
+     * 本模块：
+     * 1. 3D 全屏空间层
+     * 2. 七彩流光环境
+     * 3. AI Core 光核
+     * 4. 粒子系统
+     * 5. 扫描线
+     * 6. 环境光晕
+     * 7. 鼠标 / 触摸 3D 视差
+     * 8. Ctrl + Shift + C 复制最后消息
+     * 9. 最后消息朗读
+     * 10. 多语言自动选择朗读语言
+     * 11. 停止朗读
+     * 12. 环境音
+     * 13. 白噪音 / 粉噪音 / 棕噪音 / 风扇 / 风 / 静电 / 深雨
+     *
+     * 不覆盖 CQS 原有功能。
+     * =========================================================
+     */
+
+
+    /* =========================================================
+       1. 防止重复加载
+       ========================================================= */
+
+    if (window.__CQS_TITAN_POST_MODULE__) {
+        return;
+    }
+
+    window.__CQS_TITAN_POST_MODULE__ = true;
+
+
+    /* =========================================================
+       2. STYLE
+       ========================================================= */
+
+    const style = document.createElement("style");
+
+    style.id = "cqs-titan-post-style";
+
+    style.textContent = `
+
+        #cqs-titan-space {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+            perspective: 1400px;
+            isolation: isolate;
+        }
+
+        #cqs-titan-space::before {
+            content: "";
+            position: absolute;
+            inset: -20%;
+            background:
+                radial-gradient(
+                    circle at 50% 50%,
+                    rgba(0,243,255,.14),
+                    transparent 22%
+                ),
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(168,85,247,.14),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 85% 80%,
+                    rgba(236,72,153,.12),
+                    transparent 28%
+                );
+            filter: blur(40px);
+            animation: cqsTitanAmbient 18s ease-in-out infinite alternate;
+            transform: translateZ(-300px);
+        }
+
+        #cqs-titan-space::after {
+            content: "";
+            position: absolute;
+            inset: -30%;
+            background:
+                conic-gradient(
+                    from 0deg,
+                    rgba(0,243,255,.08),
+                    rgba(139,92,246,.08),
+                    rgba(236,72,153,.08),
+                    rgba(245,158,11,.08),
+                    rgba(34,211,238,.08),
+                    rgba(0,243,255,.08)
+                );
+            filter: blur(80px);
+            animation: cqsTitanRainbow 28s linear infinite;
+            mix-blend-mode: screen;
+            opacity: .65;
+        }
+
+        #cqs-titan-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            opacity: .85;
+        }
+
+        #cqs-titan-core {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: min(42vw, 420px);
+            height: min(42vw, 420px);
+            transform:
+                translate(-50%, -50%)
+                translateZ(0);
+            border-radius: 50%;
+            opacity: .7;
+            filter: blur(.1px);
+            transition: transform .35s cubic-bezier(.19,1,.22,1);
+        }
+
+        #cqs-titan-core::before {
+            content: "";
+            position: absolute;
+            inset: 12%;
+            border-radius: 50%;
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(255,255,255,.95) 0%,
+                    rgba(0,243,255,.65) 8%,
+                    rgba(139,92,246,.38) 24%,
+                    rgba(236,72,153,.2) 38%,
+                    transparent 68%
+                );
+            filter: blur(18px);
+            animation: cqsCorePulse 4s ease-in-out infinite;
+        }
+
+        #cqs-titan-core::after {
+            content: "";
+            position: absolute;
+            inset: 20%;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,.28);
+            box-shadow:
+                0 0 30px rgba(0,243,255,.35),
+                0 0 70px rgba(139,92,246,.2),
+                inset 0 0 40px rgba(236,72,153,.18);
+            animation: cqsCoreRotate 12s linear infinite;
+        }
+
+        #cqs-titan-grid {
+            position: absolute;
+            inset: -20%;
+            background-image:
+                linear-gradient(
+                    rgba(0,243,255,.045) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(0,243,255,.045) 1px,
+                    transparent 1px
+                );
+            background-size: 55px 55px;
+            transform:
+                perspective(700px)
+                rotateX(58deg)
+                translateY(38%);
+            transform-origin: center bottom;
+            opacity: .5;
+            mask-image: linear-gradient(
+                to top,
+                black,
+                transparent 75%
+            );
+            animation: cqsGridMove 12s linear infinite;
+        }
+
+        #cqs-titan-scan {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(0,243,255,.9),
+                    rgba(255,255,255,.8),
+                    rgba(236,72,153,.8),
+                    transparent
+                );
+            box-shadow:
+                0 0 15px rgba(0,243,255,.7),
+                0 0 35px rgba(139,92,246,.4);
+            opacity: .55;
+            animation: cqsScan 7s linear infinite;
+        }
+
+        #cqs-titan-ui {
+            position: fixed;
+            right: 14px;
+            bottom: 14px;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            pointer-events: auto;
+            font-family:
+                Consolas,
+                "SFMono-Regular",
+                monospace;
+        }
+
+        .cqs-titan-btn,
+        #cqs-titan-noise {
+            height: 28px;
+            border:
+                1px solid
+                rgba(255,255,255,.15);
+            border-radius: 6px;
+            background:
+                rgba(3,7,18,.72);
+            color: rgba(255,255,255,.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow:
+                0 0 20px rgba(0,243,255,.06);
+            cursor: pointer;
+            font-size: 11px;
+            transition:
+                .25s ease;
+        }
+
+        .cqs-titan-btn {
+            padding: 0 9px;
+        }
+
+        #cqs-titan-noise {
+            padding: 0 5px;
+            max-width: 155px;
+        }
+
+        .cqs-titan-btn:hover,
+        #cqs-titan-noise:hover {
+            border-color:
+                rgba(0,243,255,.55);
+            box-shadow:
+                0 0 18px rgba(0,243,255,.18);
+        }
+
+        #cqs-titan-status {
+            position: fixed;
+            left: 50%;
+            bottom: 15px;
+            transform: translateX(-50%);
+            z-index: 999999;
+            padding: 5px 10px;
+            border:
+                1px solid
+                rgba(0,243,255,.2);
+            border-radius: 5px;
+            background:
+                rgba(2,6,23,.58);
+            color:
+                rgba(220,250,255,.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font:
+                9px
+                Consolas,
+                monospace;
+            letter-spacing: 1px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .3s ease;
+        }
+
+        #cqs-titan-status.show {
+            opacity: 1;
+        }
+
+        @keyframes cqsTitanAmbient {
+            0% {
+                transform:
+                    translate3d(-5%, -3%, -300px)
+                    scale(1);
+            }
+
+            50% {
+                transform:
+                    translate3d(5%, 4%, -300px)
+                    scale(1.08);
+            }
+
+            100% {
+                transform:
+                    translate3d(-3%, 6%, -300px)
+                    scale(1.02);
             }
         }
-    });
 
-    // --- 2. Dynamic Wave Gradient Animation ---
-    const styleElem = document.createElement('style');
-    styleElem.innerHTML = `
-        @keyframes waveGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        @keyframes cqsTitanRainbow {
+            from {
+                transform:
+                    rotate(0deg)
+                    scale(1);
+            }
+
+            to {
+                transform:
+                    rotate(360deg)
+                    scale(1);
+            }
         }
-        .auto-gradient-bg {
-            background: linear-gradient(270deg, #022c22, #500724, #0f172a, #451a03, #3b0764, #042f2e, #18181b) !important;
-            background-size: 1400% 1400% !important;
-            animation: waveGradient 25s ease infinite !important;
-            transition: background 0.5s ease;
+
+        @keyframes cqsCorePulse {
+            0%,
+            100% {
+                transform: scale(.88);
+                opacity: .55;
+            }
+
+            50% {
+                transform: scale(1.12);
+                opacity: .9;
+            }
         }
+
+        @keyframes cqsCoreRotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes cqsGridMove {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 0 55px;
+            }
+        }
+
+        @keyframes cqsScan {
+            0% {
+                top: -2%;
+            }
+
+            100% {
+                top: 102%;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            #cqs-titan-core {
+                width: 72vw;
+                height: 72vw;
+                opacity: .55;
+            }
+
+            #cqs-titan-ui {
+                left: 8px;
+                right: 8px;
+                bottom: 8px;
+                justify-content: center;
+            }
+
+            #cqs-titan-noise {
+                max-width: 125px;
+            }
+
+        }
+
     `;
-    document.head.appendChild(styleElem);
-    document.body.classList.add('auto-gradient-bg');
 
-    // --- 3. 7 Color Themes (English) ---
-    const themes = [
-        { name: '🍀 Emerald', bg: '#022c22', text: '#ecfdf5' },
-        { name: '🌸 Rose Pink', bg: '#500724', text: '#fdf2f8' },
-        { name: '🌌 Cyber Blue', bg: '#0f172a', text: '#f8fafc' },
-        { name: '☀️ Amber Gold', bg: '#451a03', text: '#fef3c7' },
-        { name: '🍇 Dark Purple', bg: '#3b0764', text: '#f3e8ff' },
-        { name: '🌊 Cyan Teal', bg: '#042f2e', text: '#f0fdfa' },
-        { name: '🪨 Dark Gray', bg: '#18181b', text: '#f4f4f5' }
-    ];
-    let manualIndex = 0;
-    let isAuto = true;
+    document.head.appendChild(style);
 
-    const btn = document.createElement('button');
-    btn.innerHTML = '🌊 Flowing';
-    Object.assign(btn.style, {
-        position: 'fixed',
-        bottom: '10px',
-        left: '65px',
-        zIndex: '99999',
-        padding: '2px 6px',
-        borderRadius: '4px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        backgroundColor: 'rgba(30, 41, 59, 0.6)',
-        color: '#ffffff',
-        cursor: 'pointer',
-        fontSize: '10px'
-    });
 
-    btn.onclick = function() {
-        if (isAuto) {
-            isAuto = false;
-            document.body.classList.remove('auto-gradient-bg');
-            manualIndex = 0;
-            applyManualTheme();
-        } else {
-            manualIndex++;
-            if (manualIndex >= themes.length) {
-                isAuto = true;
-                document.body.classList.add('auto-gradient-bg');
-                btn.innerHTML = '🌊 Flowing';
+    /* =========================================================
+       3. 3D VISUAL LAYER
+       ========================================================= */
+
+    const space = document.createElement("div");
+
+    space.id = "cqs-titan-space";
+
+    space.innerHTML = `
+        <canvas id="cqs-titan-canvas"></canvas>
+        <div id="cqs-titan-grid"></div>
+        <div id="cqs-titan-core"></div>
+        <div id="cqs-titan-scan"></div>
+    `;
+
+    document.body.appendChild(space);
+
+
+    const canvas =
+        document.getElementById("cqs-titan-canvas");
+
+    const ctx =
+        canvas.getContext("2d");
+
+    const core =
+        document.getElementById("cqs-titan-core");
+
+
+    /* =========================================================
+       4. PARTICLES
+       ========================================================= */
+
+    let particles = [];
+
+    function resizeCanvas() {
+
+        const ratio =
+            Math.min(
+                window.devicePixelRatio || 1,
+                2
+            );
+
+        canvas.width =
+            window.innerWidth * ratio;
+
+        canvas.height =
+            window.innerHeight * ratio;
+
+        canvas.style.width =
+            window.innerWidth + "px";
+
+        canvas.style.height =
+            window.innerHeight + "px";
+
+        ctx.setTransform(
+            ratio,
+            0,
+            0,
+            ratio,
+            0,
+            0
+        );
+
+        createParticles();
+
+    }
+
+
+    function createParticles() {
+
+        particles = [];
+
+        const count =
+            window.innerWidth < 700
+                ? 65
+                : 120;
+
+        for (
+            let i = 0;
+            i < count;
+            i++
+        ) {
+
+            particles.push({
+
+                x:
+                    Math.random() *
+                    window.innerWidth,
+
+                y:
+                    Math.random() *
+                    window.innerHeight,
+
+                z:
+                    Math.random(),
+
+                size:
+                    Math.random() * 1.8 + .25,
+
+                speed:
+                    Math.random() * .35 + .05,
+
+                hue:
+                    Math.random() * 360,
+
+                phase:
+                    Math.random() * Math.PI * 2
+
+            });
+
+        }
+
+    }
+
+
+    function drawParticles(time) {
+
+        const w =
+            window.innerWidth;
+
+        const h =
+            window.innerHeight;
+
+        ctx.clearRect(
+            0,
+            0,
+            w,
+            h
+        );
+
+        for (
+            const p of particles
+        ) {
+
+            p.y -= p.speed;
+
+            if (p.y < -10) {
+
+                p.y = h + 10;
+
+                p.x =
+                    Math.random() * w;
+
+            }
+
+            const depth =
+                .35 + p.z * .85;
+
+            const pulse =
+                .5 +
+                Math.sin(
+                    time * .001 +
+                    p.phase
+                ) * .5;
+
+            const radius =
+                p.size *
+                depth;
+
+            const alpha =
+                (.18 + pulse * .5) *
+                depth;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                p.x,
+                p.y,
+                radius,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle =
+                "hsla(" +
+                p.hue +
+                ",100%,70%," +
+                alpha +
+                ")";
+
+            ctx.shadowBlur =
+                12 * depth;
+
+            ctx.shadowColor =
+                "hsla(" +
+                p.hue +
+                ",100%,65%,.65)";
+
+            ctx.fill();
+
+        }
+
+        ctx.shadowBlur = 0;
+
+        requestAnimationFrame(
+            drawParticles
+        );
+
+    }
+
+
+    resizeCanvas();
+
+    window.addEventListener(
+        "resize",
+        resizeCanvas
+    );
+
+    requestAnimationFrame(
+        drawParticles
+    );
+
+
+    /* =========================================================
+       5. 3D MOUSE / TOUCH PARALLAX
+       ========================================================= */
+
+    let px = 0;
+    let py = 0;
+
+    function applyParallax(x, y) {
+
+        px = x;
+        py = y;
+
+        const rx =
+            py * -4;
+
+        const ry =
+            px * 5;
+
+        space.style.transform =
+            "rotateX(" +
+            rx +
+            "deg) rotateY(" +
+            ry +
+            "deg)";
+
+        core.style.transform =
+            "translate(-50%, -50%) " +
+            "translate(" +
+            (px * 18) +
+            "px," +
+            (py * 18) +
+            "px) " +
+            "translateZ(80px)";
+
+    }
+
+
+    document.addEventListener(
+        "mousemove",
+        function (event) {
+
+            applyParallax(
+                (
+                    event.clientX /
+                    window.innerWidth -
+                    .5
+                ) * 2,
+
+                (
+                    event.clientY /
+                    window.innerHeight -
+                    .5
+                ) * 2
+
+            );
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    document.addEventListener(
+        "touchmove",
+        function (event) {
+
+            if (!event.touches[0]) {
                 return;
             }
-            applyManualTheme();
-        }
-    };
 
-    function applyManualTheme() {
-        const t = themes[manualIndex];
-        document.body.style.backgroundColor = t.bg;
-        document.body.style.color = t.text;
-        btn.innerHTML = '🎨 ' + t.name;
+            applyParallax(
+                (
+                    event.touches[0].clientX /
+                    window.innerWidth -
+                    .5
+                ) * 2,
+
+                (
+                    event.touches[0].clientY /
+                    window.innerHeight -
+                    .5
+                ) * 2
+            );
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    /* =========================================================
+       6. COPY LAST MESSAGE
+       ========================================================= */
+
+    async function copyLastMessage() {
+
+        if (
+            typeof state === "undefined" ||
+            !state.messages ||
+            !state.messages.length
+        ) {
+            return;
+        }
+
+        const last =
+            state.messages[
+                state.messages.length - 1
+            ];
+
+        if (
+            !last ||
+            !last.content
+        ) {
+            return;
+        }
+
+        try {
+
+            await navigator.clipboard.writeText(
+                String(last.content)
+            );
+
+            showStatus(
+                "COPY_SUCCESS"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "CQS copy failed:",
+                error
+            );
+
+        }
+
     }
-    document.body.appendChild(btn);
 
-    // --- 4. Ambient Sound (Using your exact requested version structure) ---
-    const noiseSelect = document.createElement('select');
-    noiseSelect.innerHTML = `
-        <option value="">🎵 Ambience Off</option>
-        <option value="piano">🎹 Elegant Piano</option>
-        <option value="rain">🌧️ Soft Rain</option>
-        <option value="waves">🌊 Ocean Waves</option>
-        <option value="fire">🔥 Fireplace</option>
-        <option value="cafe">☕ Coffee Shop</option>
-    `;
-    Object.assign(noiseSelect.style, {
-        position: 'fixed',
-        bottom: '10px',
-        left: '145px',
-        zIndex: '99999',
-        padding: '2px 4px',
-        borderRadius: '4px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        backgroundColor: 'rgba(30, 41, 59, 0.8)',
-        color: '#ffffff',
-        fontSize: '10px',
-        cursor: 'pointer'
-    });
 
-    const audioPlayer = document.createElement('audio');
-    audioPlayer.loop = true;
-    document.body.appendChild(audioPlayer);
+    document.addEventListener(
+        "keydown",
+        function (event) {
 
-    // 采用您最认可的这套稳妥链接，确保雨声和咖啡馆对话完美呈现
-    const noiseUrls = {
-        piano: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=gentle-piano-111164.mp3',
-        rain: 'https://cdn.pixabay.com/download/audio/2021/08/09/audio_4045f22302.mp3?filename=soft-rain-ambient-111154.mp3',
-        waves: 'https://cdn.pixabay.com/download/audio/2022/04/05/audio_1204a919f2.mp3?filename=ocean-waves-112906.mp3',
-        fire: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c97e74857b.mp3?filename=fireplace-crackling-8153.mp3',
-        cafe: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db321d7b42.mp3?filename=coffeeshop-ambience-110464.mp3'
-    };
+            if (
+                event.ctrlKey &&
+                event.shiftKey &&
+                event.key.toLowerCase() === "c"
+            ) {
 
-    noiseSelect.onchange = function() {
-        const val = noiseSelect.value;
-        if (!val) {
-            audioPlayer.pause();
-            audioPlayer.src = '';
-        } else if (noiseUrls[val]) {
-            audioPlayer.src = noiseUrls[val];
-            audioPlayer.play().catch(e => {
-                console.log('Playback error:', e);
-                alert('Please click anywhere on the page first to enable audio.');
-            });
+                event.preventDefault();
+
+                copyLastMessage();
+
+            }
+
         }
+    );
+
+
+    /* =========================================================
+       7. MULTI-LANGUAGE SPEECH
+       ========================================================= */
+
+    let speechUtterance = null;
+
+
+    function getCurrentLanguage() {
+
+        let lang = null;
+
+
+        /*
+         * 优先读取 CQS AI 原有 state.language
+         */
+
+        try {
+
+            if (
+                typeof state !== "undefined" &&
+                state.language
+            ) {
+
+                lang =
+                    String(
+                        state.language
+                    ).toLowerCase();
+
+            }
+
+        } catch (e) {}
+
+
+        /*
+         * 兼容 localStorage
+         */
+
+        if (!lang) {
+
+            try {
+
+                lang =
+                    localStorage.getItem(
+                        "cqs_language"
+                    );
+
+            } catch (e) {}
+
+        }
+
+
+        /*
+         * 最终回退
+         */
+
+        if (!lang) {
+
+            lang =
+                document.documentElement
+                    .lang ||
+                navigator.language ||
+                "zh-CN";
+
+        }
+
+
+        const map = {
+
+            zh: "zh-CN",
+            "zh-cn": "zh-CN",
+            "zh-hans": "zh-CN",
+            "zh-tw": "zh-TW",
+
+            en: "en-US",
+            "en-us": "en-US",
+            "en-gb": "en-GB",
+
+            ja: "ja-JP",
+            jp: "ja-JP",
+
+            ko: "ko-KR",
+            kr: "ko-KR",
+
+            fr: "fr-FR",
+            de: "de-DE",
+            es: "es-ES",
+            it: "it-IT",
+            pt: "pt-PT",
+            ru: "ru-RU",
+            ar: "ar-SA",
+            hi: "hi-IN",
+
+            th: "th-TH",
+            vi: "vi-VN",
+            id: "id-ID",
+            ms: "ms-MY",
+            tr: "tr-TR"
+
+        };
+
+
+        return (
+            map[lang] ||
+            lang
+        );
+
+    }
+
+
+    function getBestVoice(language) {
+
+        if (
+            !("speechSynthesis" in window)
+        ) {
+            return null;
+        }
+
+        const voices =
+            window.speechSynthesis
+                .getVoices();
+
+        if (!voices.length) {
+            return null;
+        }
+
+
+        const exact =
+            voices.find(
+                voice =>
+                    voice.lang
+                        .toLowerCase() ===
+                    language.toLowerCase()
+            );
+
+        if (exact) {
+            return exact;
+        }
+
+
+        const prefix =
+            language
+                .split("-")[0]
+                .toLowerCase();
+
+        return (
+            voices.find(
+                voice =>
+                    voice.lang
+                        .toLowerCase()
+                        .startsWith(prefix)
+            ) ||
+            null
+        );
+
+    }
+
+
+    function readLastMessage() {
+
+        if (
+            !("speechSynthesis" in window)
+        ) {
+
+            showStatus(
+                "SPEECH_NOT_SUPPORTED"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            typeof state === "undefined" ||
+            !state.messages ||
+            !state.messages.length
+        ) {
+
+            return;
+
+        }
+
+
+        const last =
+            state.messages[
+                state.messages.length - 1
+            ];
+
+
+        if (
+            !last ||
+            !last.content
+        ) {
+
+            return;
+
+        }
+
+
+        window.speechSynthesis.cancel();
+
+
+        const text =
+            String(last.content)
+                .replace(
+                    /```[\s\S]*?```/g,
+                    " "
+                )
+                .replace(
+                    /https?:\/\/\S+/g,
+                    " "
+                );
+
+
+        const language =
+            getCurrentLanguage();
+
+
+        speechUtterance =
+            new SpeechSynthesisUtterance(
+                text
+            );
+
+
+        speechUtterance.lang =
+            language;
+
+        speechUtterance.rate =
+            .95;
+
+        speechUtterance.pitch =
+            1;
+
+        speechUtterance.volume =
+            1;
+
+
+        const voice =
+            getBestVoice(
+                language
+            );
+
+        if (voice) {
+
+            speechUtterance.voice =
+                voice;
+
+        }
+
+
+        speechUtterance.onstart =
+            function () {
+
+                showStatus(
+                    "READING " +
+                    language.toUpperCase()
+                );
+
+            };
+
+
+        speechUtterance.onend =
+            function () {
+
+                showStatus(
+                    "READING_COMPLETE"
+                );
+
+            };
+
+
+        speechUtterance.onerror =
+            function () {
+
+                showStatus(
+                    "READING_ERROR"
+                );
+
+            };
+
+
+        window.speechSynthesis
+            .speak(
+                speechUtterance
+            );
+
+    }
+
+
+    function stopReading() {
+
+        if (
+            "speechSynthesis" in window
+        ) {
+
+            window.speechSynthesis
+                .cancel();
+
+            showStatus(
+                "READING_STOPPED"
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       8. VOICE BUTTONS
+       ========================================================= */
+
+    const ui =
+        document.createElement(
+            "div"
+        );
+
+    ui.id =
+        "cqs-titan-ui";
+
+
+    const copyBtn =
+        document.createElement(
+            "button"
+        );
+
+    copyBtn.className =
+        "cqs-titan-btn";
+
+    copyBtn.innerHTML =
+        "📋 Copy";
+
+    copyBtn.onclick =
+        copyLastMessage;
+
+
+    const readBtn =
+        document.createElement(
+            "button"
+        );
+
+    readBtn.className =
+        "cqs-titan-btn";
+
+    readBtn.innerHTML =
+        "🔊 Read";
+
+    readBtn.onclick =
+        readLastMessage;
+
+
+    const stopBtn =
+        document.createElement(
+            "button"
+        );
+
+    stopBtn.className =
+        "cqs-titan-btn";
+
+    stopBtn.innerHTML =
+        "⏹ Stop";
+
+    stopBtn.onclick =
+        stopReading;
+
+
+    /* =========================================================
+       9. AMBIENT AUDIO
+       ========================================================= */
+
+    const noiseSelect =
+        document.createElement(
+            "select"
+        );
+
+    noiseSelect.id =
+        "cqs-titan-noise";
+
+
+    noiseSelect.innerHTML = `
+
+        <option value="">
+            🎵 Ambience Off
+        </option>
+
+        <option value="piano">
+            🎹 Elegant Piano
+        </option>
+
+        <option value="rain">
+            🌧️ Soft Rain
+        </option>
+
+        <option value="waves">
+            🌊 Ocean Waves
+        </option>
+
+        <option value="fire">
+            🔥 Fireplace
+        </option>
+
+        <option value="cafe">
+            ☕ Overseas Cafe
+        </option>
+
+        <option value="white">
+            🤍 White Noise
+        </option>
+
+        <option value="pink">
+            🌸 Pink Noise
+        </option>
+
+        <option value="brown">
+            🟤 Brown Noise
+        </option>
+
+        <option value="fan">
+            💨 Air Conditioner
+        </option>
+
+        <option value="wind">
+            🌀 Soft Wind
+        </option>
+
+        <option value="static">
+            📻 Radio Static
+        </option>
+
+        <option value="deepRain">
+            🌧️ Deep Rain
+        </option>
+
+    `;
+
+
+    const audioPlayer =
+        document.createElement(
+            "audio"
+        );
+
+    audioPlayer.loop = true;
+
+    audioPlayer.preload =
+        "auto";
+
+
+    document.body.appendChild(
+        audioPlayer
+    );
+
+
+    const externalSounds = {
+
+        piano:
+            "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=gentle-piano-111164.mp3",
+
+        rain:
+            "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
+
+        waves:
+            "https://actions.google.com/sounds/v1/water/waves_ocean_surfs.ogg",
+
+        fire:
+            "https://actions.google.com/sounds/v1/ambiences/indoor_fire_crackling.ogg",
+
+        cafe:
+            "https://cdn.pixabay.com/download/audio/2022/05/16/audio_db321d7b42.mp3?filename=coffeeshop-ambience-110464.mp3"
+
     };
 
-    document.body.appendChild(noiseSelect);
+
+    let audioContext = null;
+    let noiseSource = null;
+    let noiseGain = null;
+    let noiseFilter = null;
+
+
+    function getAudioContext() {
+
+        if (!audioContext) {
+
+            const AC =
+                window.AudioContext ||
+                window.webkitAudioContext;
+
+            if (!AC) {
+                return null;
+            }
+
+            audioContext =
+                new AC();
+
+        }
+
+
+        if (
+            audioContext.state ===
+            "suspended"
+        ) {
+
+            audioContext.resume()
+                .catch(() => {});
+
+        }
+
+
+        return audioContext;
+
+    }
+
+
+    function createNoiseBuffer(type) {
+
+        const ctx =
+            getAudioContext();
+
+        if (!ctx) {
+            return null;
+        }
+
+
+        const seconds = 10;
+
+        const length =
+            ctx.sampleRate *
+            seconds;
+
+
+        const buffer =
+            ctx.createBuffer(
+                1,
+                length,
+                ctx.sampleRate
+            );
+
+
+        const data =
+            buffer.getChannelData(0);
+
+
+        let last = 0;
+
+
+        for (
+            let i = 0;
+            i < length;
+            i++
+        ) {
+
+            const white =
+                Math.random() * 2 - 1;
+
+
+            if (type === "white") {
+
+                data[i] =
+                    white;
+
+            }
+
+
+            else if (
+                type === "pink"
+            ) {
+
+                last =
+                    .985 * last +
+                    .015 * white;
+
+                data[i] =
+                    last * 3.5;
+
+            }
+
+
+            else if (
+                type === "brown"
+            ) {
+
+                last +=
+                    white * .02;
+
+                last =
+                    Math.max(
+                        -1,
+                        Math.min(
+                            1,
+                            last
+                        )
+                    );
+
+                data[i] =
+                    last * 3;
+
+            }
+
+
+            else if (
+                type === "fan"
+            ) {
+
+                last =
+                    .995 * last +
+                    .005 * white;
+
+                data[i] =
+                    last * 2.2 +
+                    white * .08;
+
+            }
+
+
+            else if (
+                type === "wind"
+            ) {
+
+                last =
+                    .997 * last +
+                    .003 * white;
+
+                data[i] =
+                    last * 2.8 +
+                    white * .12;
+
+            }
+
+
+            else if (
+                type === "static"
+            ) {
+
+                data[i] =
+                    white * .8 +
+                    (
+                        Math.random() > .995
+                            ? (
+                                Math.random() * 2 - 1
+                            ) * .8
+                            : 0
+                    );
+
+            }
+
+
+            else if (
+                type === "deepRain"
+            ) {
+
+                last =
+                    .97 * last +
+                    .03 * white;
+
+                data[i] =
+                    last * 2.8 +
+                    white * .12;
+
+            }
+
+
+            else {
+
+                data[i] =
+                    white;
+
+            }
+
+        }
+
+
+        return buffer;
+
+    }
+
+
+    function stopLocalNoise() {
+
+        if (noiseSource) {
+
+            try {
+                noiseSource.stop();
+            } catch (e) {}
+
+            try {
+                noiseSource.disconnect();
+            } catch (e) {}
+
+            noiseSource = null;
+
+        }
+
+
+        if (noiseGain) {
+
+            try {
+                noiseGain.disconnect();
+            } catch (e) {}
+
+            noiseGain = null;
+
+        }
+
+
+        if (noiseFilter) {
+
+            try {
+                noiseFilter.disconnect();
+            } catch (e) {}
+
+            noiseFilter = null;
+
+        }
+
+    }
+
+
+    function startLocalNoise(type) {
+
+        stopLocalNoise();
+
+
+        const ctx =
+            getAudioContext();
+
+        if (!ctx) {
+            return false;
+        }
+
+
+        const buffer =
+            createNoiseBuffer(type);
+
+        if (!buffer) {
+            return false;
+        }
+
+
+        noiseSource =
+            ctx.createBufferSource();
+
+        noiseSource.buffer =
+            buffer;
+
+        noiseSource.loop =
+            true;
+
+
+        noiseFilter =
+            ctx.createBiquadFilter();
+
+
+        if (type === "white") {
+
+            noiseFilter.type =
+                "lowpass";
+
+            noiseFilter.frequency.value =
+                12000;
+
+        }
+
+        else if (
+            type === "pink"
+        ) {
+
+            noiseFilter.type =
+                "lowpass";
+
+            noiseFilter.frequency.value =
+                9000;
+
+        }
+
+        else if (
+            type === "brown"
+        ) {
+
+            noiseFilter.type =
+                "lowpass";
+
+            noiseFilter.frequency.value =
+                700;
+
+        }
+
+        else if (
+            type === "fan"
+        ) {
+
+            noiseFilter.type =
+                "lowpass";
+
+            noiseFilter.frequency.value =
+                850;
+
+        }
+
+        else if (
+            type === "wind"
+        ) {
+
+            noiseFilter.type =
+                "lowpass";
+
+            noiseFilter.frequency.value =
+                1500;
+
+        }
+
+        else if (
+            type === "static"
+        ) {
+
+            noiseFilter.type =
+                "bandpass";
+
+            noiseFilter.frequency.value =
+                3000;
+
+            noiseFilter.Q.value =
+                .7;
+
+        }
+
+        else if (
+            type === "deepRain"
+        ) {
+
+            noiseFilter.type =
+                "lowpass";
+
+            noiseFilter.frequency.value =
+                5000;
+
+        }
+
+
+        noiseGain =
+            ctx.createGain();
+
+        noiseGain.gain.value =
+            .18;
+
+
+        noiseSource.connect(
+            noiseFilter
+        );
+
+        noiseFilter.connect(
+            noiseGain
+        );
+
+        noiseGain.connect(
+            ctx.destination
+        );
+
+
+        noiseSource.start(0);
+
+        return true;
+
+    }
+
+
+    function playExternalSound(
+        value
+    ) {
+
+        stopLocalNoise();
+
+        audioPlayer.pause();
+
+        audioPlayer.src =
+            externalSounds[value] ||
+            "";
+
+        audioPlayer.currentTime =
+            0;
+
+
+        const promise =
+            audioPlayer.play();
+
+
+        if (
+            promise &&
+            promise.catch
+        ) {
+
+            promise.catch(
+                function () {
+
+                    showStatus(
+                        "CLICK_PAGE_TO_ENABLE_AUDIO"
+                    );
+
+                }
+            );
+
+        }
+
+    }
+
+
+    noiseSelect.onchange =
+        function () {
+
+            const value =
+                noiseSelect.value;
+
+
+            if (!value) {
+
+                audioPlayer.pause();
+
+                audioPlayer.src =
+                    "";
+
+                stopLocalNoise();
+
+                showStatus(
+                    "AMBIENCE_OFF"
+                );
+
+                return;
+
+            }
+
+
+            const localTypes = [
+
+                "white",
+                "pink",
+                "brown",
+                "fan",
+                "wind",
+                "static",
+                "deepRain"
+
+            ];
+
+
+            if (
+                localTypes.includes(
+                    value
+                )
+            ) {
+
+                audioPlayer.pause();
+
+                audioPlayer.src =
+                    "";
+
+
+                if (
+                    startLocalNoise(
+                        value
+                    )
+                ) {
+
+                    showStatus(
+                        value
+                            .toUpperCase() +
+                        "_NOISE_ACTIVE"
+                    );
+
+                }
+
+                return;
+
+            }
+
+
+            if (
+                externalSounds[value]
+            ) {
+
+                playExternalSound(
+                    value
+                );
+
+            }
+
+        };
+
+
+    document.addEventListener(
+        "click",
+        function () {
+
+            const ctx =
+                getAudioContext();
+
+            if (
+                ctx &&
+                ctx.state ===
+                "suspended"
+            ) {
+
+                ctx.resume()
+                    .catch(() => {});
+
+            }
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    /* =========================================================
+       10. UI
+       ========================================================= */
+
+    ui.appendChild(
+        copyBtn
+    );
+
+    ui.appendChild(
+        readBtn
+    );
+
+    ui.appendChild(
+        stopBtn
+    );
+
+    ui.appendChild(
+        noiseSelect
+    );
+
+    document.body.appendChild(
+        ui
+    );
+
+
+    /* =========================================================
+       11. STATUS
+       ========================================================= */
+
+    const status =
+        document.createElement(
+            "div"
+        );
+
+    status.id =
+        "cqs-titan-status";
+
+    document.body.appendChild(
+        status
+    );
+
+
+    let statusTimer = null;
+
+
+    function showStatus(text) {
+
+        status.textContent =
+            "CQS // " + text;
+
+        status.classList.add(
+            "show"
+        );
+
+
+        clearTimeout(
+            statusTimer
+        );
+
+
+        statusTimer =
+            setTimeout(
+                function () {
+
+                    status.classList.remove(
+                        "show"
+                    );
+
+                },
+                1800
+            );
+
+    }
+
+
+    /* =========================================================
+       12. SPEECH VOICE LOADING
+       ========================================================= */
+
+    if (
+        "speechSynthesis" in window
+    ) {
+
+        window.speechSynthesis
+            .addEventListener(
+                "voiceschanged",
+                function () {}
+            );
+
+    }
+
+
+    /* =========================================================
+       13. CLEANUP WHEN PAGE IS UNLOADED
+       ========================================================= */
+
+    window.addEventListener(
+        "beforeunload",
+        function () {
+
+            try {
+
+                if (
+                    "speechSynthesis"
+                    in window
+                ) {
+
+                    window.speechSynthesis
+                        .cancel();
+
+                }
+
+            } catch (e) {}
+
+
+            try {
+
+                stopLocalNoise();
+
+            } catch (e) {}
+
+
+            try {
+
+                if (audioPlayer) {
+
+                    audioPlayer.pause();
+
+                }
+
+            } catch (e) {}
+
+        }
+    );
+
+
+    /* =========================================================
+       14. READY
+       ========================================================= */
+
+    showStatus(
+        "TITAN_POST_MODULE_READY"
+    );
+
+
 })();
 </script>
-
-
 
 </body>
 </html>
