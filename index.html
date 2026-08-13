@@ -7909,6 +7909,8 @@ const translations = {
 
 /* =========================================================
    APPLY LANGUAGE
+   /* =========================================================
+   LANGUAGE SYSTEM
    ========================================================= */
 
 function applyLanguage(language) {
@@ -7918,30 +7920,35 @@ function applyLanguage(language) {
         || translations.en;
 
     state.language =
-        language;
+        translations[language]
+        ? language
+        : "en";
 
     localStorage.setItem(
         "cqs_language",
-        language
+        state.language
     );
 
     document.documentElement.lang =
-        language;
+        state.language;
 
     document.documentElement.dir =
-        language === "ar"
+        state.language === "ar"
             ? "rtl"
             : "ltr";
 
+    document.body.classList.toggle(
+        "rtl-mode",
+        state.language === "ar"
+    );
 
-    /*
-     * TOP BAR
-     */
+
+    /* =====================================================
+       TOP BAR
+       ===================================================== */
 
     const pageTitle =
-        document.querySelector(
-            "#pageTitle"
-        );
+        document.getElementById("pageTitle");
 
     if (pageTitle) {
 
@@ -7952,9 +7959,7 @@ function applyLanguage(language) {
 
 
     const pageSubtitle =
-        document.querySelector(
-            "#pageSubtitle"
-        );
+        document.getElementById("pageSubtitle");
 
     if (pageSubtitle) {
 
@@ -7964,37 +7969,338 @@ function applyLanguage(language) {
     }
 
 
-    /*
-     * COMMON DATA-I18N ELEMENTS
-     */
+    /* =====================================================
+       SIDEBAR
+       ===================================================== */
 
-    document
-        .querySelectorAll(
-            "[data-i18n]"
-        )
-        .forEach(
-            element => {
+    const newChat =
+        document.getElementById("newChatBtn");
 
-                const key =
-                    element.dataset.i18n;
+    if (newChat) {
 
-                if (
-                    lang[key]
-                    !== undefined
-                ) {
+        const span =
+            newChat.querySelector(
+                ".new-chat-icon"
+            );
 
-                    element.textContent =
-                        lang[key];
+        newChat.textContent = "";
 
-                }
+        if (span) {
 
-            }
+            newChat.appendChild(span);
+
+        }
+
+        const text =
+            document.createElement("span");
+
+        text.textContent =
+            lang.newChat;
+
+        newChat.appendChild(text);
+
+    }
+
+
+    const languageBtn =
+        document.getElementById("languageBtn");
+
+    if (languageBtn) {
+
+        const spans =
+            languageBtn.querySelectorAll("span");
+
+        if (spans[1]) {
+
+            spans[1].textContent =
+                lang.language;
+
+        }
+
+    }
+
+
+    const settingsBtn =
+        document.getElementById("settingsBtn");
+
+    if (settingsBtn) {
+
+        const spans =
+            settingsBtn.querySelectorAll("span");
+
+        if (spans[1]) {
+
+            spans[1].textContent =
+                lang.settings;
+
+        }
+
+    }
+
+
+    const notionBtn =
+        document.getElementById("notionBtn");
+
+    if (notionBtn) {
+
+        const spans =
+            notionBtn.querySelectorAll("span");
+
+        if (spans[1]) {
+
+            spans[1].textContent =
+                lang.notion;
+
+        }
+
+    }
+
+
+    const historyTitle =
+        document.querySelector(
+            ".sidebar-section-title"
         );
 
+    if (historyTitle) {
 
-    /*
-     * LANGUAGE BUTTON ACTIVE STATE
-     */
+        historyTitle.textContent =
+            lang.history;
+
+    }
+
+
+    /* =====================================================
+       COMPOSER
+       ===================================================== */
+
+    if (input) {
+
+        input.placeholder =
+            lang.placeholder;
+
+    }
+
+
+    /* =====================================================
+       STATUS
+       ===================================================== */
+
+    const statusText =
+        document.getElementById("statusText");
+
+    if (
+        statusText
+        && !state.isStreaming
+    ) {
+
+        statusText.textContent =
+            lang.online;
+
+    }
+
+
+    /* =====================================================
+       WELCOME
+       ===================================================== */
+
+    const welcomeTitle =
+        document.getElementById(
+            "welcomeTitle"
+        );
+
+    if (welcomeTitle) {
+
+        welcomeTitle.textContent =
+            lang.welcomeTitle;
+
+    }
+
+
+    const welcomeDescription =
+        document.getElementById(
+            "welcomeDescription"
+        );
+
+    if (welcomeDescription) {
+
+        welcomeDescription.textContent =
+            lang.welcomeDescription;
+
+    }
+
+
+    /* =====================================================
+       QUICK ACTIONS
+       ===================================================== */
+
+    const quickActions =
+        document.querySelectorAll(
+            ".quick-action"
+        );
+
+    quickActions.forEach(
+        (button, index) => {
+
+            const item =
+                lang.quickActions[index];
+
+            if (!item)
+                return;
+
+            button.textContent =
+                item.label;
+
+            button.dataset.prompt =
+                item.prompt;
+
+        }
+    );
+
+
+    /* =====================================================
+       LANGUAGE MODAL
+       ===================================================== */
+
+    const languageModalTitle =
+        document.querySelector(
+            "#languageOverlay .modal-title"
+        );
+
+    if (languageModalTitle) {
+
+        languageModalTitle.textContent =
+            lang.selectLanguage;
+
+    }
+
+
+    /* =====================================================
+       SETTINGS MODAL
+       ===================================================== */
+
+    const settingsModal =
+        document.querySelector(
+            "#settingsOverlay .modal-title"
+        );
+
+    if (settingsModal) {
+
+        settingsModal.textContent =
+            lang.settings;
+
+    }
+
+
+    /* =====================================================
+       NOTION
+       ===================================================== */
+
+    const notionTitle =
+        document.querySelector(
+            "#notionOverlay .modal-title"
+        );
+
+    if (notionTitle) {
+
+        notionTitle.textContent =
+            lang.notionTitle;
+
+    }
+
+
+    const saveNotionBtn =
+        document.getElementById(
+            "saveNotionBtn"
+        );
+
+    if (saveNotionBtn) {
+
+        saveNotionBtn.textContent =
+            lang.saveNotion;
+
+    }
+
+
+    /* =====================================================
+       SHARE
+       ===================================================== */
+
+    const shareTitle =
+        document.querySelector(
+            "#shareOverlay .modal-title"
+        );
+
+    if (shareTitle) {
+
+        shareTitle.textContent =
+            lang.shareTitle;
+
+    }
+
+
+    const copyShareBtn =
+        document.getElementById(
+            "copyShareBtn"
+        );
+
+    if (copyShareBtn) {
+
+        copyShareBtn.textContent =
+            lang.copy;
+
+    }
+
+
+    /* =====================================================
+       EXPORT
+       ===================================================== */
+
+    const exportTitle =
+        document.querySelector(
+            "#exportOverlay .modal-title"
+        );
+
+    if (exportTitle) {
+
+        exportTitle.textContent =
+            lang.exportTitle;
+
+    }
+
+
+    /* =====================================================
+       PROVIDER
+       ===================================================== */
+
+    const providerTitle =
+        document.querySelector(
+            "#agentOverlay .modal-title"
+        );
+
+    if (providerTitle) {
+
+        providerTitle.textContent =
+            lang.providerTitle;
+
+    }
+
+
+    const activateProviderBtn =
+        document.getElementById(
+            "activateProviderBtn"
+        );
+
+    if (activateProviderBtn) {
+
+        activateProviderBtn.textContent =
+            lang.activateProvider;
+
+    }
+
+
+    /* =====================================================
+       LANGUAGE ACTIVE STATE
+       ===================================================== */
 
     document
         .querySelectorAll(
@@ -8006,30 +8312,46 @@ function applyLanguage(language) {
                 option.classList.toggle(
                     "active",
                     option.dataset.language
-                    === language
+                    === state.language
                 );
 
             }
         );
 
 
-    /*
-     * RTL SUPPORT
-     */
+    /* =====================================================
+       RTL
+       ===================================================== */
 
     if (
-        language === "ar"
+        state.language === "ar"
     ) {
 
-        document.body.classList.add(
-            "rtl-mode"
-        );
+        document.documentElement
+            .setAttribute(
+                "dir",
+                "rtl"
+            );
+
+        document.documentElement
+            .setAttribute(
+                "lang",
+                "ar"
+            );
 
     } else {
 
-        document.body.classList.remove(
-            "rtl-mode"
-        );
+        document.documentElement
+            .setAttribute(
+                "dir",
+                "ltr"
+            );
+
+        document.documentElement
+            .setAttribute(
+                "lang",
+                state.language
+            );
 
     }
 
@@ -8058,11 +8380,14 @@ document
                         language
                     );
 
-                    toast(
+                    const t =
                         translations[
-                            language
-                        ]?.saveLanguage
-                        || "Language saved"
+                            state.language
+                        ]
+                        || translations.en;
+
+                    toast(
+                        t.saveLanguage
                     );
 
                     closeModal(
@@ -8084,97 +8409,7 @@ applyLanguage(
     localStorage.getItem(
         "cqs_language"
     )
-    || "en"
-);
-
-
-    /*
-     * Arabic RTL
-     */
-
-    if (lang === "ar") {
-
-        document.documentElement
-            .setAttribute(
-                "dir",
-                "rtl"
-            );
-
-        document.documentElement
-            .setAttribute(
-                "lang",
-                "ar"
-            );
-
-    } else {
-
-        document.documentElement
-            .setAttribute(
-                "dir",
-                "ltr"
-            );
-
-        document.documentElement
-            .setAttribute(
-                "lang",
-                lang
-            );
-
-    }
-
-}
-
-
-/*
- * 语言选择
- */
-
-document
-    .querySelectorAll(
-        ".language-option"
-    )
-    .forEach(
-        option => {
-
-            option.addEventListener(
-                "click",
-                () => {
-
-                    const language =
-                        option.dataset.language;
-
-                    applyLanguage(
-                        language
-                    );
-
-                    const t =
-                        translations[
-                            state.language
-                        ];
-
-                    toast(
-                        t.languageSaved
-                    );
-
-                    closeModal(
-                        "languageOverlay"
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-/*
- * 页面启动时恢复语言
- */
-
-applyLanguage(
-    localStorage.getItem(
-        "cqs_language"
-    ) || "zh"
+    || "zh"
 );
 
 
