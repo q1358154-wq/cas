@@ -7747,6 +7747,311 @@ $("exportBtn")
    LANGUAGE
    ========================================================= */
 
+/* =========================================================
+   LANGUAGE SYSTEM
+   ========================================================= */
+
+const translations = {
+
+    zh: {
+        pageTitle: "CQS AI",
+        pageSubtitle: "Online • Spatial Core",
+        online: "Online",
+        thinking: "Thinking...",
+        newChat: "新对话",
+        history: "历史记录",
+        settings: "设置",
+        language: "语言",
+        notion: "Notion",
+        share: "分享",
+        export: "导出",
+        send: "发送",
+        placeholder: "输入你的消息...",
+        languageSaved: "语言设置已保存",
+        spatialOn: "3D 空间已开启",
+        spatialOff: "3D 空间已关闭"
+    },
+
+    en: {
+        pageTitle: "CQS AI",
+        pageSubtitle: "Online • Spatial Core",
+        online: "Online",
+        thinking: "Thinking...",
+        newChat: "New Chat",
+        history: "History",
+        settings: "Settings",
+        language: "Language",
+        notion: "Notion",
+        share: "Share",
+        export: "Export",
+        send: "Send",
+        placeholder: "Type your message...",
+        languageSaved: "Language saved",
+        spatialOn: "3D Spatial Mode Enabled",
+        spatialOff: "3D Spatial Mode Disabled"
+    },
+
+    ja: {
+        pageTitle: "CQS AI",
+        pageSubtitle: "Online • Spatial Core",
+        online: "オンライン",
+        thinking: "思考中...",
+        newChat: "新しいチャット",
+        history: "履歴",
+        settings: "設定",
+        language: "言語",
+        notion: "Notion",
+        share: "共有",
+        export: "エクスポート",
+        send: "送信",
+        placeholder: "メッセージを入力...",
+        languageSaved: "言語設定を保存しました",
+        spatialOn: "3D空間を有効化",
+        spatialOff: "3D空間を無効化"
+    },
+
+    ko: {
+        pageTitle: "CQS AI",
+        pageSubtitle: "Online • Spatial Core",
+        online: "온라인",
+        thinking: "생각 중...",
+        newChat: "새 대화",
+        history: "기록",
+        settings: "설정",
+        language: "언어",
+        notion: "Notion",
+        share: "공유",
+        export: "내보내기",
+        send: "전송",
+        placeholder: "메시지를 입력하세요...",
+        languageSaved: "언어 설정이 저장되었습니다",
+        spatialOn: "3D 공간 활성화",
+        spatialOff: "3D 공간 비활성화"
+    },
+
+    fr: {
+        pageTitle: "CQS AI",
+        pageSubtitle: "Online • Spatial Core",
+        online: "En ligne",
+        thinking: "Réflexion...",
+        newChat: "Nouvelle conversation",
+        history: "Historique",
+        settings: "Paramètres",
+        language: "Langue",
+        notion: "Notion",
+        share: "Partager",
+        export: "Exporter",
+        send: "Envoyer",
+        placeholder: "Écrivez votre message...",
+        languageSaved: "Langue enregistrée",
+        spatialOn: "Mode spatial 3D activé",
+        spatialOff: "Mode spatial 3D désactivé"
+    },
+
+    de: {
+        pageTitle: "CQS AI",
+        pageSubtitle: "Online • Spatial Core",
+        online: "Online",
+        thinking: "Denke...",
+        newChat: "Neuer Chat",
+        history: "Verlauf",
+        settings: "Einstellungen",
+        language: "Sprache",
+        notion: "Notion",
+        share: "Teilen",
+        export: "Exportieren",
+        send: "Senden",
+        placeholder: "Nachricht eingeben...",
+        languageSaved: "Sprache gespeichert",
+        spatialOn: "3D-Raum aktiviert",
+        spatialOff: "3D-Raum deaktiviert"
+    },
+
+    es: {
+        pageTitle: "CQS AI",
+        pageSubtitle: "Online • Spatial Core",
+        online: "En línea",
+        thinking: "Pensando...",
+        newChat: "Nuevo chat",
+        history: "Historial",
+        settings: "Configuración",
+        language: "Idioma",
+        notion: "Notion",
+        share: "Compartir",
+        export: "Exportar",
+        send: "Enviar",
+        placeholder: "Escribe tu mensaje...",
+        languageSaved: "Idioma guardado",
+        spatialOn: "Espacio 3D activado",
+        spatialOff: "Espacio 3D desactivado"
+    },
+
+    ru: {
+        pageTitle: "CQS AI",
+        pageSubtitle: "Online • Spatial Core",
+        online: "Онлайн",
+        thinking: "Думаю...",
+        newChat: "Новый чат",
+        history: "История",
+        settings: "Настройки",
+        language: "Язык",
+        notion: "Notion",
+        share: "Поделиться",
+        export: "Экспорт",
+        send: "Отправить",
+        placeholder: "Введите сообщение...",
+        languageSaved: "Язык сохранён",
+        spatialOn: "3D-пространство включено",
+        spatialOff: "3D-пространство выключено"
+    },
+
+    ar: {
+        pageTitle: "CQS AI",
+        pageSubtitle: "متصل • النواة المكانية",
+        online: "متصل",
+        thinking: "جارٍ التفكير...",
+        newChat: "محادثة جديدة",
+        history: "السجل",
+        settings: "الإعدادات",
+        language: "اللغة",
+        notion: "Notion",
+        share: "مشاركة",
+        export: "تصدير",
+        send: "إرسال",
+        placeholder: "اكتب رسالتك...",
+        languageSaved: "تم حفظ إعداد اللغة",
+        spatialOn: "تم تفعيل المساحة ثلاثية الأبعاد",
+        spatialOff: "تم تعطيل المساحة ثلاثية الأبعاد"
+    }
+
+};
+
+
+function applyLanguage(
+    language
+) {
+
+    const lang =
+        translations[language]
+        ? language
+        : "zh";
+
+    state.language =
+        lang;
+
+    localStorage.setItem(
+        "cqs_language",
+        lang
+    );
+
+    const t =
+        translations[lang];
+
+
+    /*
+     * 页面标题
+     */
+
+    if ($("pageSubtitle")) {
+
+        $("pageSubtitle")
+            .textContent =
+            t.pageSubtitle;
+
+    }
+
+
+    /*
+     * 状态
+     */
+
+    if (
+        $("statusText")
+        && !state.isStreaming
+    ) {
+
+        $("statusText")
+            .textContent =
+            t.online;
+
+    }
+
+
+    /*
+     * 输入框
+     */
+
+    if ($("input")) {
+
+        $("input")
+            .placeholder =
+            t.placeholder;
+
+    }
+
+
+    /*
+     * 语言按钮 active
+     */
+
+    document
+        .querySelectorAll(
+            ".language-option"
+        )
+        .forEach(
+            option => {
+
+                option.classList.toggle(
+                    "active",
+                    option.dataset.language
+                    === lang
+                );
+
+            }
+        );
+
+
+    /*
+     * Arabic RTL
+     */
+
+    if (lang === "ar") {
+
+        document.documentElement
+            .setAttribute(
+                "dir",
+                "rtl"
+            );
+
+        document.documentElement
+            .setAttribute(
+                "lang",
+                "ar"
+            );
+
+    } else {
+
+        document.documentElement
+            .setAttribute(
+                "dir",
+                "ltr"
+            );
+
+        document.documentElement
+            .setAttribute(
+                "lang",
+                lang
+            );
+
+    }
+
+}
+
+
+/*
+ * 语言选择
+ */
+
 document
     .querySelectorAll(
         ".language-option"
@@ -7758,21 +8063,20 @@ document
                 "click",
                 () => {
 
-                    document
-                        .querySelectorAll(
-                            ".language-option"
-                        )
-                        .forEach(
-                            x =>
-                                x.classList
-                                .remove("active")
-                        );
+                    const language =
+                        option.dataset.language;
 
-                    option.classList
-                        .add("active");
+                    applyLanguage(
+                        language
+                    );
+
+                    const t =
+                        translations[
+                            state.language
+                        ];
 
                     toast(
-                        "语言设置已保存"
+                        t.languageSaved
                     );
 
                     closeModal(
@@ -7784,6 +8088,17 @@ document
 
         }
     );
+
+
+/*
+ * 页面启动时恢复语言
+ */
+
+applyLanguage(
+    localStorage.getItem(
+        "cqs_language"
+    ) || "zh"
+);
 
 
 /* =========================================================
