@@ -4251,41 +4251,96 @@ body.rebooting .stage-inner {
    ========================================================= */
 
 .md-bold {
-    font-weight: 700;
-    color: white;
+
+    font-weight:
+        700;
+
+    color:
+        white;
+
 }
 
 .md-link {
-    color: #7dd3fc;
-    text-decoration: underline;
+
+    color:
+        #7dd3fc;
+
+    text-decoration:
+        underline;
+
 }
 
 .md-list {
-    margin: 8px 0;
-    padding-left: 22px;
+
+    margin:
+        8px 0;
+
+    padding-left:
+        22px;
+
 }
 
 .md-quote {
-    padding-left: 10px;
-    border-left: 2px solid rgba(56,189,248,.3);
-    color: var(--muted);
+
+    padding-left:
+        10px;
+
+    border-left:
+        2px solid
+        rgba(56,189,248,.3);
+
+    color:
+        var(--muted);
+
 }
 
-/* 七彩背景动画 */
-@keyframes rainbowBackground {
-  0%   { background-color: #ff0000; }
-  14%  { background-color: #ff7f00; }
-  28%  { background-color: #ffff00; }
-  42%  { background-color: #00ff00; }
-  57%  { background-color: #00ffff; }
-  71%  { background-color: #0000ff; }
-  85%  { background-color: #8b00ff; }
-  100% { background-color: #ff0000; }
-}
+</style>
+</head>
 
-body {
-  animation: rainbowBackground 10s infinite;
-}
+
+<body>
+
+
+<!-- =========================================================
+     BOOT
+     ========================================================= -->
+
+<div id="bootScreen">
+
+    <div class="boot-grid"></div>
+
+    <div class="boot-line"></div>
+
+    <div class="boot-ring"></div>
+
+    <div class="boot-title">
+        CQS_AI
+    </div>
+
+    <div class="boot-sub">
+        GLOBAL INTELLIGENCE CONSOLE
+    </div>
+
+    <div
+        class="boot-status"
+        id="bootStatus"
+    >
+        INITIALIZING CQS CORE...
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     APP
+     ========================================================= -->
+
+<div class="app" id="app">
+
+
+    <!-- BACKGROUND -->
+
+    <div class="space-bg">
 
         <div class="space-grid"></div>
 
