@@ -11189,7 +11189,76 @@ setInterval(
 
 
 })();
+</script><script>
+  // 1. 自动注入 CSS 样式
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .hero-title {
+      font-family: monospace;
+      font-size: 28px;
+      color: #fff;
+    }
+    .cursor {
+      display: inline-block;
+      background-color: #fff;
+      margin-left: 2px;
+      animation: blink 0.7s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // 2. 自动在页面中插入 HTML 结构（如果你页面里还没有这个容器的话）
+  // 默认加在 body 的最前面，你也可以根据需要修改插入位置
+  const container = document.createElement('div');
+  container.className = 'hero-title';
+  container.innerHTML = 'Agent Loops <span id="typing-text"></span><span class="cursor">|</span>';
+  document.body.insertBefore(container, document.body.firstChild);
+
+  // 3. 运行文字跑动/打字循环逻辑
+  const words = [
+    "that grl", 
+    "that grow your audience", 
+    "that work while you sleep"
+  ];
+
+  let i = 0;
+
+  function typingEffect() {
+    const word = words[i];
+    let j = 0;
+    const target = document.getElementById("typing-text");
+    
+    function type() {
+      if (j < word.length) {
+        target.textContent += word.charAt(j);
+        j++;
+        setTimeout(type, 100);
+      } else {
+        setTimeout(erase, 2000);
+      }
+    }
+
+    function erase() {
+      if (j > 0) {
+        target.textContent = word.substring(0, j - 1);
+        j--;
+        setTimeout(erase, 50);
+      } else {
+        i = (i + 1) % words.length;
+        setTimeout(typingEffect, 500);
+      }
+    }
+
+    type();
+  }
+
+  typingEffect();
 </script>
+
 
 </body>
 </html>
