@@ -11190,55 +11190,57 @@ setInterval(
 
 })();
 </script><script>
-  // 1. 自动注入 CSS 样式
+  // 1. 自动注入 CSS 样式（设置灰色字体和科技感外观）
   const style = document.createElement('style');
   style.innerHTML = `
-    .hero-title {
+    .cqs-typing-container {
       font-family: monospace;
-      font-size: 28px;
-      color: #fff;
+      font-size: 24px;
+      color: #888888; /* 灰色字体 */
+      text-align: center;
+      margin: 20px 0;
     }
-    .cursor {
+    .cqs-cursor {
       display: inline-block;
-      background-color: #fff;
+      background-color: #888888; /* 光标也保持灰色 */
+      width: 2px;
       margin-left: 2px;
-      animation: blink 0.7s infinite;
+      animation: cqs-blink 0.7s infinite;
     }
-    @keyframes blink {
+    @keyframes cqs-blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
   `;
   document.head.appendChild(style);
 
-  // 2. 自动在页面中插入 HTML 结构（如果你页面里还没有这个容器的话）
-  // 默认加在 body 的最前面，你也可以根据需要修改插入位置
+  // 2. 自动在页面中插入这行文字的容器
   const container = document.createElement('div');
-  container.className = 'hero-title';
-  container.innerHTML = 'Agent Loops <span id="typing-text"></span><span class="cursor">|</span>';
-  document.body.insertBefore(container, document.body.firstChild);
+  container.className = 'cqs-typing-container';
+  container.innerHTML = 'CQS - <span id="cqs-text"></span><span class="cqs-cursor">|</span>';
+  document.body.appendChild(container); // 默认加到页面最底部，如果你想加在特定地方可以告诉我
 
-  // 3. 运行文字跑动/打字循环逻辑
+  // 3. 英文欢迎语循环跑动逻辑
   const words = [
-    "that grl", 
-    "that grow your audience", 
-    "that work while you sleep"
+    "Welcome to CQS System", 
+    "Global Intelligence Console", 
+    "Connecting Matrix..."
   ];
 
   let i = 0;
 
-  function typingEffect() {
+  function runTyping() {
     const word = words[i];
     let j = 0;
-    const target = document.getElementById("typing-text");
+    const target = document.getElementById("cqs-text");
     
     function type() {
       if (j < word.length) {
         target.textContent += word.charAt(j);
         j++;
-        setTimeout(type, 100);
+        setTimeout(type, 100); // 打印速度
       } else {
-        setTimeout(erase, 2000);
+        setTimeout(erase, 2000); // 显现后停留2秒
       }
     }
 
@@ -11246,18 +11248,19 @@ setInterval(
       if (j > 0) {
         target.textContent = word.substring(0, j - 1);
         j--;
-        setTimeout(erase, 50);
+        setTimeout(erase, 50); // 删除速度
       } else {
         i = (i + 1) % words.length;
-        setTimeout(typingEffect, 500);
+        setTimeout(runTyping, 500); // 切换下一句
       }
     }
 
     type();
   }
 
-  typingEffect();
+  runTyping();
 </script>
+
 
 
 </body>
