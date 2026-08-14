@@ -866,7 +866,6 @@ body.right-only #book{ gap: 0; }
 body.right-only .page-left{ width: 0; opacity: 0; transform: rotateY(-75deg) translateX(35vw) translateZ(-350px); pointer-events: none; }
 body.right-only .page-right{ width: min(88vw, 1100px); }
 
-/* 模块放大图标与专属主页面样式 */
 .zoom-btn {
     background: transparent;
     border: 1px solid hsla(var(--hue), 100%, 70%, 0.4);
@@ -937,7 +936,6 @@ body.right-only .page-right{ width: min(88vw, 1100px); }
     overflow-y: auto;
 }
 
-/* 核心修改：利用中心脊柱(BOTH / spine)触发控制全局横屏，左区功能键横屏全部展出，右区保持输入在下内容在上 */
 body.immersive-landscape #book {
     flex-direction: column;
     justify-content: flex-start;
@@ -951,11 +949,9 @@ body.immersive-landscape .page-left {
     height: auto !important;
     transform: none !important;
 }
-/* 左区功能键横屏保持全部展出（10列满排） */
 body.immersive-landscape .toolbar-grid {
     grid-template-columns: repeat(10, 1fr) !important;
 }
-/* 右区保持AI对话：上方内容/工作区，下方输入框 */
 body.immersive-landscape .page-right {
     width: min(94vw, 1100px) !important;
     height: min(55vh, 500px) !important;
@@ -1044,7 +1040,6 @@ body.immersive-landscape .page-right {
     <option value="ar">العربية</option>
 </select>
 
-<!-- 全屏专属主页面 Overlay -->
 <div id="fullscreenOverlay">
     <div class="fs-header">
         <div class="fs-title" id="fsTitle">CQSAI 模块独立主页面</div>
@@ -1122,7 +1117,6 @@ body.immersive-landscape .page-right {
                     </div>
                 </div>
 
-                <!-- 手动选择控制区（保留手动按钮，已删除冗余键盘逻辑） -->
                 <div class="collapsible-section" id="gameModeCollapsible">
                     <div class="collapsible-header">
                         <div style="display:flex; align-items:center; gap:6px;" onclick="toggleCollapsible('gameModeCollapsible')">
@@ -1184,7 +1178,6 @@ body.immersive-landscape .page-right {
         </div>
     </section>
 
-    <!-- 右区 AI 区：保持对话输入在下方、内容展示区域在上方 -->
     <section class="page-right" id="rightPage">
         <div class="right-content">
             <div class="right-header">
@@ -1214,12 +1207,10 @@ body.immersive-landscape .page-right {
                 <button class="quick-cmd-chip" data-cmd="Build app for viral ads">🛡️ /viral-ads</button>
             </div>
 
-            <!-- 内容展示区域在上 -->
             <div class="messages-container" id="messagesContainer">
                 <div class="message user" style="border-style: dashed; opacity: 0.7;" data-i18n="msg_tip">Entrez votre invite ci-dessous, la réponse s'affichera à gauche.<br>*All AI responses and prompt entries are handled within this single clear area.*</div>
             </div>
 
-            <!-- 对话输入在下方 -->
             <div class="input-area">
                 <button class="action-btn" id="askClaudeBtn" style="width:60px; font-size:8px;">Ask<br>Claude</button>
                 <textarea class="input-box" id="userInput" placeholder="Ask Claude or Supercomputer via CQSAI MCP..." data-i18n-placeholder="input_placeholder"></textarea>
@@ -1230,7 +1221,6 @@ body.immersive-landscape .page-right {
     </section>
 </div>
 
-<!-- 利用原来的中心脊柱 (BOTH / spine) 来调节横屏与竖屏功能 -->
 <div id="spine">
     <div class="spine-core"></div>
     <button id="modeSwitch"><span id="switchText">BOTH</span></button>
@@ -1938,7 +1928,6 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-// 利用中心脊柱和按钮手动控制全局横屏切换
 window.handleManualSelection = function(actionType) {
     const logEl = document.getElementById("modeStatusLog");
     const coreEl = document.getElementById("core");
@@ -2271,6 +2260,3 @@ setLanguage(savedLang);
 
 </body>
 </html>
-
-lni
-
