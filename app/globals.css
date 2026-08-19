@@ -1,0 +1,266 @@
+:root{
+    --hue: 185;
+    --bg: #010406;
+    --cyan: #00f3ff;
+    --text: #e9ffff;
+    --book-gap: 28px;
+    --page-radius: 14px;
+}
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+html, body{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+    touch-action: none;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 视频同款炫酷开场 Logo 动效样式 */
+#welcomeScreen{
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: #0b0e11;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 1s cubic-bezier(0.22, 0.8, 0.2, 1), transform 1s cubic-bezier(0.22, 0.8, 0.2, 1);
+}
+
+.welcome-logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    animation: welcomePulse 3s ease-in-out infinite;
+}
+
+.welcome-icon-box {
+    width: 64px;
+    height: 64px;
+    background: rgba(18, 22, 28, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
+    position: relative;
+}
+
+.welcome-icon-box::before {
+    content: "";
+    width: 24px;
+    height: 10px;
+    border: 3px solid #00ff66;
+    border-radius: 10px;
+    display: block;
+    box-shadow: 0 0 12px #00ff66;
+    animation: neonWiggle 2s ease-in-out infinite;
+}
+
+.welcome-logo{ 
+    font-size: clamp(20px, 4vw, 36px); 
+    font-weight: 900;
+    letter-spacing: 8px; 
+    color: #fff; 
+    text-shadow: 0 0 20px hsla(var(--hue), 100%, 70%, 0.8); 
+    text-align: center; 
+}
+.welcome-sub{ 
+    font-size: 9.5px; 
+    letter-spacing: 4px; 
+    color: hsla(var(--hue), 100%, 75%, 0.7); 
+    margin-bottom: 30px; 
+}
+.enter-btn{
+    padding: 12px 38px;
+    border: 1px solid hsla(var(--hue), 100%, 70%, 1);
+    background: hsla(var(--hue), 100%, 70%, 0.15);
+    color: #fff;
+    font: 11px Consolas, monospace;
+    letter-spacing: 3px;
+    cursor: pointer;
+    box-shadow: 0 0 25px hsla(var(--hue), 100%, 70%, 0.3);
+    transition: all 0.3s;
+    border-radius: 6px;
+}
+.enter-btn:hover{ 
+    background: hsla(var(--hue), 100%, 70%, 0.4); 
+    box-shadow: 0 0 45px hsla(var(--hue), 100%, 70%, 0.7); 
+    transform: scale(1.05);
+}
+
+@keyframes welcomePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+@keyframes neonWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(10deg) scale(1.1); }
+}
+
+#space{
+    position: fixed;
+    inset: 0;
+    perspective: 1200px;
+    overflow: hidden;
+}
+
+#canvas{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+#grid{
+    position: absolute;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    transform: rotateX(72deg) translateY(20%);
+    transform-origin: center center;
+    background-image:
+        linear-gradient(rgba(0,243,255,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,243,255,.08) 1px, transparent 1px);
+    background-size: 70px 70px;
+    mask-image: linear-gradient(to top, rgba(0,0,0,1), transparent 65%);
+    opacity: .45;
+    z-index: 1;
+    pointer-events: none;
+}
+
+#horizon{
+    position:absolute;
+    left:0;
+    right:0;
+    top:50%;
+    height:1px;
+    background: linear-gradient(90deg,transparent,hsla(var(--hue),100%,70%,.8),transparent);
+    box-shadow: 0 0 30px hsla(var(--hue),100%,70%,.5);
+    z-index:2;
+    pointer-events:none;
+}
+
+#core{
+    position:absolute;
+    inset:0;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform-style:preserve-3d;
+    transition:transform .8s cubic-bezier(.16,1,.3,1);
+}
+
+.book{
+    width:min(1400px,92vw);
+    height:min(760px,84vh);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:var(--book-gap);
+    transform-style:preserve-3d;
+    transition:all .8s cubic-bezier(.16,1,.3,1);
+}
+
+.page{
+    position:relative;
+    min-width:0;
+    min-height:0;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:var(--page-radius);
+    background:rgba(5,10,15,.72);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.025),
+        0 0 50px rgba(0,0,0,.45),
+        0 0 35px hsla(var(--hue),100%,60%,.08);
+    overflow:hidden;
+    transform-style:preserve-3d;
+}
+
+.page::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+        linear-gradient(135deg,rgba(255,255,255,.035),transparent 30%),
+        linear-gradient(315deg,hsla(var(--hue),100%,70%,.03),transparent 45%);
+}
+
+.page-left{
+    transform:translateZ(20px) rotateY(2deg);
+}
+
+.page-right{
+    transform:translateZ(20px) rotateY(-2deg);
+}
+
+.spine{
+    position:absolute;
+    top:2%;
+    bottom:2%;
+    left:50%;
+    width:1px;
+    transform:translateX(-50%);
+    background:linear-gradient(
+        to bottom,
+        transparent,
+        hsla(var(--hue),100%,70%,.55),
+        transparent
+    );
+    box-shadow:0 0 18px hsla(var(--hue),100%,70%,.35);
+    z-index:20;
+    pointer-events:none;
+}
+
+@media(max-width:900px){
+    .book{
+        width:96vw;
+        height:88vh;
+        gap:12px;
+    }
+
+    .page{
+        border-radius:10px;
+    }
+
+    #grid{
+        background-size:48px 48px;
+    }
+}
+
+@media(max-width:700px){
+    .book{
+        grid-template-columns:1fr;
+        width:94vw;
+        height:88vh;
+    }
+
+    .page-left,
+    .page-right{
+        transform:none;
+    }
+
+    .spine{
+        display:none;
+    }
+}
+
+/* 其余原始 CSS 继续保持原文件内容 */
